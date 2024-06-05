@@ -55,9 +55,7 @@ const WellCome = () => {
         style={styles.image}
         source={require("../../assets/images/wellcome.jpg")}
       />
-      <View style={styles.textContainer}>
-        <Text style={styles.textItem}>Kết Nối Việc Làm</Text>
-      </View>
+     
     </View>
   );
 };
@@ -72,22 +70,6 @@ const styles = StyleSheet.create({
     alignItems: "center",
     position: "relative",
   },
-  textItem: {
-     // Màu nền của văn bản
-    padding: 10, 
-    color:"#99FFFF", 
-    fontSize: 30,
-    fontWeight:"bold",
-    textShadowColor: 'rgba(0,0,0,1)',
-    textShadowOffset:{width: 2, height: 2},
-    textShadowRadius: 10, 
-  },
-  textContainer:{
-      position: 'absolute',
-      top: 90,
-      left: 0,
-      right: 0,
-      alignItems: 'center'
-  }
+ 
 });
 export default WellCome;
