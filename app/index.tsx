@@ -9,8 +9,8 @@ export default function Index() {
 
     useEffect(()=>{
       const timer = setTimeout(()=>{
-        // router.push("login") chuyền tên màn hình login vào đây
-      }, 5000);
+        router.push("RegisterScreen")
+      }, 3000);
       return () => clearTimeout(timer);
     }, [router])
   return (
