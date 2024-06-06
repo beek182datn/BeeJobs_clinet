@@ -1,4 +1,3 @@
-
 import { useRouter } from "expo-router";
 import { useEffect } from "react";
 import { Text, View , Image, StyleSheet} from "react-native";
