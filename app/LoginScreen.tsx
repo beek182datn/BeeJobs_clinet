@@ -21,6 +21,15 @@ const LoginScreen = () => {
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Đăng nhập</Text>
+      <View style={styles.inputContainer}>
+        <Icon name="user" size={20} color="#A9A9A9" style={styles.icon} />
+        <TextInput
+          style={styles.input}
+          placeholder="Tài khoản hoặc Email"
+          value={username}
+          onChangeText={setUsername}
+        />
+      </View>
     </View>
   );
 };
@@ -37,6 +46,26 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     alignSelf: "center",
     marginBottom: 30,
+  },
+  inputContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    borderWidth: 1,
+    borderColor: "#A9A9A9",
+    borderRadius: 25,
+    marginBottom: 20,
+    paddingHorizontal: 15,
+    backgroundColor: "#f9f9f9",
+    padding: 10,
+  },
+  input: {
+    flex: 1,
+    padding: 10,
+    fontSize: 16,
+    color: "#000",
+  },
+  icon: {
+    marginRight: 10,
   },
 });
 
