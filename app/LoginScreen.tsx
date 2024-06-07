@@ -12,6 +12,12 @@ import axios, { AxiosResponse } from "axios";
 import { useRouter } from 'expo-router';
 
 const LoginScreen = () => {
+  const [username, setUsername] = useState("");
+  const [passwd, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
+  const [rememberMe, setRememberMe] = useState(false);
+  const router = useRouter();
+
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Đăng nhập</Text>
