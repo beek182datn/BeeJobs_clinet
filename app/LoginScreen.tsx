@@ -18,6 +18,33 @@ const LoginScreen = () => {
   const [rememberMe, setRememberMe] = useState(false);
   const router = useRouter();
 
+  const handleLogin = async () => {
+    if (username.trim() === "" || passwd.trim() === "") {
+      alert("Xin vui lòng điền đầy đủ vào những ô trống cần thiết.");
+      return;
+    }
+
+    try {
+      const response: AxiosResponse = await axios.post('http://beejobs.io.vn:14307/api/login', {
+        username: username,
+        passwd: passwd,
+      });
+      console.log('Đăng nhập thành công:', response.data);
+
+      // Reset form fields
+      setUsername("");
+      setPassword("");
+      setShowPassword(false);
+      setRememberMe(false);
+
+      // Chuyển hướng đến màn hình khác sau khi đăng nhập thành công
+      router.push('/home');
+    } catch (error) {
+      console.error('Lỗi đăng nhập:', error);
+      alert("Đã xảy ra lỗi trong quá trình đăng nhập. Vui lòng thử lại sau.");
+    }
+  };
+
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Đăng nhập</Text>
@@ -61,6 +88,9 @@ const LoginScreen = () => {
         />
         <Text style={styles.rememberMeText}>Lưu mật khẩu</Text>
       </View>
+      <TouchableOpacity style={styles.button} onPress={handleLogin}>
+        <Text style={styles.buttonText}>Đăng nhập</Text>
+      </TouchableOpacity>
     </View>
   );
 };
@@ -127,6 +157,18 @@ const styles = StyleSheet.create({
   },
   rememberMeCheckboxChecked: {
     backgroundColor: "#007aff",
+  },
+  button: {
+    backgroundColor: "#007BFF",
+    paddingVertical: 15,
+    borderRadius: 25,
+    alignItems: "center",
+    marginBottom: 20,
+  },
+  buttonText: {
+    color: "#fff",
+    fontSize: 18,
+    fontWeight: "bold",
   },
 });
 
