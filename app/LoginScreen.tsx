@@ -91,6 +91,18 @@ const LoginScreen = () => {
       <TouchableOpacity style={styles.button} onPress={handleLogin}>
         <Text style={styles.buttonText}>Đăng nhập</Text>
       </TouchableOpacity>
+      <Text style={styles.continueWithText}>----- continue with -----</Text>
+      <View style={styles.socialIconsContainer}>
+        <TouchableOpacity>
+          <Icon name="facebook-square" size={35} color="#3b5998" />
+        </TouchableOpacity>
+        <TouchableOpacity>
+          <Icon name="google-plus-square" size={35} color="#db4a39" />
+        </TouchableOpacity>
+        <TouchableOpacity>
+          <Icon name="twitter-square" size={35} color="#00acee" />
+        </TouchableOpacity>
+      </View>
     </View>
   );
 };
@@ -169,6 +181,16 @@ const styles = StyleSheet.create({
     color: "#fff",
     fontSize: 18,
     fontWeight: "bold",
+  },
+  continueWithText: {
+    textAlign: "center",
+    color: "#A9A9A9",
+    marginBottom: 20,
+  },
+  socialIconsContainer: {
+    flexDirection: "row",
+    justifyContent: "space-around",
+    marginBottom: 20,
   },
 });
 
