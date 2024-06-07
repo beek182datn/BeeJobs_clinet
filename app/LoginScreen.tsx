@@ -48,6 +48,19 @@ const LoginScreen = () => {
           />
         </TouchableOpacity>
       </View>
+      <TouchableOpacity style={styles.forgotPassword} onPress={() => router.push('ForgotPasswordScreen')}>
+        <Text style={styles.forgotPasswordText}>Quên mật khẩu?</Text>
+      </TouchableOpacity>
+      <View style={styles.rememberMeContainer}>
+        <TouchableOpacity
+          style={[
+            styles.rememberMeCheckbox,
+            rememberMe ? styles.rememberMeCheckboxChecked : null,
+          ]}
+          onPress={() => setRememberMe(!rememberMe)}
+        />
+        <Text style={styles.rememberMeText}>Lưu mật khẩu</Text>
+      </View>
     </View>
   );
 };
@@ -84,6 +97,36 @@ const styles = StyleSheet.create({
   },
   icon: {
     marginRight: 10,
+  },
+  forgotPassword: {
+    alignSelf: 'flex-end',
+    marginBottom: 20,
+  },
+  forgotPasswordText: {
+    color: '#007BFF',
+    fontSize: 16,
+  },
+  rememberMeContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginBottom: 20,
+    marginLeft: 10,
+  },
+  rememberMeText: {
+    marginLeft: 10,
+    fontSize: 16,
+    color: "#000",
+  },
+  rememberMeCheckbox: {
+    width: 20,
+    height: 20,
+    borderWidth: 1,
+    borderColor: "#ccc",
+    borderRadius: 5,
+    marginRight: 10,
+  },
+  rememberMeCheckboxChecked: {
+    backgroundColor: "#007aff",
   },
 });
 
