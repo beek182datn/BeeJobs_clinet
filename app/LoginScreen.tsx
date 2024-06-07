@@ -30,6 +30,24 @@ const LoginScreen = () => {
           onChangeText={setUsername}
         />
       </View>
+      <View style={styles.inputContainer}>
+        <Icon name="lock" size={20} color="#A9A9A9" style={styles.icon} />
+        <TextInput
+          style={styles.input}
+          placeholder="Mật khẩu"
+          secureTextEntry={!showPassword}
+          value={passwd}
+          onChangeText={setPassword}
+        />
+        <TouchableOpacity onPress={() => setShowPassword(!showPassword)}>
+          <Icon
+            name={showPassword ? "eye-slash" : "eye"}
+            size={20}
+            color="#A9A9A9"
+            style={styles.icon}
+          />
+        </TouchableOpacity>
+      </View>
     </View>
   );
 };
