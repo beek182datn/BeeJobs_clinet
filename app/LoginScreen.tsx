@@ -103,6 +103,10 @@ const LoginScreen = () => {
           <Icon name="twitter-square" size={35} color="#00acee" />
         </TouchableOpacity>
       </View>
+      <Text style={styles.footerText}>
+        Bạn chưa có tài khoản?
+        <Text style={styles.signupText} onPress={() => router.push('RegisterScreen')}> Đăng ký</Text>
+      </Text>
     </View>
   );
 };
@@ -191,6 +195,16 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-around",
     marginBottom: 20,
+  },
+  footerText: {
+    textAlign: "center",
+    fontSize: 16,
+    color: "#A9A9A9",
+    marginBottom: 30,
+  },
+  signupText: {
+    color: "#007BFF",
+    fontWeight: "bold",
   },
 });
 
