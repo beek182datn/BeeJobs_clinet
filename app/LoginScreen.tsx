@@ -38,7 +38,7 @@ const LoginScreen = () => {
       setRememberMe(false);
 
       // Chuyển hướng đến màn hình khác sau khi đăng nhập thành công
-      router.push('/home');
+      router.push('/Home');
     } catch (error) {
       console.error('Lỗi đăng nhập:', error);
       alert("Đã xảy ra lỗi trong quá trình đăng nhập. Vui lòng thử lại sau.");
