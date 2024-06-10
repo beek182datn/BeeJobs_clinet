@@ -33,6 +33,10 @@ const ForgotPasswordScreen = () => {
     }
   };
 
+  const navigateToLogin = () => {
+    router.push('LoginScreen');
+  };
+
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Quên mật khẩu</Text>
@@ -50,6 +54,9 @@ const ForgotPasswordScreen = () => {
       </View>
       <TouchableOpacity style={styles.button} onPress={handleResetPassword}>
         <Text style={styles.buttonText}>Gửi yêu cầu</Text>
+      </TouchableOpacity>
+      <TouchableOpacity style={styles.backButton} onPress={navigateToLogin}>
+        <Text style={styles.backButtonText}>Quay lại đăng nhập</Text>
       </TouchableOpacity>
     </View>
   );
@@ -97,6 +104,19 @@ const styles = StyleSheet.create({
   },
   buttonText: {
     color: "#fff",
+    fontSize: 18,
+    fontWeight: "bold",
+  },
+  backButton: {
+    backgroundColor: "#f9f9f9",
+    paddingVertical: 15,
+    borderRadius: 25,
+    alignItems: "center",
+    borderColor: "#007BFF",
+    borderWidth: 1,
+  },
+  backButtonText: {
+    color: "#007BFF",
     fontSize: 18,
     fontWeight: "bold",
   },
