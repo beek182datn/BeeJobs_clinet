@@ -6,9 +6,29 @@ import {
   TouchableOpacity,
   StyleSheet,
 } from "react-native";
+import axios from "axios";
 
 const ForgotPasswordScreen = () => {
   const [email, setEmail] = useState("");
+
+  const handleResetPassword = async () => {
+    if (email.trim() === "") {
+      alert("Xin vui lòng điền email của bạn.");
+      return;
+    }
+
+    try {
+      const response = await axios.post('http://beejobs.io.vn:14307/api/forgot-password', {
+        email: email,
+      });
+      console.log('Yêu cầu đặt lại mật khẩu thành công:', response.data);
+      alert("Yêu cầu đặt lại mật khẩu đã được gửi. Vui lòng kiểm tra email của bạn.");
+      setEmail("");
+    } catch (error) {
+      console.error('Lỗi đặt lại mật khẩu:', error);
+      alert("Đã xảy ra lỗi trong quá trình đặt lại mật khẩu. Vui lòng thử lại sau.");
+    }
+  };
 
   return (
     <View style={styles.container}>
@@ -22,7 +42,7 @@ const ForgotPasswordScreen = () => {
           keyboardType="email-address"
         />
       </View>
-      <TouchableOpacity style={styles.button}>
+      <TouchableOpacity style={styles.button} onPress={handleResetPassword}>
         <Text style={styles.buttonText}>Gửi yêu cầu</Text>
       </TouchableOpacity>
     </View>
