@@ -9,6 +9,7 @@ import {
 import Icon from "react-native-vector-icons/FontAwesome";
 import AlertComponent from "@/components/AlertComponent";
 import axios, { AxiosResponse } from "axios";
+import { useRouter } from "expo-router";
 // import CheckBox from '@react-native-community/checkbox';
 
 const RegisterScreen = () => {
@@ -16,42 +17,58 @@ const RegisterScreen = () => {
   const [email, setEmail] = useState("");
   const [passwd, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
-  const [rememberMe, setRememberMe] = useState(false);
-  //const types = ['worker', 'company'];
-  const [userType, setUserType] = useState("worker"); // default to 'worker'
+  const router = useRouter();
+  const [showMissingInfoAlert, setShowMissingInfoAlert] = useState(false);
+  const [showSuccessAlert, setShowSuccessAlert] = useState(false);
+
+  const isValidEmail = (email: string): boolean => {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(email);
+  };
 
   const handleRegister = async () => {
-    const type = userType === 'worker' ? 'NLD' : 'DN';
-    if (accout_name.trim() === "" || email.trim() === "" || passwd.trim() === "") {
-      alert("Xin vui lòng điền đầy đủ vào những ô trống cần thiết.");
+    if (
+      accout_name.trim() === "" ||
+      email.trim() === "" ||
+      passwd.trim() === ""
+    ) {
+      //alert("Xin vui lòng điền đầy đủ vào những ô trống cần thiết.");
+      setShowMissingInfoAlert(true);
       return;
     }
-  
+
+    if (!isValidEmail(email)) {
+      alert("Địa chỉ email không hợp lệ. Vui lòng nhập lại.");
+      return;
+    }
+
     try {
-      const response: AxiosResponse = await axios.post('http://beejobs.io.vn:14307/api/signup', {
-        accout_name: accout_name,
-        email: email,
-        passwd: passwd,
-        type: type,
-      });
-      console.log('Đăng ký thành công:', response.data);
-  
+      const response: AxiosResponse = await axios.post(
+        "http://beejobs.io.vn:14307/api/signup",
+        {
+          accout_name: accout_name,
+          email: email,
+          passwd: passwd,
+        }
+      );
+      console.log("Đăng ký thành công:", response.data);
+
       // Reset form fields
       setName("");
       setEmail("");
       setPassword("");
       setShowPassword(false);
-      setRememberMe(false);
-      setUserType("worker");
+      // Show success alert
+    setShowSuccessAlert(true);
     } catch (error) {
-      console.error('Lỗi đăng ký:', error);
+      console.error("Lỗi đăng ký:", error);
       alert("Đã xảy ra lỗi trong quá trình đăng ký. Vui lòng thử lại sau.");
     }
   };
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Sign up</Text>
+      <Text style={styles.title}>Đăng ký</Text>
       <View style={styles.inputContainer}>
         <Icon name="user" size={20} color="#A9A9A9" style={styles.icon} />
         <TextInput
@@ -88,46 +105,8 @@ const RegisterScreen = () => {
           />
         </TouchableOpacity>
       </View>
-      <View style={styles.radioButtonContainer}>
-        <View style={styles.radioButtonRow}>
-          <TouchableOpacity
-            style={styles.radioButton}
-            onPress={() => setUserType("worker")}
-          >
-            <View
-              style={[
-                styles.radioButtonInner,
-                userType === "worker" ? styles.radioButtonInnerSelected : null,
-              ]}
-            />
-          </TouchableOpacity>
-          <Text style={styles.radioButtonText}>Worker</Text>
-          <TouchableOpacity
-            style={styles.radioButton}
-            onPress={() => setUserType("company")}
-          >
-            <View
-              style={[
-                styles.radioButtonInner,
-                userType === "company" ? styles.radioButtonInnerSelected : null,
-              ]}
-            />
-          </TouchableOpacity>
-          <Text style={styles.radioButtonText}>Company</Text>
-        </View>
-      </View>
-      <View style={styles.rememberMeContainer}>
-        <TouchableOpacity
-          style={[
-            styles.rememberMeCheckbox,
-            rememberMe ? styles.rememberMeCheckboxChecked : null,
-          ]}
-          onPress={() => setRememberMe(!rememberMe)}
-        />
-        <Text style={styles.rememberMeText}>Remember Me</Text>
-      </View>
       <TouchableOpacity style={styles.button} onPress={handleRegister}>
-        <Text style={styles.buttonText}>Sign up</Text>
+        <Text style={styles.buttonText}>Đăng ký</Text>
       </TouchableOpacity>
       <Text style={styles.continueWithText}>----- continue with -----</Text>
       <View style={styles.socialIconsContainer}>
@@ -142,9 +121,27 @@ const RegisterScreen = () => {
         </TouchableOpacity>
       </View>
       <Text style={styles.footerText}>
-        Already have an account?
-        <Text style={styles.signinText}> Signin</Text>
+        Bạn đã có tài khoản?
+        <Text
+          style={styles.signinText}
+          onPress={() => router.push("LoginScreen")}
+        >
+          {" "}
+          Đăng nhập
+        </Text>
       </Text>
+      <AlertComponent
+        color="#FF4F4F"
+        message="Bạn nhập thiếu thông tin!"
+        visible={showMissingInfoAlert}
+        onClose={() => setShowMissingInfoAlert(false)}
+      />
+      <AlertComponent
+        color="#00FF00"
+        message="Đăng ký thành công!"
+        visible={showSuccessAlert}
+        onClose={() => setShowSuccessAlert(false)}
+      />
     </View>
   );
 };
@@ -181,17 +178,6 @@ const styles = StyleSheet.create({
   },
   icon: {
     marginRight: 10,
-  },
-  rememberMeContainer: {
-    flexDirection: "row",
-    alignItems: "center",
-    marginBottom: 20,
-    marginLeft: 10,
-  },
-  rememberMeText: {
-    marginLeft: 10,
-    fontSize: 16,
-    color: "#000",
   },
   button: {
     backgroundColor: "#007BFF",
@@ -234,41 +220,6 @@ const styles = StyleSheet.create({
   },
   rememberMeCheckboxChecked: {
     backgroundColor: "#007aff",
-  },
-  radioButtonContainer: {
-    marginBottom: 20,
-    alignItems: 'center'
-  },
-  radioButtonLabel: {
-    fontSize: 16,
-    marginBottom: 10,
-  },
-  radioButtonRow: {
-    flexDirection: "row",
-    alignItems: "center",
-  },
-  radioButton: {
-    width: 24,
-    height: 24,
-    borderWidth: 2,
-    borderColor: "#007aff",
-    borderRadius: 12,
-    marginRight: 10,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  radioButtonInner: {
-    width: 12,
-    height: 12,
-    borderRadius: 6,
-    backgroundColor: "#fff",
-  },
-  radioButtonInnerSelected: {
-    backgroundColor: "#007aff",
-  },
-  radioButtonText: {
-    fontSize: 16,
-    marginRight: 20,
   },
 });
 
