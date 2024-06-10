@@ -8,7 +8,6 @@ export default function RootLayout() {
       <Stack.Screen name="RegisterScreen" options={{headerShown: false}}/>
       <Stack.Screen name="(homes)" options={{headerShown: false}}/>
       <Stack.Screen name="ForgetPW" options={{headerShown: false}}/>
-  
     </Stack>
   );
 }
