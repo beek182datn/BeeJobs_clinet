@@ -7,9 +7,11 @@ import {
   StyleSheet,
 } from "react-native";
 import axios from "axios";
+import { useRouter } from 'expo-router';
 
 const ForgotPasswordScreen = () => {
   const [email, setEmail] = useState("");
+  const router = useRouter();
 
   const handleResetPassword = async () => {
     if (email.trim() === "") {
@@ -24,6 +26,7 @@ const ForgotPasswordScreen = () => {
       console.log('Yêu cầu đặt lại mật khẩu thành công:', response.data);
       alert("Yêu cầu đặt lại mật khẩu đã được gửi. Vui lòng kiểm tra email của bạn.");
       setEmail("");
+      router.push('LoginScreen');
     } catch (error) {
       console.error('Lỗi đặt lại mật khẩu:', error);
       alert("Đã xảy ra lỗi trong quá trình đặt lại mật khẩu. Vui lòng thử lại sau.");
