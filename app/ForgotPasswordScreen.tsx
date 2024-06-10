@@ -33,6 +33,9 @@ const ForgotPasswordScreen = () => {
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Quên mật khẩu</Text>
+      <Text style={styles.instruction}>
+        Nhập email hoặc số điện thoại của bạn và chúng tôi sẽ gửi hướng dẫn để đặt lại mật khẩu.
+      </Text>
       <View style={styles.inputContainer}>
         <TextInput
           style={styles.input}
@@ -61,6 +64,12 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     alignSelf: "center",
     marginBottom: 30,
+  },
+  instruction: {
+    fontSize: 16,
+    color: "#A9A9A9",
+    textAlign: "center",
+    marginBottom: 20,
   },
   inputContainer: {
     borderWidth: 1,
