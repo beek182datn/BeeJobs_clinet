@@ -1,4 +1,3 @@
-// Tiến sẽ code àn hình chào ở đây (Code xong trước 6/6/2024)
 import { useRouter } from "expo-router";
 import { useEffect } from "react";
 import { Text, View , Image, StyleSheet} from "react-native";
@@ -9,7 +8,7 @@ export default function Index() {
 
     useEffect(()=>{
       const timer = setTimeout(()=>{
-        router.push("LoginScreen")
+        router.push("RegisterScreen")
       }, 3000);
       return () => clearTimeout(timer);
     }, [router])
