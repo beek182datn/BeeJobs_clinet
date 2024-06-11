@@ -16,6 +16,7 @@ const LoginScreen = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [rememberMe, setRememberMe] = useState(false);
   const router = useRouter();
+  const [loggedInUser, setLoggedInUser] = useState(null);
 
   const handleLogin = async () => {
     if (username.trim() === "" || passwd.trim() === "") {
@@ -29,6 +30,7 @@ const LoginScreen = () => {
         passwd: passwd,
       });
       console.log('Đăng nhập thành công:', response.data);
+      setLoggedInUser(response.data.email);
 
       // Reset form fields
       setUsername("");

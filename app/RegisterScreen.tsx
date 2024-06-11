@@ -19,7 +19,8 @@ const RegisterScreen = () => {
   const [showPassword, setShowPassword] = useState(false);
   const router = useRouter();
   const [showMissingInfoAlert, setShowMissingInfoAlert] = useState(false);
-  const [showSuccessAlert, setShowSuccessAlert] = useState(false);
+  const [message, setMessage] = useState('');
+  const [color, setColor] = useState('');
 
   const isValidEmail = (email: string): boolean => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -32,13 +33,17 @@ const RegisterScreen = () => {
       email.trim() === "" ||
       passwd.trim() === ""
     ) {
-      //alert("Xin vui lòng điền đầy đủ vào những ô trống cần thiết.");
+      //alert("Xin Vui lòng điền đầy đủ vào những ô trống cần thiết.");
+      setMessage('Vui lòng nhập đầy đủ thông tin')
+      setColor('red');
       setShowMissingInfoAlert(true);
       return;
     }
 
     if (!isValidEmail(email)) {
-      alert("Địa chỉ email không hợp lệ. Vui lòng nhập lại.");
+      setMessage('Email không hợp lệ')
+      setColor('red');
+      setShowMissingInfoAlert(true);
       return;
     }
 
@@ -52,17 +57,21 @@ const RegisterScreen = () => {
         }
       );
       console.log("Đăng ký thành công:", response.data);
-
+      setMessage('Đăng ký thành công');
+      setShowMissingInfoAlert(true);
+      setColor('green');
       // Reset form fields
       setName("");
       setEmail("");
       setPassword("");
       setShowPassword(false);
       // Show success alert
-    setShowSuccessAlert(true);
     } catch (error) {
       console.error("Lỗi đăng ký:", error);
-      alert("Đã xảy ra lỗi trong quá trình đăng ký. Vui lòng thử lại sau.");
+      setMessage('Đăng ký thất bại');
+      setShowMissingInfoAlert(true);
+      setColor('red');
+      // alert("Đã xảy ra lỗi trong quá trình đăng ký. Vui lòng thử lại sau.");
     }
   };
 
@@ -73,7 +82,7 @@ const RegisterScreen = () => {
         <Icon name="user" size={20} color="#A9A9A9" style={styles.icon} />
         <TextInput
           style={styles.input}
-          placeholder="Jordan"
+          placeholder="Tài khoản"
           value={accout_name}
           onChangeText={setName}
         />
@@ -82,7 +91,7 @@ const RegisterScreen = () => {
         <Icon name="envelope" size={20} color="#A9A9A9" style={styles.icon} />
         <TextInput
           style={styles.input}
-          placeholder="Jordan.domain.com"
+          placeholder="Email"
           value={email}
           onChangeText={setEmail}
         />
@@ -91,7 +100,7 @@ const RegisterScreen = () => {
         <Icon name="lock" size={20} color="#A9A9A9" style={styles.icon} />
         <TextInput
           style={styles.input}
-          placeholder="Password"
+          placeholder="Mật khẩu"
           secureTextEntry={!showPassword}
           value={passwd}
           onChangeText={setPassword}
@@ -131,17 +140,17 @@ const RegisterScreen = () => {
         </Text>
       </Text>
       <AlertComponent
-        color="#FF4F4F"
-        message="Bạn nhập thiếu thông tin!"
+        color={color}
+        message={message}
         visible={showMissingInfoAlert}
         onClose={() => setShowMissingInfoAlert(false)}
       />
-      <AlertComponent
+      {/* <AlertComponent
         color="#00FF00"
         message="Đăng ký thành công!"
         visible={showSuccessAlert}
         onClose={() => setShowSuccessAlert(false)}
-      />
+      /> */}
     </View>
   );
 };

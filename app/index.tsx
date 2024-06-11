@@ -4,9 +4,7 @@ import { useEffect } from "react";
 import { Text, View , Image, StyleSheet} from "react-native";
 
 export default function Index() {
-
     const router = useRouter();
-
     useEffect(()=>{
       const timer = setTimeout(()=>{
         router.push("LoginScreen")
@@ -24,13 +22,9 @@ export default function Index() {
      <Image style={styles.image} source={require('../assets/images/bee_jobs_light_blue.png')}/>
     </View>
   );
-
- 
-  
 }
 const styles = StyleSheet.create({
   container: {
-    
   },
   image: {
     width: '100%',
