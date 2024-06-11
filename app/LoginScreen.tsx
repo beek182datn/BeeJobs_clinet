@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect  } from "react";
 import {
   View,
   Text,
@@ -9,6 +9,8 @@ import {
 import Icon from "react-native-vector-icons/FontAwesome";
 import axios, { AxiosResponse } from "axios";
 import { useRouter } from 'expo-router';
+import { BackHandler, Alert } from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const LoginScreen = () => {
   const [username, setUsername] = useState("");
@@ -18,12 +20,61 @@ const LoginScreen = () => {
   const router = useRouter();
   const [loggedInUser, setLoggedInUser] = useState(null);
 
+  useEffect(() => {
+    const backAction = () => {
+      Alert.alert("Thông báo !", "Bạn muốn thoát khỏi ứng dụng?", [
+        {
+          text: "Cancel",
+          onPress: () => null,
+          style: "cancel"
+        },
+        { text: "YES", onPress: () => BackHandler.exitApp() }
+      ]);
+      return true;
+    };
+
+    const backHandler = BackHandler.addEventListener(
+      "hardwareBackPress",
+      backAction
+    );
+    const loadCredentials = async () => {
+      try {
+        const savedUsername = await AsyncStorage.getItem('username');
+        const savedPassword = await AsyncStorage.getItem('passwd');
+        if (savedUsername && savedPassword) {
+          setUsername(savedUsername);
+          setPassword(savedPassword);
+          setRememberMe(true);
+        }
+      } catch (error) {
+        console.error('Không tải được thông tin đăng nhập', error);
+      }
+    };
+
+    loadCredentials();
+    return () => backHandler.remove();
+  }, []);
+
   const handleLogin = async () => {
     if (username.trim() === "" || passwd.trim() === "") {
       alert("Xin vui lòng điền đầy đủ vào những ô trống cần thiết.");
       return;
     }
-
+    if (rememberMe) {
+      try {
+        await AsyncStorage.setItem('username', username);
+        await AsyncStorage.setItem('passwd', passwd);
+      } catch (error) {
+        console.error('Không tải được thông tin đăng nhập', error);
+      }
+    } else {
+      try {
+        await AsyncStorage.removeItem('username');
+        await AsyncStorage.removeItem('passwd');
+      } catch (error) {
+        console.error('Không tải được thông tin đăng nhập', error);
+      }
+    }
     try {
       const response: AxiosResponse = await axios.post('http://beejobs.io.vn:14307/api/login', {
         username: username,
