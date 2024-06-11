@@ -6,7 +6,7 @@ import {
   TouchableOpacity,
   StyleSheet,
 } from "react-native";
-import axios from "axios";
+import axios, { AxiosResponse } from "axios";
 import { useRouter } from 'expo-router';
 
 const ForgotPasswordScreen = () => {
@@ -20,7 +20,7 @@ const ForgotPasswordScreen = () => {
     }
 
     try {
-      const response = await axios.post('http://beejobs.io.vn:14307/api/forgot-password', {
+      const response: AxiosResponse = await axios.post('http://beejobs.io.vn:14307/api/forgot-password', {
         email: email,
       });
       console.log('Yêu cầu đặt lại mật khẩu thành công:', response.data);
