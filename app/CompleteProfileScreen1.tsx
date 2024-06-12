@@ -21,6 +21,25 @@ const CompleteProfileScreen1: React.FC = () => {
     address: ''
   });
 
+  const handleContinue = () => {
+    const newErrors = {
+      name: name ? '' : 'Tên không được để trống',
+      phone: phone ? '' : 'Số điện thoại không được để trống',
+      email: email ? '' : 'Địa chỉ Gmail không được để trống',
+      age: age ? '' : 'Tuổi không được để trống',
+      gender: gender ? '' : 'Giới tính không được để trống',
+      address: address ? '' : 'Địa chỉ không được để trống'
+    };
+
+    setErrors(newErrors);
+
+    const noErrors = Object.values(newErrors).every(error => !error);
+    
+    if (noErrors) {
+      router.push('/CompleteProfileScreen2');
+    }
+  };
+
   return (
     <View style={styles.container}>
       <View style={styles.headerContainer}>
@@ -103,6 +122,13 @@ const CompleteProfileScreen1: React.FC = () => {
         </View>
         {errors.address ? <Text style={styles.errorText}>{errors.address}</Text> : null}
       </View>
+      
+      <TouchableOpacity style={styles.saveButton} onPress={handleContinue}>
+        <Text style={styles.buttonText}>Lưu và tiếp tục</Text>
+      </TouchableOpacity>
+      <TouchableOpacity>
+        <Text style={styles.skipText}>Bỏ qua</Text>
+      </TouchableOpacity>
     </View>
   );
 };
@@ -170,6 +196,22 @@ const styles = StyleSheet.create({
   },
   icon: {
     marginRight: 10,
+  },
+  saveButton: {
+    backgroundColor: '#007BFF',
+    padding: 15,
+    borderRadius: 25,
+    alignItems: 'center',
+    marginBottom: 10,
+  },
+  buttonText: {
+    color: '#fff',
+    fontSize: 16,
+  },
+  skipText: {
+    color: '#6200EE',
+    fontSize: 16,
+    textAlign: 'center',
   },
   errorText: {
     color: 'red',
