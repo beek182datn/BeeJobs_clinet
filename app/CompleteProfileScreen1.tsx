@@ -30,6 +30,42 @@ const CompleteProfileScreen1: React.FC = () => {
       <View style={styles.progressBar}>
         <View style={styles.progress} />
       </View>
+      
+      <Text style={styles.sectionHeader}>Thông tin cá nhân</Text>
+      <View style={styles.section}>
+        <View style={styles.inputContainer}>
+          <Icon name="user" size={20} color="#A9A9A9" style={styles.icon} />
+          <TextInput
+            style={styles.input}
+            placeholder="Tên"
+            value={name}
+            onChangeText={setName}
+          />
+        </View>
+        {errors.name ? <Text style={styles.errorText}>{errors.name}</Text> : null}
+        <View style={styles.inputContainer}>
+          <Icon name="phone" size={20} color="#A9A9A9" style={styles.icon} />
+          <TextInput
+            style={styles.input}
+            placeholder="Số điện thoại"
+            keyboardType="phone-pad"
+            value={phone}
+            onChangeText={setPhone}
+          />
+        </View>
+        {errors.phone ? <Text style={styles.errorText}>{errors.phone}</Text> : null}
+        <View style={styles.inputContainer}>
+          <Icon name="envelope" size={20} color="#A9A9A9" style={styles.icon} />
+          <TextInput
+            style={styles.input}
+            placeholder="Địa chỉ Gmail"
+            keyboardType="email-address"
+            value={email}
+            onChangeText={setEmail}
+          />
+        </View>
+        {errors.email ? <Text style={styles.errorText}>{errors.email}</Text> : null}
+      </View>
     </View>
   );
 };
@@ -61,6 +97,41 @@ const styles = StyleSheet.create({
     width: '50%',
     backgroundColor: '#6200EE',
     borderRadius: 5,
+  },
+  sectionHeader: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    marginTop: 20,
+    marginBottom: 10,
+  },
+  section: {
+    marginBottom: 20,
+  },
+  inputContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    borderWidth: 1,
+    borderColor: '#A9A9A9',
+    borderRadius: 25,
+    paddingHorizontal: 15,
+    backgroundColor: '#f9f9f9',
+    padding: 10,
+    marginBottom: 10,
+  },
+  input: {
+    flex: 1,
+    padding: 10,
+    fontSize: 16,
+    color: '#000',
+  },
+  icon: {
+    marginRight: 10,
+  },
+  errorText: {
+    color: 'red',
+    fontSize: 14,
+    marginBottom: 10,
+    marginLeft: 10,
   },
 });
 
