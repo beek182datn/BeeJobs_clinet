@@ -10,6 +10,9 @@ const CompleteProfileScreen: React.FC = () => {
     const continueButton = () => {
         router.push('/CompleteProfileScreen1');
     };
+    const skipButton = () => {
+        router.push('/Home');
+    };
 
     return (
         <View style={styles.container}>
@@ -25,7 +28,7 @@ const CompleteProfileScreen: React.FC = () => {
             <TouchableOpacity style={styles.continueButton} onPress={continueButton}>
                 <Text style={styles.buttonText}>Tiếp tục</Text>
             </TouchableOpacity>
-            <TouchableOpacity>
+            <TouchableOpacity onPress={skipButton}>
                 <Text style={styles.skipText}>Bỏ qua</Text>
             </TouchableOpacity>
         </View>
