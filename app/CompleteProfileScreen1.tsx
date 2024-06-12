@@ -65,6 +65,43 @@ const CompleteProfileScreen1: React.FC = () => {
           />
         </View>
         {errors.email ? <Text style={styles.errorText}>{errors.email}</Text> : null}
+        <View style={styles.row}>
+          <View style={[styles.inputContainer, styles.halfInput]}>
+            <Icon name="calendar" size={20} color="#A9A9A9" style={styles.icon} />
+            <TextInput
+              style={styles.input}
+              placeholder="Tuổi"
+              keyboardType="numeric"
+              value={age}
+              onChangeText={setAge}
+            />
+          </View>
+          <View style={[styles.inputContainer, styles.halfInput]}>
+            <Icon name="venus-mars" size={20} color="#A9A9A9" style={styles.icon} />
+            <TextInput
+              style={styles.input}
+              placeholder="Giới tính"
+              value={gender}
+              onChangeText={setGender}
+            />
+          </View>
+        </View>
+        {errors.age ? <Text style={styles.errorText}>{errors.age}</Text> : null}
+        {errors.gender ? <Text style={styles.errorText}>{errors.gender}</Text> : null}
+      </View>
+      
+      <Text style={styles.sectionHeader}>Địa chỉ</Text>
+      <View style={styles.section}>
+        <View style={styles.inputContainer}>
+          <Icon name="map-marker" size={20} color="#A9A9A9" style={styles.icon} />
+          <TextInput
+            style={styles.input}
+            placeholder="Địa chỉ"
+            value={address}
+            onChangeText={setAddress}
+          />
+        </View>
+        {errors.address ? <Text style={styles.errorText}>{errors.address}</Text> : null}
       </View>
     </View>
   );
@@ -123,6 +160,13 @@ const styles = StyleSheet.create({
     padding: 10,
     fontSize: 16,
     color: '#000',
+  },
+  row: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+  },
+  halfInput: {
+    width: '48%',
   },
   icon: {
     marginRight: 10,
