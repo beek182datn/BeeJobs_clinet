@@ -3,7 +3,7 @@ import React, { useEffect, useState } from 'react'
 import { useRouter } from 'expo-router';
 import { useNavigation } from '@react-navigation/native'
 import JobsList from '@/components/list_obj/JobsList';
-import { Job } from '@/components/Model';
+import { Job } from '@/components/Model/Model';
 import { fetchJobs } from '@/components/fetch_data/api';
 
 const Home = () => {

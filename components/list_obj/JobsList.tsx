@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, FlatList, StyleSheet } from 'react-native';
-import { Job } from '../Model';
+import { Job } from '../Model/Model';
 
 type JobsListProps = {
   jobs: Job[];

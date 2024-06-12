@@ -1,5 +1,5 @@
 import axios, {AxiosResponse} from "axios";
-import { Job } from "../Model";
+import { Job } from "../Model/Model";
 
 type JobsResponse = {
   data: Job[];
