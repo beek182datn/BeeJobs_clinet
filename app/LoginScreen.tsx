@@ -59,40 +59,60 @@ const LoginScreen = () => {
       alert("Xin vui lòng điền đầy đủ vào những ô trống cần thiết.");
       return;
     }
+
     if (rememberMe) {
       try {
         await AsyncStorage.setItem('username', username);
         await AsyncStorage.setItem('passwd', passwd);
       } catch (error) {
-        console.error('Không tải được thông tin đăng nhập', error);
+        console.error('Không lưu được thông tin đăng nhập', error);
       }
     } else {
       try {
         await AsyncStorage.removeItem('username');
         await AsyncStorage.removeItem('passwd');
       } catch (error) {
-        console.error('Không tải được thông tin đăng nhập', error);
+        console.error('Không xóa được thông tin đăng nhập', error);
       }
     }
+
     try {
-      const response: AxiosResponse = await axios.post('http://beejobs.io.vn:14307/api/login', {
+      const response = await axios.post('http://beejobs.io.vn:14307/api/login', {
         username: username,
         passwd: passwd,
       });
-      console.log('Đăng nhập thành công:', response.data);
-      setLoggedInUser(response.data.email);
 
-      // Reset form fields
-      setUsername("");
-      setPassword("");
-      setShowPassword(false);
-      setRememberMe(false);
+      // Kiểm tra phản hồi từ API
+      if (response.data.status === 200) {
+        console.log('Đăng nhập thành công:', response.data);
+        setLoggedInUser(response.data.user_info.email);
 
-      // Chuyển hướng đến màn hình khác sau khi đăng nhập thành công
-      router.push('/Home');
+          // Reset form fields
+          setUsername("");
+          setPassword("");
+          setShowPassword(false);
+          setRememberMe(false);
+
+          // Chuyển hướng đến màn hình khác sau khi đăng nhập thành công
+          router.push('/Home');
+        
+        // if (response.data.user_info && response.data.user_info.email) {
+          
+        // } else {
+        //   alert("Đã xảy ra lỗi trong quá trình đăng nhập. Vui lòng thử lại.");
+        // }
+      } else if (response.data.status === 400) {
+        alert("Thông tin đăng nhập không chính xác. Vui lòng thử lại.");
+      } else {
+        alert("Đã xảy ra lỗi trong quá trình đăng nhập. Vui lòng thử lại sau.");
+      }
     } catch (error) {
       console.error('Lỗi đăng nhập:', error);
-      alert("Đã xảy ra lỗi trong quá trình đăng nhập. Vui lòng thử lại sau.");
+      // if (error.response && error.response.status === 401) {
+      //   alert("Thông tin đăng nhập không chính xác. Vui lòng thử lại.");
+      // } else {
+      //   alert("Đã xảy ra lỗi trong quá trình đăng nhập. Vui lòng thử lại sau.");
+      // }
     }
   };
 
