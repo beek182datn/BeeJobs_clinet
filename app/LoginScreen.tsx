@@ -50,7 +50,6 @@ const LoginScreen = () => {
         console.error('Không tải được thông tin đăng nhập', error);
       }
     };
-
     loadCredentials();
     return () => backHandler.remove();
   }, []);
