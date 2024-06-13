@@ -1,4 +1,4 @@
-import React, { useState, useEffect  } from "react";
+import React, { useState, useEffect } from "react";
 import {
   View,
   Text,
@@ -8,9 +8,10 @@ import {
 } from "react-native";
 import Icon from "react-native-vector-icons/FontAwesome";
 import axios, { AxiosResponse } from "axios";
-import { useRouter } from 'expo-router';
-import { BackHandler, Alert } from 'react-native';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useRouter } from "expo-router";
+import { BackHandler, Alert } from "react-native";
+import AlertComponent from "@/components/AlertComponent";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const LoginScreen = () => {
   const [username, setUsername] = useState("");
@@ -19,6 +20,9 @@ const LoginScreen = () => {
   const [rememberMe, setRememberMe] = useState(false);
   const router = useRouter();
   const [loggedInUser, setLoggedInUser] = useState(null);
+  const [showAlert, setShowAlert] = useState(false);
+  const [message, setMessage] = useState("");
+  const [color, setColor] = useState("");
 
   useEffect(() => {
     const backAction = () => {
@@ -26,9 +30,9 @@ const LoginScreen = () => {
         {
           text: "Cancel",
           onPress: () => null,
-          style: "cancel"
+          style: "cancel",
         },
-        { text: "YES", onPress: () => BackHandler.exitApp() }
+        { text: "YES", onPress: () => BackHandler.exitApp() },
       ]);
       return true;
     };
@@ -39,15 +43,15 @@ const LoginScreen = () => {
     );
     const loadCredentials = async () => {
       try {
-        const savedUsername = await AsyncStorage.getItem('username');
-        const savedPassword = await AsyncStorage.getItem('passwd');
+        const savedUsername = await AsyncStorage.getItem("username");
+        const savedPassword = await AsyncStorage.getItem("passwd");
         if (savedUsername && savedPassword) {
           setUsername(savedUsername);
           setPassword(savedPassword);
           setRememberMe(true);
         }
       } catch (error) {
-        console.error('Không tải được thông tin đăng nhập', error);
+        console.error("Không tải được thông tin đăng nhập", error);
       }
     };
     loadCredentials();
@@ -56,58 +60,68 @@ const LoginScreen = () => {
 
   const handleLogin = async () => {
     if (username.trim() === "" || passwd.trim() === "") {
-      alert("Xin vui lòng điền đầy đủ vào những ô trống cần thiết.");
+      setMessage("Hãy nhập đầy đủ thông tin");
+      setColor("red");
+      setShowAlert(true);
       return;
     }
 
     if (rememberMe) {
       try {
-        await AsyncStorage.setItem('username', username);
-        await AsyncStorage.setItem('passwd', passwd);
+        await AsyncStorage.setItem("username", username);
+        await AsyncStorage.setItem("passwd", passwd);
       } catch (error) {
-        console.error('Không lưu được thông tin đăng nhập', error);
+        console.error("Không lưu được thông tin đăng nhập", error);
       }
     } else {
       try {
-        await AsyncStorage.removeItem('username');
-        await AsyncStorage.removeItem('passwd');
+        await AsyncStorage.removeItem("username");
+        await AsyncStorage.removeItem("passwd");
       } catch (error) {
-        console.error('Không xóa được thông tin đăng nhập', error);
+        console.error("Không xóa được thông tin đăng nhập", error);
       }
     }
 
     try {
-      const response = await axios.post('http://beejobs.io.vn:14307/api/login', {
-        username: username,
-        passwd: passwd,
-      });
+      const response = await axios.post(
+        "http://beejobs.io.vn:14307/api/login",
+        {
+          username: username,
+          passwd: passwd,
+        }
+      );
 
       // Kiểm tra phản hồi từ API
       if (response.data.status === 200) {
-        console.log('Đăng nhập thành công:', response.data);
+        console.log("Đăng nhập thành công:", response.data);
         setLoggedInUser(response.data.user_info.email);
 
-          // Reset form fields
-          setUsername("");
-          setPassword("");
-          setShowPassword(false);
-          setRememberMe(false);
+        // Reset form fields
+        setUsername("");
+        setPassword("");
+        setShowPassword(false);
+        setRememberMe(false);
+        setMessage("Đăng nhập thành công");
+        setColor("green");
+        setShowAlert(true);
 
-          // Chuyển hướng đến màn hình khác sau khi đăng nhập thành công
-          router.push('/Home');
-        
+        // Chuyển hướng đến màn hình khác sau khi đăng nhập thành công
+        router.push("/Home");
+
         // if (response.data.user_info && response.data.user_info.email) {
-          
+
         // } else {
         //   alert("Đã xảy ra lỗi trong quá trình đăng nhập. Vui lòng thử lại.");
         // }
       } else if (response.data.status === 400) {
-        alert("Thông tin đăng nhập không chính xác. Vui lòng thử lại.");
+        setMessage("Thông tin đăng nhập không chính xác");
+        setColor("red");
+        setShowAlert(true);
       } else {
         alert("Đã xảy ra lỗi trong quá trình đăng nhập. Vui lòng thử lại sau.");
       }
     } catch (error) {
-      console.error('Lỗi đăng nhập:', error);
+      console.error("Lỗi đăng nhập:", error);
       // if (error.response && error.response.status === 401) {
       //   alert("Thông tin đăng nhập không chính xác. Vui lòng thử lại.");
       // } else {
@@ -146,7 +160,10 @@ const LoginScreen = () => {
           />
         </TouchableOpacity>
       </View>
-      <TouchableOpacity style={styles.forgotPassword} onPress={() => router.push('ForgotPasswordScreen')}>
+      <TouchableOpacity
+        style={styles.forgotPassword}
+        onPress={() => router.push("ForgotPasswordScreen")}
+      >
         <Text style={styles.forgotPasswordText}>Quên mật khẩu?</Text>
       </TouchableOpacity>
       <View style={styles.rememberMeContainer}>
@@ -176,8 +193,20 @@ const LoginScreen = () => {
       </View>
       <Text style={styles.footerText}>
         Bạn chưa có tài khoản?
-        <Text style={styles.signupText} onPress={() => router.push('RegisterScreen')}> Đăng ký</Text>
+        <Text
+          style={styles.signupText}
+          onPress={() => router.push("RegisterScreen")}
+        >
+          {" "}
+          Đăng ký
+        </Text>
       </Text>
+      <AlertComponent
+        color={color}
+        message={message}
+        visible={showAlert}
+        onClose={() => setShowAlert(false)}
+      />
     </View>
   );
 };
@@ -216,11 +245,11 @@ const styles = StyleSheet.create({
     marginRight: 10,
   },
   forgotPassword: {
-    alignSelf: 'flex-end',
+    alignSelf: "flex-end",
     marginBottom: 20,
   },
   forgotPasswordText: {
-    color: '#007BFF',
+    color: "#007BFF",
     fontSize: 16,
   },
   rememberMeContainer: {
