@@ -10,13 +10,13 @@ import axios from "axios";
 import { useRouter } from 'expo-router';
 
 const OtpVerificationScreen: React.FC = () => {
-  const [otp, setOtp] = useState<string[]>(["", "", "", ""]);
+  const [otp, setOtp] = useState<string[]>(["", "", "", "", "", ""]);
   const router = useRouter();
 
   const handleVerifyOtp = async () => {
     const otpCode = otp.join("");
-    if (otpCode.length !== 4) {
-      alert("Vui lòng nhập đúng mã OTP gồm 4 chữ số.");
+    if (otpCode.length !== 6) {
+      alert("Vui lòng nhập đúng mã OTP gồm 6 ký tự.");
       return;
     }
 
@@ -26,7 +26,7 @@ const OtpVerificationScreen: React.FC = () => {
       });
       console.log('Xác minh OTP thành công:', response.data);
       alert("Xác minh OTP thành công.");
-      setOtp(["", "", "", ""]);
+      setOtp(["", "", "", "", "", ""]);
       router.push('ResetPasswordScreen'); // Điều hướng đến màn hình đặt lại mật khẩu
     } catch (error) {
       console.error('Lỗi xác minh OTP:', error);
@@ -44,7 +44,7 @@ const OtpVerificationScreen: React.FC = () => {
     <View style={styles.container}>
       <Text style={styles.title}>Xác minh OTP</Text>
       <Text style={styles.instruction}>
-        Nhập mã OTP gồm 4 chữ số mà chúng tôi đã gửi đến email hoặc số điện thoại của bạn.
+        Nhập mã OTP gồm 6 ký tự mà chúng tôi đã gửi đến email hoặc số điện thoại của bạn.
       </Text>
       <View style={styles.otpContainer}>
         {otp.map((digit, index) => (
@@ -53,7 +53,6 @@ const OtpVerificationScreen: React.FC = () => {
             style={styles.otpInput}
             value={digit}
             onChangeText={(text) => handleChangeOtp(text, index)}
-            keyboardType="numeric"
             maxLength={1}
           />
         ))}
@@ -96,7 +95,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: "#A9A9A9",
     borderRadius: 5,
-    width: 50,
+    width: 40,
     height: 50,
     textAlign: "center",
     fontSize: 18,
