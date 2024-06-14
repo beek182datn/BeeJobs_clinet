@@ -4,22 +4,19 @@ import { Job } from '../Model/Model';
 
 type JobsListProps = {
   jobs: Job[];
+  filtered?: Job[];
 };
 
-const JobsList: React.FC<JobsListProps> = ({ jobs }) => {
+const JobsList: React.FC<JobsListProps> = ({ jobs, filtered }) => {
   return (
     <View style={styles.container}>
       <FlatList
-        data={jobs}
+        data={filtered === null ? jobs: filtered}
         keyExtractor={(item) => item._id}
         renderItem={({ item }) => (
-          <View style={styles.jobContainer}>
-            <Text style={styles.title}>{item.title}</Text>
-            <Text style={styles.description}>{item.desc}</Text>
-            <Text style={styles.requirement}>{item.requirements}</Text>
-            <Text style={styles.salary}>{item.salary}</Text>
-            <Text style={styles.benefit}>{item.benefits}</Text>
-            <Text style={styles.location}>{item.location}</Text>
+          <View style={styles.jobItem}>
+            <Text style={styles.jobTitle}>{item.title}</Text>
+            <Text style={styles.jobDescription}>{item.desc}</Text>
           </View>
         )}
       />
@@ -33,44 +30,22 @@ const styles = StyleSheet.create({
     backgroundColor: '#f0f0f0',
     padding: 16,
   },
-  jobContainer: {
-    backgroundColor: '#fff',
-    padding: 16,
-    marginBottom: 16,
+  jobItem: {
+    paddingVertical: 16,
+    paddingHorizontal: 16,
+    borderWidth: 1,
+    borderColor: '#ccc',
     borderRadius: 8,
-    shadowColor: '#000',
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.25,
-    shadowRadius: 3.84,
-    elevation: 5,
+    marginVertical: 8,
   },
-  title: {
-    fontSize: 18,
+  jobTitle: {
+    fontSize: 16,
     fontWeight: 'bold',
-    marginBottom: 8,
+    marginBottom: 4,
   },
-  description: {
-    fontSize: 16,
-    marginBottom: 8,
-  },
-  requirement: {
-    fontSize: 16,
-    marginBottom: 8,
-  },
-  salary: {
-    fontSize: 16,
-    marginBottom: 8,
-  },
-  benefit: {
-    fontSize: 16,
-    marginBottom: 8,
-  },
-  location: {
-    fontSize: 16,
-    marginBottom: 8,
+  jobDescription: {
+    fontSize: 14,
+    color: '#666',
   },
 });
 

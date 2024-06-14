@@ -16,9 +16,9 @@ export default () => {
             <Tabs.Screen
                 name="Home"
                 options={{
-                    title: 'Home',
+                    title: 'Việc làm',
                     tabBarIcon: ({ color, focused }) => (
-                        <TabBarIcon name={focused ? 'home' : 'home-outline'} color={color} />
+                        <TabBarIcon name={focused ? 'bag' : 'bag-outline'} color={color} />
                     ),
                 }}
             />
