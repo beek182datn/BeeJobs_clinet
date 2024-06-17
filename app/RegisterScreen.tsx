@@ -54,6 +54,7 @@ const RegisterScreen = () => {
           accout_name: accout_name,
           email: email,
           passwd: passwd,
+          type_role: 'NLD'
         }
       );
       console.log("Đăng ký thành công:", response.data);

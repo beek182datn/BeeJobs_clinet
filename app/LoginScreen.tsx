@@ -104,7 +104,12 @@ const LoginScreen = () => {
         setMessage("Đăng nhập thành công");
         setColor("green");
         setShowAlert(true);
-
+        // phần này Long thêm
+        try {
+          await AsyncStorage.setItem('userProfile', JSON.stringify(response.data));
+        } catch (error) {
+          console.error('Error saving user profile:', error);
+        }
         // Chuyển hướng đến màn hình khác sau khi đăng nhập thành công
         router.push("/Home");
 
