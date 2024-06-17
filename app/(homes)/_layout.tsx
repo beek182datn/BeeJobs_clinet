@@ -18,16 +18,34 @@ export default () => {
                 options={{
                     title: 'Việc làm',
                     tabBarIcon: ({ color, focused }) => (
-                        <TabBarIcon name={focused ? 'bag' : 'bag-outline'} color={color} />
+                        <TabBarIcon name={focused ? 'bag' : 'bag-outline'} color={color} size={20}/>
+                    ),
+                }}
+            />
+            <Tabs.Screen
+                name="CV_Profile"
+                options={{
+                    title: 'CV & Profile',
+                    tabBarIcon: ({ color, focused }) => (
+                        <TabBarIcon name={focused ? 'file-tray-full' : 'file-tray-full-outline'} color={color} size={20}/>
+                    ),
+                }}
+            />
+            <Tabs.Screen
+                name="Notification"
+                options={{
+                    title: 'Thông báo',
+                    tabBarIcon: ({ color, focused }) => (
+                        <TabBarIcon name={focused ? 'notifications' : 'notifications-outline'} color={color} size={20}/>
                     ),
                 }}
             />
             <Tabs.Screen
                 name="Profile"
                 options={{
-                    title: 'Profile',
+                    title: 'Tài khoản',
                     tabBarIcon: ({ color, focused }) => (
-                        <TabBarIcon name={focused ? 'person' : 'person-outline'} color={color} />
+                        <TabBarIcon name={focused ? 'person' : 'person-outline'} color={color} size={20}/>
                     ),
                 }}
             />
