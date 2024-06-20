@@ -1,20 +1,35 @@
-import { StyleSheet, Text, View, ScrollView, Pressable } from 'react-native'
-import React from 'react'
-import { useLocalSearchParams, useRouter } from 'expo-router'
+import { StyleSheet, Text, View, ScrollView, Pressable, Image } from 'react-native'
+import React, { useEffect, useState } from 'react'
+import { useLocalSearchParams } from 'expo-router'
+import { findCompanyById } from '@/components/fetch_data/api';
+import { Company } from '@/components/Model/Model';
 
 const JobDetail = () => {
-  const router = useRouter();
-  const  job  = useLocalSearchParams();
+  const [companyInfo, setCompanyInfo] = useState<Company | null>();
+  const job = useLocalSearchParams();
+  const linkVps = 'http://beejobs.io.vn:14307';
+
+  const companyId = job.company_id + '';
+  useEffect(() => {
+    const fetchCompanyData = async (company_id: string) => {
+      const company = await findCompanyById(company_id);
+      setCompanyInfo(company)
+    }
+    fetchCompanyData(companyId);
+  }, [])
 
   const handleApply = () => {
     // Xử lý logic ứng tuyển tại đây
-    console.log('Ứng tuyển công việc:', job.title);
   };
 
   return (
     <ScrollView style={styles.container}>
       <View style={styles.content}>
         <Text style={styles.title}>{job.title}</Text>
+        <Image source={{ uri: linkVps + companyInfo?.company_logo }} style={styles.image} />
+        <Text style={styles.company}>{companyInfo?.company_name}</Text>
+        <Text style={styles.company}>{companyInfo?.company_address}</Text>
+        <Text style={styles.company}>{companyInfo?.taxcode}</Text>
         <Text style={styles.company}>{job.company}</Text>
         <Text style={styles.description}>{job.description}</Text>
         <Text style={styles.location}>{job.location}</Text>
@@ -79,4 +94,8 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: 'bold',
   },
+  image: {
+    width: 80,
+    height: 80
+  }
 })

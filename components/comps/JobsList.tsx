@@ -8,17 +8,17 @@ interface JobItemProps {
 }
 
 const JobsList: React.FC<JobItemProps> = ({ job }) => {
+  const linkVps = 'http://beejobs.io.vn:14307';
   const handleDetail = () => {
     router.push({
       pathname: 'JobDetail',
-      params: job 
+      params: job
     });
   }
   return (
     <Pressable onPress={handleDetail}>
       <View style={styles.container}>
-        {/* <Image source={{ uri: job.image}} style={styles.companyLogo} /> */}
-        <Image source={require('../../assets/images/icon.png')} style={styles.companyLogo} />
+        <Image source={job.company_logo != '' ? { uri: linkVps + job.company_logo } : require('../../assets/images/profile.png')} style={styles.companyLogo} />
         <View style={styles.infoContainer}>
           <Text style={styles.jobTitle}>{job.title}</Text>
           <Text style={styles.jobDescription}>{job.desc}</Text>
