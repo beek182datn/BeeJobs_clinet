@@ -2,7 +2,7 @@ import { View, Text, TextInput, StyleSheet, FlatList, TouchableOpacity, Image } 
 import React, { useState, useEffect, useCallback } from 'react';
 import { fetchJobs, findJobByTitle, findJobBySalary, findJobByLocation, findJobByWorkType } from '@/components/fetch_data/api';
 import { Job } from '@/components/Model/Model';
-import JobsList from '@/components/list_obj/JobsList';
+import JobsList from '@/components/comps/JobsList';
 
 interface FilterOptionProps {
   label: string;

@@ -6,7 +6,7 @@ export default function Index() {
   const router = useRouter();
   useEffect(() => {
     const timer = setTimeout(() => {
-      router.navigate("LoginScreen");
+      router.navigate("(outsidescreens)/LoginScreen");
     }, 2000);
     return () => clearTimeout(timer);
   }, [router])
@@ -15,7 +15,7 @@ export default function Index() {
 
   return (
     <View style={styles.container}>
-      <Image style={[styles.image, { width, height }]} source={require('../assets/images/bee_jobs_light_blue.png')} />
+      <Image style={[styles.image, { width, height }]} source={require('../../assets/images/bee_jobs_light_blue.png')} />
     </View>
   );
 }
