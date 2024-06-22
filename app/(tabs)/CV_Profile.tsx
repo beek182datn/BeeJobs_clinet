@@ -1,18 +1,28 @@
-import { StyleSheet, Text, View } from "react-native";
-import React, { useState, useEffect } from "react";
-import { useRouter } from "expo-router";
-import { BackHandler } from "react-native";
+import AppliedJobs from '@/components/comps/AppliedJobs ';
+import PersonalProfile from '@/components/comps/PersonalProfile ';
+import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
 
-const CV_Profile = () => {
-  const router = useRouter();
-  
+const Tab = createMaterialTopTabNavigator();
+
+function CV_Profile() {
   return (
-    <View>
-      <Text>CV_Profile</Text>
-    </View>
+    <Tab.Navigator
+      initialRouteName='PersonalProfile'
+      screenOptions={{
+        tabBarActiveTintColor: '#e91e63',
+        tabBarLabelStyle: { fontSize: 12 },
+        tabBarStyle: { backgroundColor: 'powderblue' },
+      }}>
+      <Tab.Screen
+        name="PersonalProfile"
+        component={PersonalProfile}
+        options={{ tabBarLabel: 'Hồ sơ' }} />
+      <Tab.Screen
+        name="AppliedJobs"
+        component={AppliedJobs}
+        options={{ tabBarLabel: 'Việc đã ứng tuyển' }} />
+    </Tab.Navigator>
   );
-};
+}
 
-export default CV_Profile;
-
-const styles = StyleSheet.create({});
+export default CV_Profile;8
