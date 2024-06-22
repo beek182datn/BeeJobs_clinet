@@ -74,17 +74,14 @@ const RegisterScreen = () => {
           email: email,
           passwd: passwd,
           type_role: "NLD",
+          verify: false,
         }
       );
-      console.log("Đăng ký thành công:", response.data);
-      setMessage("Đăng ký thành công");
-      setShowMissingInfoAlert(true);
-      setColor("green");
-      // Reset form fields
       setName("");
       setEmail("");
       setPassword("");
       setShowPassword(false);
+      router.push('VerifyAccount')
       // Show success alert
     } catch (error) {
       console.error("Lỗi đăng ký:", error);

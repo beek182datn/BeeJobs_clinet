@@ -1,26 +1,21 @@
 import { StyleSheet, Text, View } from 'react-native'
-import React, {useEffect, useState} from 'react'
-import { useRouter } from "expo-router";
-import { BackHandler } from "react-native";
+import React, {useEffect, useState, } from 'react'
+import { useRouter,  } from "expo-router";
+import { BackHandler,  } from "react-native";
+import AlertComponent from "@/components/AlertComponent";
+import { useBackHandler } from "../../components/BackHandler";
 
 const Notification = () => {
-  const router = useRouter();
-  useEffect(() => {
-    const backAction = () => {
-      router.back();
-      return true;
-    };
-
-    const backHandler = BackHandler.addEventListener(
-      "hardwareBackPress",
-      backAction
-    );
-
-    return () => backHandler.remove();
-  }, [router]);
+  const { backPressedCount, setBackPressedCount, showAlert, setShowAlert, message, setMessage, color, setColor } = useBackHandler(true);
   return (
     <View>
       <Text>Notification</Text>
+      <AlertComponent
+        color={color}
+        message={message}
+        visible={showAlert}
+        onClose={() => setShowAlert(false)}
+      />
     </View>
   )
 }

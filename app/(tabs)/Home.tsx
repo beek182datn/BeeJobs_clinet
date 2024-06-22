@@ -6,6 +6,7 @@ import {
   FlatList,
   TouchableOpacity,
   Image,
+  
 } from "react-native";
 import React, { useState, useEffect, useCallback } from "react";
 import {
@@ -19,7 +20,8 @@ import { Job } from "@/components/Model/Model";
 import JobsList from "@/components/comps/JobsList";
 import { BackHandler, Alert } from "react-native";
 import { useRouter } from "expo-router";
-import { useBackHandler } from "../../components/BlackHandler";
+import { useBackHandler } from "../../components/BackHandler";
+import AlertComponent from "@/components/AlertComponent";
 
 interface FilterOptionProps {
   label: string;
@@ -41,31 +43,10 @@ const Home = () => {
   ]);
   const [selectedFilterOption, setSelectedFilterOption] = useState("title");
   const [inputSearch, setInputSearch] = useState("Tiêu đề");
-  //const [backPressedCount, setBackPressedCount] = useState(0);
   const router = useRouter();
-  const [backPressedTimer, setBackPressedTimer] = useState<ReturnType<
-    typeof setTimeout
-  > | null>(null);
-  const [backPressedCount, setBackPressedCount] = useBackHandler(true);
+  const { backPressedCount, setBackPressedCount, showAlert, setShowAlert, message, setMessage, color, setColor } = useBackHandler(true);
 
   useEffect(() => {
-    // const backAction = () => {
-    //   Alert.alert("Thông báo!", "Bạn có muốn thoát ứng dụng ?", [
-    //     {
-    //       text: "Hủy",
-    //       onPress: () => null,
-    //       style: "cancel"
-    //     },
-    //     { text: "OK", onPress: () => BackHandler.exitApp() }
-    //   ]);
-    //   return true;
-    // };
-
-    // const backHandler = BackHandler.addEventListener(
-    //   "hardwareBackPress",
-    //   backAction
-    // );
-
     const loadJobs = async () => {
       setIsLoading(true);
       const fetchedJobs = await fetchJobs();
@@ -74,7 +55,6 @@ const Home = () => {
       setIsLoading(false);
     };
     loadJobs();
-    //return () => backHandler.remove();
   }, []);
 
   const handleSearch = async (text: string) => {
@@ -173,6 +153,12 @@ const Home = () => {
           renderItem={({ item }) => <JobsList job={item} />}
         />
       )}
+      <AlertComponent
+        color={color}
+        message={message}
+        visible={showAlert}
+        onClose={() => setShowAlert(false)}
+      />
     </View>
   );
 };

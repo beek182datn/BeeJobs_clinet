@@ -1,10 +1,12 @@
 import AppliedJobs from '@/components/comps/AppliedJobs ';
 import PersonalProfile from '@/components/comps/PersonalProfile ';
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
-
+import AlertComponent from "@/components/AlertComponent";
+import { useBackHandler } from "../../components/BackHandler";
 const Tab = createMaterialTopTabNavigator();
 
 function CV_Profile() {
+  const { backPressedCount, setBackPressedCount, showAlert, setShowAlert, message, setMessage, color, setColor } = useBackHandler(true);
   return (
     <Tab.Navigator
       initialRouteName='PersonalProfile'

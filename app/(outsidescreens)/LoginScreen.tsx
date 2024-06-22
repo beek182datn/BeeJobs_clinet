@@ -12,7 +12,7 @@ import { useRouter } from "expo-router";
 import { BackHandler, Alert } from "react-native";
 import AlertComponent from "@/components/AlertComponent";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { useBackHandler } from "../../components/BlackHandler";
+import { useBackHandler } from "../../components/BackHandler";
 
 const LoginScreen = () => {
   const [username, setUsername] = useState("");
@@ -21,54 +21,35 @@ const LoginScreen = () => {
   const [rememberMe, setRememberMe] = useState(false);
   const router = useRouter();
   const [loggedInUser, setLoggedInUser] = useState(null);
-  const [showAlert, setShowAlert] = useState(false);
-  const [message, setMessage] = useState("");
-  const [color, setColor] = useState("");
+  // const [showAlert, setShowAlert] = useState(false);
+  // const [message, setMessage] = useState("");
+  // const [color, setColor] = useState("");
   //const [backPressedCount, setBackPressedCount] = useState(0);
   const [backPressedTimer, setBackPressedTimer] = useState<ReturnType<
     typeof setTimeout
   > | null>(null);
-  const [backPressedCount, setBackPressedCount] = useBackHandler(true);
-
+  const {
+    backPressedCount,
+    setBackPressedCount,
+    showAlert,
+    setShowAlert,
+    message,
+    setMessage,
+    color,
+    setColor,
+  } = useBackHandler(true);
   useEffect(() => {
-    // const backHandler = BackHandler.addEventListener(
-    //   "hardwareBackPress",
-    //   () => {
-    //     if (backPressedCount === 0) {
-    //       setBackPressedCount(1);
-    //       setBackPressedTimer(
-    //         setTimeout(() => {
-    //           setBackPressedCount(0);
-    //         }, 2000)
-    //       );
-    //       setMessage("Ấn một lần nữa trong 2s để thoát ứng dụng");
-    //       setColor("yellow");
-    //       setShowAlert(true);
-    //       return true;
-    //     }else if(backPressedCount === 1){
-    //       if(backPressedTimer){
-    //         clearTimeout(backPressedTimer)
-    //       }
-    //       BackHandler.exitApp();
-    //       return true;
-    //     }else{
-    //       if(backPressedTimer){
-    //         clearTimeout(backPressedTimer)
-    //       }
-    //       setBackPressedCount(0);
-    //       return false;
-    //     }
-    //   }
-    // );
     const loadCredentials = async () => {
       try {
         const savedUsername = await AsyncStorage.getItem("username");
         const savedPassword = await AsyncStorage.getItem("passwd");
+        //const user_info = await AsyncStorage.getItem("user_info");
         if (savedUsername && savedPassword) {
           setUsername(savedUsername);
           setPassword(savedPassword);
           setRememberMe(true);
         }
+        //console.log(user_info);
       } catch (error) {
         console.error("Không tải được thông tin đăng nhập", error);
       }
@@ -129,17 +110,16 @@ const LoginScreen = () => {
             "userProfile",
             JSON.stringify(response.data)
           );
+          await AsyncStorage.setItem(
+            "user_info",
+            JSON.stringify(response.data.user_info)
+          );
+          console.log(response.data.user_info);
         } catch (error) {
           console.error("Error saving user profile:", error);
         }
-        // Chuyển hướng đến màn hình khác sau khi đăng nhập thành công
+
         router.push("/Home");
-
-        // if (response.data.user_info && response.data.user_info.email) {
-
-        // } else {
-        //   alert("Đã xảy ra lỗi trong quá trình đăng nhập. Vui lòng thử lại.");
-        // }
       } else if (response.data.status === 400) {
         setMessage("Thông tin đăng nhập không chính xác");
         setColor("red");
@@ -149,11 +129,6 @@ const LoginScreen = () => {
       }
     } catch (error) {
       console.error("Lỗi đăng nhập:", error);
-      // if (error.response && error.response.status === 401) {
-      //   alert("Thông tin đăng nhập không chính xác. Vui lòng thử lại.");
-      // } else {
-      //   alert("Đã xảy ra lỗi trong quá trình đăng nhập. Vui lòng thử lại sau.");
-      // }
     }
   };
 
