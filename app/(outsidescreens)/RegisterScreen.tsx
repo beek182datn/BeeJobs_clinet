@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   View,
   Text,
@@ -10,6 +10,7 @@ import Icon from "react-native-vector-icons/FontAwesome";
 import AlertComponent from "@/components/AlertComponent";
 import axios, { AxiosResponse } from "axios";
 import { useRouter } from "expo-router";
+import { BackHandler} from "react-native";
 // import CheckBox from '@react-native-community/checkbox';
 
 const RegisterScreen = () => {
@@ -19,8 +20,26 @@ const RegisterScreen = () => {
   const [showPassword, setShowPassword] = useState(false);
   const router = useRouter();
   const [showMissingInfoAlert, setShowMissingInfoAlert] = useState(false);
-  const [message, setMessage] = useState('');
-  const [color, setColor] = useState('');
+  const [message, setMessage] = useState("");
+  const [color, setColor] = useState("");
+  const [backPressedCount, setBackPressedCount] = useState(0);
+
+  useEffect(() => {
+    const backHandler = () => {
+      if (backPressedCount === 0) {
+        setBackPressedCount((prevCount) => prevCount + 1);
+        router.back();
+        return true;
+      }
+      return false; // Default behavior (exit app or go back)
+    };
+
+    BackHandler.addEventListener("hardwareBackPress", backHandler);
+
+    // Cleanup function to remove event listener
+    return () =>
+      BackHandler.removeEventListener("hardwareBackPress", backHandler);
+  }, [backPressedCount, router]);
 
   const isValidEmail = (email: string): boolean => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -34,15 +53,15 @@ const RegisterScreen = () => {
       passwd.trim() === ""
     ) {
       //alert("Xin Vui lòng điền đầy đủ vào những ô trống cần thiết.");
-      setMessage('Vui lòng nhập đầy đủ thông tin')
-      setColor('red');
+      setMessage("Vui lòng nhập đầy đủ thông tin");
+      setColor("red");
       setShowMissingInfoAlert(true);
       return;
     }
 
     if (!isValidEmail(email)) {
-      setMessage('Email không hợp lệ')
-      setColor('red');
+      setMessage("Email không hợp lệ");
+      setColor("red");
       setShowMissingInfoAlert(true);
       return;
     }
@@ -54,13 +73,13 @@ const RegisterScreen = () => {
           accout_name: accout_name,
           email: email,
           passwd: passwd,
-          type_role: 'NLD'
+          type_role: "NLD",
         }
       );
       console.log("Đăng ký thành công:", response.data);
-      setMessage('Đăng ký thành công');
+      setMessage("Đăng ký thành công");
       setShowMissingInfoAlert(true);
-      setColor('green');
+      setColor("green");
       // Reset form fields
       setName("");
       setEmail("");
@@ -69,9 +88,9 @@ const RegisterScreen = () => {
       // Show success alert
     } catch (error) {
       console.error("Lỗi đăng ký:", error);
-      setMessage('Đăng ký thất bại');
+      setMessage("Đăng ký thất bại");
       setShowMissingInfoAlert(true);
-      setColor('red');
+      setColor("red");
       // alert("Đã xảy ra lỗi trong quá trình đăng ký. Vui lòng thử lại sau.");
     }
   };
