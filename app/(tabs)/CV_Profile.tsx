@@ -16,7 +16,7 @@ function CV_Profile() {
       <Tab.Screen
         name="PersonalProfile"
         component={PersonalProfile}
-        options={{ tabBarLabel: 'Hồ sơ' }} />
+        options={{ tabBarLabel: 'Hồ sơ ứng tuyển' }} />
       <Tab.Screen
         name="AppliedJobs"
         component={AppliedJobs}
