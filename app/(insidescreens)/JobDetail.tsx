@@ -1,22 +1,37 @@
 import { StyleSheet, Text, View, ScrollView, Pressable, Image } from 'react-native'
 import React, { useEffect, useState } from 'react'
-import { useLocalSearchParams } from 'expo-router'
+import { router, useLocalSearchParams } from 'expo-router'
 import { findCompanyById } from '@/components/fetch_data/api';
 import { Company } from '@/components/Model/Model';
+import { BackHandler,  } from "react-native";
+import { useRouter,  } from "expo-router";
+
 
 const JobDetail = () => {
   const [companyInfo, setCompanyInfo] = useState<Company | null>();
   const job = useLocalSearchParams();
   const linkVps = 'http://beejobs.io.vn:14307';
+  const router = useRouter();
 
   const companyId = job.company_id + '';
   useEffect(() => {
+  
+    const backAction = () => {
+      router.back();
+      return true;
+    };
+
+    const backHandler = BackHandler.addEventListener(
+      "hardwareBackPress",
+      backAction
+    );
     const fetchCompanyData = async (company_id: string) => {
       const company = await findCompanyById(company_id);
       setCompanyInfo(company)
     }
     fetchCompanyData(companyId);
-  }, [])
+    return () => backHandler.remove();
+  }, [router])
 
   const handleApply = () => {
     // Xử lý logic ứng tuyển tại đây

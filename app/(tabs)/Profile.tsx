@@ -2,8 +2,11 @@ import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, Image, TouchableOpacity } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { decodeToken } from '../../scripts/utils';
+import { useBackHandler } from "../../components/BackHandler";
+import AlertComponent from "@/components/AlertComponent";
 const Profile = () => {
   const [userData, setUserData] = useState(null);
+  const { backPressedCount, setBackPressedCount, showAlert, setShowAlert, message, setMessage, color, setColor } = useBackHandler(true);
 
   useEffect(() => {
     const fetchUserData = async () => {
@@ -54,6 +57,12 @@ const Profile = () => {
           <Text style={styles.loadingText}>Đang tải dữ liệu...</Text>
         </View>
       )}
+      <AlertComponent
+        color={color}
+        message={message}
+        visible={showAlert}
+        onClose={() => setShowAlert(false)}
+      />
     </View>
   );
 };
