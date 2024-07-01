@@ -108,11 +108,6 @@ const LoginScreen = () => {
         // Chuyển hướng đến màn hình khác sau khi đăng nhập thành công
         router.push("/Home");
 
-        // if (response.data.user_info && response.data.user_info.email) {
-
-        // } else {
-        //   alert("Đã xảy ra lỗi trong quá trình đăng nhập. Vui lòng thử lại.");
-        // }
       } else if (response.data.status === 400) {
         setMessage("Thông tin đăng nhập không chính xác");
         setColor("red");
@@ -122,11 +117,6 @@ const LoginScreen = () => {
       }
     } catch (error) {
       console.error("Lỗi đăng nhập:", error);
-      // if (error.response && error.response.status === 401) {
-      //   alert("Thông tin đăng nhập không chính xác. Vui lòng thử lại.");
-      // } else {
-      //   alert("Đã xảy ra lỗi trong quá trình đăng nhập. Vui lòng thử lại sau.");
-      // }
     }
   };
 
@@ -173,7 +163,11 @@ const LoginScreen = () => {
             rememberMe ? styles.rememberMeCheckboxChecked : null,
           ]}
           onPress={() => setRememberMe(!rememberMe)}
-        />
+        >
+          {rememberMe && (
+            <Icon name="check" size={15} color="#fff" />
+          )}
+        </TouchableOpacity>
         <Text style={styles.rememberMeText}>Lưu mật khẩu</Text>
       </View>
       <TouchableOpacity style={styles.button} onPress={handleLogin}>
@@ -270,6 +264,8 @@ const styles = StyleSheet.create({
     borderColor: "#ccc",
     borderRadius: 5,
     marginRight: 10,
+    justifyContent: "center",
+    alignItems: "center",
   },
   rememberMeCheckboxChecked: {
     backgroundColor: "#007aff",
