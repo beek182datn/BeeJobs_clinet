@@ -1,24 +1,16 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, Image, TouchableOpacity } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { decodeToken } from '../../scripts/utils';
 import { useBackHandler } from "../../components/BackHandler";
 import AlertComponent from "@/components/AlertComponent";
+import { getUserData } from '@/components/fetch_data/api';
 const Profile = () => {
   const [userData, setUserData] = useState(null);
   const { backPressedCount, setBackPressedCount, showAlert, setShowAlert, message, setMessage, color, setColor } = useBackHandler(true);
 
   useEffect(() => {
     const fetchUserData = async () => {
-      try {
-        const userData = await AsyncStorage.getItem('userProfile');
-        if (userData) {
-          setUserData(JSON.parse(userData));
-          decodeToken(JSON.parse(userData).token); 
-        }
-      } catch (error) {
-        console.error('Error fetching user data:', error);
-      }
+      getUserData();
     };
     fetchUserData();
   }, []);

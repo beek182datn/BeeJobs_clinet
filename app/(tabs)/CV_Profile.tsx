@@ -18,11 +18,11 @@ function CV_Profile() {
       <Tab.Screen
         name="PersonalProfile"
         component={PersonalProfile}
-        options={{ tabBarLabel: 'Hồ sơ ứng tuyển' }} />
+        options={{ tabBarLabel: 'CV' }} />
       <Tab.Screen
         name="AppliedJobs"
         component={AppliedJobs}
-        options={{ tabBarLabel: 'Việc đã ứng tuyển' }} />
+        options={{ tabBarLabel: 'AppliedJob' }} />
     </Tab.Navigator>
   );
 }

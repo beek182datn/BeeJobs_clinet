@@ -1,10 +1,10 @@
 const decodeToken = (token) => {
   try {
-    const [, payload, ] = token.split('.');
-    console.log(token)
-    console.log(payload)
+    console.log('tokenString: ', token)
+    const payload = `"${token.split('.')[1]}"`;
+    console.log('payload: '+payload)
     const decodedPayload = JSON.parse(atob(payload));
-    console.log('Decoded token:', decodedPayload);
+    console.log('Decoded payload:', decodedPayload);
     return decodedPayload;
   } catch (error) {
     console.error('Error decoding token:', error);

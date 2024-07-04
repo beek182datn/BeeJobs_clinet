@@ -1,7 +1,20 @@
 import axios, { AxiosResponse } from "axios";
-import { Job, Company, CompanyRespone, JobsResponse } from "../Model/Model";
+import { Job, Company, CompanyRespone, JobsResponse, User, ApplyJobData } from "../Model/Model";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
+// lấy dữ liệu của user từ asyncstorage
+export const getUserData = async (): Promise<User | null> => {
+  try {
+    const userData = await AsyncStorage.getItem('user_info');
+    if (userData) {
+      return JSON.parse(userData) as User;
+    }
+    return null;
+  } catch (error) {
+    console.error('Error fetching user data:', error);
+    return null;
+  }
+};
 // danh sách công việc
 export const fetchJobs = async (): Promise<Job[]> => {
   try {
@@ -126,4 +139,28 @@ export const createApplyProfile = async (data: JSON): Promise<Company> => {
 //     console.error('Error fetching user data:', error);
 //   }
 // };
+
+// api ứng tuyển công việc theo tin bài
+export const createApplyJob = async (workerId: string, jobId: string, data: ApplyJobData): Promise<AxiosResponse<any>> => {
+  try {
+    const formData = new FormData();
+    formData.append('cv', data.cv);
+    formData.append('status', data.status);
+
+    const response = await axios.post<any>(
+      `http://beejobs.io.vn:14307/api/applyJobs/create/${workerId}/${jobId}`,
+      formData,
+      {
+        headers: {
+          'Content-Type': 'multipart/form-data'
+        }
+      }
+    );
+
+    return response;
+  } catch (error) {
+    console.error('Error creating job application:', error);
+    throw error;
+  }
+};
 

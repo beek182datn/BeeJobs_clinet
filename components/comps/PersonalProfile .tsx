@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { StyleSheet, Text, View, TouchableOpacity, Modal, TextInput } from 'react-native';
 
-interface PersonalProfileProps {}
+interface PersonalProfileProps { }
 
 const PersonalProfile: React.FC<PersonalProfileProps> = () => {
   const [showModal, setShowModal] = useState(false);
@@ -31,7 +31,7 @@ const PersonalProfile: React.FC<PersonalProfileProps> = () => {
 
   return (
     <View style={styles.scene}>
-      <Text>Hồ sơ ứng tuyển</Text>
+      <Text>Hồ sơ</Text>
       <TouchableOpacity style={styles.addButton} onPress={handleAddProfile}>
         <Text style={styles.addButtonText}>+</Text>
       </TouchableOpacity>
