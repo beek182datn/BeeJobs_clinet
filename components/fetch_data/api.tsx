@@ -1,5 +1,5 @@
 import axios, { AxiosResponse } from "axios";
-import { Job, Company, CompanyRespone, JobsResponse, User, ApplyJobData, AppliedJob, JobsResponseSingle, AppliedJobsResponse } from "../Model/Model";
+import { Job, Company, Worker, CompanyRespone, JobsResponse, User, ApplyJobData, AppliedJob, JobsResponseSingle, AppliedJobsResponse, CheckApplyJobResponse, WokerRespone } from "../Model/Model";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { DocumentPickerAsset } from "expo-document-picker";
 import FormData from 'form-data'
@@ -142,7 +142,7 @@ export const createApplyJob = async (worker_id: string, job_id: string, data: Ap
       name: data.cv.name,
       type: data.cv.type,
     } as any);
-    
+
     const response = await axios.post(
       `http://beejobs.io.vn:14307/api/applyJobs/create/${worker_id}/${job_id}`,
       formData,
@@ -155,10 +155,10 @@ export const createApplyJob = async (worker_id: string, job_id: string, data: Ap
     return response;
   } catch (error) {
     if (axios.isAxiosError(error) && error.response) {
-      console.error('Error of aoxis:', error.response.data);
+      console.log('Error of aoxis:', error.response.data);
       throw new Error(`Error fetching applied jobs: ${error.response.data.message}`);
     } else {
-      console.error('Error fetching applied jobs:', error);
+      console.log('Error fetching applied jobs:', error);
       throw new Error('An unexpected error occurred while fetching applied jobs.');
     }
   }
@@ -192,12 +192,43 @@ export const getAppliedJobsByWorker = async (worker_id: string): Promise<Applied
     return updatedAppliedJobs;
   } catch (error) {
     if (axios.isAxiosError(error) && error.response) {
-      console.error('Error fetching applied jobs:', error.response.data);
+      console.log('Error fetching applied jobs:', error.response.data);
       throw new Error(`Error fetching applied jobs: ${error.response.data.message}`);
     } else {
-      console.error('Error fetching applied jobs:', error);
+      console.log('Error fetching applied jobs:', error);
       throw new Error('An unexpected error occurred while fetching applied jobs.');
     }
   }
 };
 
+export const checkApplyJob = async (worker_id: string, job_id: string): Promise<CheckApplyJobResponse> => {
+  try {
+    const response: AxiosResponse<CheckApplyJobResponse> = await axios.get(
+      `http://beejobs.io.vn:14307/api/applyJobs/checkApplyJobs/${worker_id}/${job_id}`
+    );
+    console.log(JSON.stringify(response.data.message))
+    return response.data;
+  } catch (error) {
+    if (axios.isAxiosError(error) && error.response) {
+      console.error('Error in checking apply job status:', error.response.data);
+      throw new Error(`Error checking apply job status: ${error.response.data.message}`);
+    } else {
+      console.error('Unexpected error in checking apply job status:', error);
+      throw new Error('An unexpected error occurred while checking apply job status.');
+    }
+  }
+};
+
+export const findWorkerById = async (keyword: string): Promise<Worker | null> => {
+  try {
+    const response: AxiosResponse<WokerRespone> = await axios.get(
+      `http://beejobs.io.vn:14307/api/workers/getInforWorker/${keyword}`
+    );
+    console.log(response.status)
+    const worker = response.data.worker_info;
+    return worker;
+  } catch (error) {
+    console.log(error);
+    return null;
+  }
+};

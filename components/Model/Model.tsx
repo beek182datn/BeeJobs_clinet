@@ -81,10 +81,34 @@ export interface AppliedJob {
   _id: string;
   job_id: string;
   worker_id: string;
-  cv: DocumentPickerAsset
+  cv: string;
   status: string;
   applied_at: Date;
   __v: number;
   job: Job
 }
+
+// check applied
+export interface CheckApplyJobResponse {
+  isApplied: boolean;
+  message: string;
+}
+
+// worker
+export type Worker = {
+  _id: string;
+  user_id: string;
+  worker_name: string;
+  worker_avatar: string;
+  phone: string;
+  email: string;
+  __v: number;
+}
+export type WokerRespone = {
+  worker_info: Worker;
+  message: string;
+  createdBy: string;
+}
+
+
 

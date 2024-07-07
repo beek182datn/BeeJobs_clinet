@@ -1,7 +1,7 @@
 import { StyleSheet, Text, View, ScrollView, Pressable, Image, Modal, TextInput, TouchableOpacity, Dimensions } from 'react-native'
 import React, { useEffect, useState } from 'react'
 import { useLocalSearchParams } from 'expo-router'
-import { findCompanyById, getUserInfo } from '@/components/fetch_data/api';
+import { findCompanyById, getUserInfo, checkApplyJob } from '@/components/fetch_data/api';
 import { ApplyJobData, Company, User } from '@/components/Model/Model';
 import { BackHandler, } from "react-native";
 import { useRouter, } from "expo-router";
@@ -40,9 +40,15 @@ const JobDetail = () => {
       "hardwareBackPress",
       backAction
     );
+
     const fetchCompanyData = async (company_id: string) => {
       const company = await findCompanyById(company_id);
       const user: User | null = await getUserInfo();
+      if(user){
+        const response = await checkApplyJob(user.id_user, String(job._id));
+        setIsApplied(response.isApplied);
+        console.log(JSON.stringify(response.isApplied))
+      }
       setUser(user);
       setCompanyInfo(company)
     }
@@ -80,7 +86,7 @@ const JobDetail = () => {
           setVisible(true);
           setIsApplied(true);
         } catch (error) {
-          console.error('Error creating application:', error);
+          console.log('Error creating application:', error);
           setShowModal(false);
           setColor('red');
           setMessage('Hệ thống đang lỗi, thử lại sau');
@@ -116,28 +122,29 @@ const JobDetail = () => {
           </View>
         </View>
         <View style={styles.detailsContainer}>
-          <Text style={styles.detailsText}>Địa chỉ công ty: {companyInfo?.company_address}</Text>
+          <Text style={styles.detailsText}>Địa chỉ: {companyInfo?.company_address}</Text>
           <Text style={styles.detailsText}>Liên hệ: {companyInfo?.taxcode}</Text>
           <Text style={styles.detailsText}>Địa điểm: {job.location}</Text>
-          <Text style={styles.detailsText}>Lương: {job.salary}</Text>
+          <Text style={styles.detailsText}>Ngân sách: {job.salary}</Text>
         </View>
-        <Text style={styles.description}>{job.desc}</Text>
+        <Text style={styles.description}>Mô tả: {job.desc}</Text>
         <Text style={styles.requirements}>Yêu cầu: {job.requirements}</Text>
         <Text style={styles.requirements}>Số lượng tuyển: {job.number_of_recruitments}</Text>
-        <Text style={styles.requirements}>{job.major}</Text>
         <Text style={styles.requirements}>Hạn ứng tuyển: {job.deadline}</Text>
       </View>
-      {isApplied ? (
+      {isApplied &&
       <Pressable style={styles.appliedButton}>
         <Ionicons name="checkmark-circle-outline" style={styles.appliedButtonIcon} />
         <Text style={styles.appliedButtonText}>Đã ứng tuyển</Text>
       </Pressable>
-    ) : (
-      <Pressable style={styles.applyButton} onPress={handleModalApply}>
+      } 
+      {!isApplied && 
+        <Pressable style={styles.applyButton} onPress={handleModalApply}>
         <Ionicons name="paper-plane-outline" style={styles.applyButtonIcon} />
         <Text style={styles.applyButtonText}>Ứng tuyển</Text>
       </Pressable>
-    )}
+      }
+    
 
       <Modal visible={showModal} animationType="slide">
         <View style={styles.modalContainer}>
@@ -222,12 +229,13 @@ const styles = StyleSheet.create({
   },
   detailsText: {
     fontSize: 16,
-    color: '#666',
+    color: 'black',
     marginBottom: 4,
+    fontWeight:'bold'
   },
   description: {
     fontSize: 16,
-    marginBottom: 16,
+    marginBottom:10
   },
   requirements: {
     fontSize: 16,

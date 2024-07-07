@@ -10,7 +10,7 @@ import Icon from "react-native-vector-icons/FontAwesome";
 import AlertComponent from "@/components/AlertComponent";
 import axios, { AxiosResponse } from "axios";
 import { useRouter } from "expo-router";
-import { BackHandler} from "react-native";
+import { BackHandler } from "react-native";
 // import CheckBox from '@react-native-community/checkbox';
 
 const RegisterScreen = () => {
@@ -74,14 +74,14 @@ const RegisterScreen = () => {
           email: email,
           passwd: passwd,
           type_role: "NLD",
-          verify: false,
+          verify: true,
         }
       );
       setName("");
       setEmail("");
       setPassword("");
       setShowPassword(false);
-      router.push('VerifyAccount')
+      router.push({ pathname: 'VerifyAccount', params: email as any })
       // Show success alert
     } catch (error) {
       console.error("Lỗi đăng ký:", error);

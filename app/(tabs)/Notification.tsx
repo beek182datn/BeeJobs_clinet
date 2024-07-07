@@ -1,27 +1,59 @@
-import { SafeAreaView, StyleSheet, Text, View } from 'react-native'
-import React, { useEffect, useState, } from 'react'
-import { useRouter, } from "expo-router";
-import { BackHandler, } from "react-native";
-import AlertComponent from "@/components/AlertComponent";
-import { useBackHandler } from "../../components/BackHandler";
+import React from 'react';
+import { StyleSheet, Text, View, Image } from 'react-native';
 
 const Notification = () => {
-  const { backPressedCount, setBackPressedCount, showAlert, setShowAlert, message, setMessage, color, setColor } = useBackHandler(true);
   return (
-    <SafeAreaView>
-      <View>
-        <Text>Notification</Text>
-        <AlertComponent
-          color={color}
-          message={message}
-          visible={showAlert}
-          onClose={() => setShowAlert(false)}
+    <View style={styles.container}>
+      <Text style={styles.header}>Thông báo</Text>
+      <View style={styles.content}>
+        <Image
+          source={require('../../assets/images/notification.png')}
+          style={styles.image}
         />
+        <Text style={styles.title}>Bạn chưa có thông báo nào</Text>
+        <Text style={styles.description}>
+          Đừng lo, chúng tôi sẽ thông báo ngay khi có tin mới cho bạn.
+          Hãy khám phá tính năng khác hoặc kiểm tra lại sau.
+        </Text>
       </View>
-    </SafeAreaView>
-  )
-}
+    </View>
+  );
+};
 
-export default Notification
+export default Notification;
 
-const styles = StyleSheet.create({})
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: '#fff',
+    alignItems: 'center',
+    justifyContent: 'flex-start',
+    paddingTop: 50,
+  },
+  header: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    marginBottom: 20,
+  },
+  content: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingHorizontal: 20,
+  },
+  image: {
+    width: 150,
+    height: 150,
+    marginBottom: 20,
+  },
+  title: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: '#000',
+    marginBottom: 10,
+  },
+  description: {
+    fontSize: 14,
+    color: '#666',
+    textAlign: 'center',
+  },
+});
