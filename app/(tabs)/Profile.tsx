@@ -4,22 +4,47 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useBackHandler } from "../../components/BackHandler";
 import AlertComponent from "@/components/AlertComponent";
 import { getUserData } from '@/components/fetch_data/api';
+import { useRouter } from 'expo-router';
+import axios, { AxiosResponse } from "axios";
+import { Job, Company, CompanyRespone, JobsResponse, User, ApplyJobData } from "../../components/Model/Model";
 const Profile = () => {
   const [userData, setUserData] = useState(null);
   const { backPressedCount, setBackPressedCount, showAlert, setShowAlert, message, setMessage, color, setColor } = useBackHandler(true);
+  const router = useRouter();
 
   useEffect(() => {
-    const fetchUserData = async () => {
-      getUserData();
+    const fetchUserInfo = async () => {
+      try {
+        // Lấy user_info từ AsyncStorage
+        const userInfoString = await AsyncStorage.getItem('user_info');
+        if (userInfoString !== null) {
+          const userData = JSON.parse(userInfoString);
+          setUserData(userData);
+
+          // Lấy id_user từ userInfo
+          const id_user = userData.id_user;
+          console.log(id_user)
+
+          // Gửi yêu cầu lấy thông tin chi tiết của user
+          const response: AxiosResponse<User> = await axios.post(`http://beejobs.io.vn:14307/api/users/${id_user}`);
+          const detailedUserInfo = response.data;
+
+          // Cập nhật state với thông tin chi tiết của user
+          //setUserData(detailedUserInfo);
+        }
+      } catch (error) {
+        console.error('Error fetching user info:', error);
+      }
     };
-    fetchUserData();
+
+    fetchUserInfo();
   }, []);
 
   const handleLogout = async () => {
     try {
       await AsyncStorage.removeItem('userProfile');
       setUserData(null);
-      // Redirect to login screen or perform other logout actions
+      router.push('LoginScreen')
     } catch (error) {
       console.error('Error logging out:', error);
     }
@@ -28,6 +53,7 @@ const Profile = () => {
   return (
     <View style={styles.container}>
       {userData !== null ? (
+        
         <>
           {/* <View style={styles.profileHeader}>
             <Image source={{ uri: userData.avatarUrl }} style={styles.avatar} />
@@ -46,7 +72,9 @@ const Profile = () => {
         </>
       ) : (
         <View style={styles.loadingContainer}>
-          <Text style={styles.loadingText}>Đang tải dữ liệu...</Text>
+          <TouchableOpacity style={styles.logoutButton1} onPress={handleLogout}>
+            <Text style={styles.logoutText}>Đăng nhập</Text>
+          </TouchableOpacity>
         </View>
       )}
       <AlertComponent
@@ -106,6 +134,13 @@ const styles = StyleSheet.create({
   },
   logoutButton: {
     backgroundColor: '#e74c3c',
+    paddingVertical: 12,
+    paddingHorizontal: 20,
+    borderRadius: 8,
+    alignItems: 'center',
+  },
+  logoutButton1: {
+    backgroundColor: 'blue',
     paddingVertical: 12,
     paddingHorizontal: 20,
     borderRadius: 8,

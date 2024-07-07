@@ -6,6 +6,7 @@ export default function RootLayout() {
       <Stack.Screen name="(outsidescreens)/index" options={{ headerShown: false }} />
       <Stack.Screen name="(outsidescreens)/CompleteProfileScreen" options={{ headerShown: false }} />
       <Stack.Screen name="(outsidescreens)/CompleteProfileScreen1" options={{ headerShown: false }} />
+      <Stack.Screen name="(outsidescreens)/CompleteProfileScreen2" options={{ headerShown: false }} />
       <Stack.Screen name="(outsidescreens)/ForgotPasswordScreen" options={{ headerShown: false }} />
       <Stack.Screen name="(outsidescreens)/LoginScreen" options={{ headerShown: false }} />
       <Stack.Screen name="(outsidescreens)/RegisterScreen" options={{ headerShown: false }} />

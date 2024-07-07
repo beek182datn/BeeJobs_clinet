@@ -119,7 +119,7 @@ const LoginScreen = () => {
           console.error("Error saving user profile:", error);
         }
 
-        router.push("/Home");
+        router.push("/CompleteProfileScreen");
       } else if (response.data.status === 400) {
         setMessage("Thông tin đăng nhập không chính xác");
         setColor("red");

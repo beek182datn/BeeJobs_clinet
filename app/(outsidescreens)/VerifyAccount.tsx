@@ -8,11 +8,14 @@ import {
 } from "react-native";
 import axios from "axios";
 import { useRouter } from 'expo-router';
+import AlertComponent from "@/components/AlertComponent";
 
 const VerifyAccount: React.FC = () => {
   const [otp, setOtp] = useState<string[]>(["", "", "", "", "", ""]);
   const router = useRouter();
-
+  const [showMissingInfoAlert, setShowMissingInfoAlert] = useState(false);
+  const [message, setMessage] = useState("");
+  const [color, setColor] = useState("");
   const handleVerifyOtp = async () => {
     const otpCode = otp.join("");
     if (otpCode.length !== 6) {
@@ -21,13 +24,17 @@ const VerifyAccount: React.FC = () => {
     }
 
     try {
-      const response = await axios.post('http://beejobs.io.vn:14307/api/verify-otp', {
-        otp: otpCode,
-      });
-      console.log('Xác minh OTP thành công:', response.data);
+      // const response = await axios.post('http://beejobs.io.vn:14307/api/verify-otp', {
+      //   otp: otpCode,
+      // });
+      //console.log('Xác minh OTP thành công:', response.data);
       alert("Xác minh OTP thành công.");
-      setOtp(["", "", "", "", "", ""]);
-      router.push('ResetPasswordScreen'); // Điều hướng đến màn hình đặt lại mật khẩu
+      //setOtp(["", "", "", "", "", ""]);
+      router.push('LoginScreen');
+      setMessage("Đăng ký thành công");
+      setColor("green");
+      setShowMissingInfoAlert(true);
+       // Điều hướng đến màn hình đặt lại mật khẩu
     } catch (error) {
       console.error('Lỗi xác minh OTP:', error);
       alert("Đã xảy ra lỗi trong quá trình xác minh OTP. Vui lòng thử lại sau.");
@@ -63,6 +70,12 @@ const VerifyAccount: React.FC = () => {
       <TouchableOpacity style={styles.backButton} onPress={() => router.push('RegisterScreen')}>
         <Text style={styles.backButtonText}>Quay lại</Text>
       </TouchableOpacity>
+      <AlertComponent
+        color={color}
+        message={message}
+        visible={showMissingInfoAlert}
+        onClose={() => setShowMissingInfoAlert(false)}
+      />
     </View>
   );
 };

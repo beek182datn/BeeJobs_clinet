@@ -74,7 +74,7 @@ const RegisterScreen = () => {
           email: email,
           passwd: passwd,
           type_role: "NLD",
-          verify: false,
+          verify: true,
         }
       );
       setName("");
