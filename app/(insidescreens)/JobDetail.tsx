@@ -1,7 +1,7 @@
-import { StyleSheet, Text, View, ScrollView, Pressable, Image, Modal, TextInput, TouchableOpacity } from 'react-native'
+import { StyleSheet, Text, View, ScrollView, Pressable, Image, Modal, TextInput, TouchableOpacity, Dimensions } from 'react-native'
 import React, { useEffect, useState } from 'react'
 import { useLocalSearchParams } from 'expo-router'
-import { findCompanyById, getUserData } from '@/components/fetch_data/api';
+import { findCompanyById, getUserInfo } from '@/components/fetch_data/api';
 import { ApplyJobData, Company, User } from '@/components/Model/Model';
 import { BackHandler, } from "react-native";
 import { useRouter, } from "expo-router";
@@ -9,6 +9,7 @@ import { createApplyJob } from '@/components/fetch_data/api';
 import * as DocumentPicker from 'expo-document-picker';
 import AlertComponent from '@/components/AlertComponent';
 import { Ionicons } from '@expo/vector-icons';
+const { width, height } = Dimensions.get('window');
 
 
 const JobDetail = () => {
@@ -22,13 +23,11 @@ const JobDetail = () => {
   const [visible, setVisible] = useState(false);
   const [color, setColor] = useState('');
 
-  const [applyJobData, setApplyJobData] = useState<ApplyJobData>({
-    cv: null,
-    status: '',
-  });
+  const [cv, setCv] = useState<DocumentPicker.DocumentPickerAsset | null>(null);
 
   // modal của ứng tuyển
   const [showModal, setShowModal] = useState(false);
+  const [isApplied, setIsApplied] = useState(false);
 
   useEffect(() => {
     const companyId = String(job.company_id);
@@ -43,7 +42,8 @@ const JobDetail = () => {
     );
     const fetchCompanyData = async (company_id: string) => {
       const company = await findCompanyById(company_id);
-      setUser(await getUserData());
+      const user: User | null = await getUserInfo();
+      setUser(user);
       setCompanyInfo(company)
     }
     fetchCompanyData(companyId);
@@ -60,90 +60,103 @@ const JobDetail = () => {
   };
 
   const handleApply = async () => {
-    const workerId = String(user?.id_user);
-    const jobId = String(job._id);
-    if (applyJobData.cv !== null && applyJobData.status !== '') {
-      try {
-        const response = await createApplyJob(workerId, jobId, applyJobData);
-        setShowModal(false)
-        setColor('green')
-        setMessage('Ứng tuyển thành công')
-        setVisible(true)
-      } catch (error) {
-        console.error('Error creating application:', error);
-        setShowModal(false)
-        setColor('red')
-        setMessage('Hệ thống đang lỗi, thử lại sau')
-        setVisible(true)
+    if (cv !== null) {
+      if (user && job) {
+        try {
+          const data: ApplyJobData = {
+            cv: {
+              uri: cv.uri,
+              name: cv.name!,
+              type: cv.mimeType!
+            }
+          };
+          const jobId = job._id;
+          const userId = user.id_user;
+          const response = await createApplyJob(userId, jobId as any, data);
+          // console.log(response.data);
+          setShowModal(false);
+          setColor('green');
+          setMessage('Ứng tuyển thành công');
+          setVisible(true);
+          setIsApplied(true);
+        } catch (error) {
+          console.error('Error creating application:', error);
+          setShowModal(false);
+          setColor('red');
+          setMessage('Hệ thống đang lỗi, thử lại sau');
+          setVisible(true);
+        }
       }
     }
-  }
+  };
 
   const pickFile = async () => {
     try {
       const result = await DocumentPicker.getDocumentAsync({
-        type: 'application/pdf',
+        type: ['application/pdf', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'],
       });
       if (!result.canceled) {
-        console.log(result);
-        setApplyJobData((prevData) => ({
-          ...prevData,
-          cv: result.assets[0],
-        }));
-      } else {
-        console.log('User cancelled file picker');
+        setCv(result.assets[0]);
+        console.log(JSON.stringify(result));
       }
-    } catch (err) {
-      console.log('Error picking file:', err);
+    } catch (error) {
+      console.error('Lỗi khi chọn tệp tin:', error);
     }
-  }
-
-  const handleStatusChange = (newStatus: string) => {
-    setApplyJobData((prevData) => ({
-      ...prevData,
-      status: newStatus,
-    }));
   };
 
   return (
     <ScrollView style={styles.container}>
       <AlertComponent message={message} color={color} visible={visible} onClose={() => setVisible(false)} />
-      <View style={styles.content}>
-        <Text style={styles.title}>{job.title}</Text>
-        <Image source={job.company_logo != '' ? { uri: linkVps + job.company_logo } : require('../../assets/images/profile.png')} style={styles.image} />
-        <Text style={styles.company}>{companyInfo?.company_name}</Text>
-        <Text style={styles.company}>{companyInfo?.company_address}</Text>
-        <Text style={styles.company}>{companyInfo?.taxcode}</Text>
-        <Text style={styles.company}>{job.company}</Text>
-        <Text style={styles.description}>{job.description}</Text>
-        <Text style={styles.location}>{job.location}</Text>
-        <Text style={styles.salary}>Lương: {job.salary}</Text>
-        <Text style={styles.requirements}>{job.requirements}</Text>
+      <View style={styles.contentContainer}>
+        <View style={styles.headerContainer}>
+          <Image source={job.company_logo != '' ? { uri: linkVps + job.company_logo } : require('../../assets/images/profile.png')} style={styles.companyLogo} />
+          <View style={styles.headerTextContainer}>
+            <Text style={styles.title}>{job.title}</Text>
+            <Text style={styles.companyName}>{companyInfo?.company_name}</Text>
+          </View>
+        </View>
+        <View style={styles.detailsContainer}>
+          <Text style={styles.detailsText}>Địa chỉ công ty: {companyInfo?.company_address}</Text>
+          <Text style={styles.detailsText}>Liên hệ: {companyInfo?.taxcode}</Text>
+          <Text style={styles.detailsText}>Địa điểm: {job.location}</Text>
+          <Text style={styles.detailsText}>Lương: {job.salary}</Text>
+        </View>
+        <Text style={styles.description}>{job.desc}</Text>
+        <Text style={styles.requirements}>Yêu cầu: {job.requirements}</Text>
+        <Text style={styles.requirements}>Số lượng tuyển: {job.number_of_recruitments}</Text>
+        <Text style={styles.requirements}>{job.major}</Text>
+        <Text style={styles.requirements}>Hạn ứng tuyển: {job.deadline}</Text>
       </View>
+      {isApplied ? (
+      <Pressable style={styles.appliedButton}>
+        <Ionicons name="checkmark-circle-outline" style={styles.appliedButtonIcon} />
+        <Text style={styles.appliedButtonText}>Đã ứng tuyển</Text>
+      </Pressable>
+    ) : (
       <Pressable style={styles.applyButton} onPress={handleModalApply}>
+        <Ionicons name="paper-plane-outline" style={styles.applyButtonIcon} />
         <Text style={styles.applyButtonText}>Ứng tuyển</Text>
       </Pressable>
+    )}
 
       <Modal visible={showModal} animationType="slide">
         <View style={styles.modalContainer}>
-        <Image style={{ width:200 , height:200 }} source={require('../../assets/images/bee_jobs_light_blue.png')} />
-          <Pressable style={[styles.applyButton, {marginBottom:100}]} onPress={pickFile}>
+          <Image style={{ width: 200, height: 200 }} source={require('../../assets/images/bee_jobs_light_blue.png')} />
+          <Pressable style={[styles.applyButton, { marginBottom: 100 }]} onPress={pickFile}>
             <Ionicons name="document-attach-outline" style={styles.applyButtonIcon} />
             <Text style={styles.applyButtonText}>Chọn CV của bạn</Text>
           </Pressable>
-          {applyJobData.cv && (
+          {cv && (
             <View style={styles.filePreview}>
-              <Text style={styles.filePreviewText}>
-                Tệp đã chọn: {applyJobData.cv.name}
-              </Text>
+              <Text style={styles.filePreviewText}>Tệp đã chọn: {cv.name}</Text>
             </View>
           )}
-          <TextInput
+          {/* <TextInput
             style={styles.input}
             placeholder="Lời nhắn"
-            value={applyJobData.status}
-            onChangeText={handleStatusChange}
-          />
+            value={status}
+            onChangeText={setStatus}
+          /> */}
           <View style={styles.buttonContainer}>
             <TouchableOpacity style={styles.button} onPress={handleApply}>
               <Text style={styles.buttonText}>Ứng tuyển</Text>
@@ -155,6 +168,7 @@ const JobDetail = () => {
         </View>
       </Modal>
 
+
     </ScrollView>
   )
 }
@@ -164,38 +178,59 @@ export default JobDetail
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
+    backgroundColor: '#f2f2f2',
   },
-  content: {
+  contentContainer: {
     padding: 20,
+    backgroundColor: '#fff',
+    borderRadius: 10,
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+    elevation: 5,
+    marginVertical: 20,
+  },
+  headerContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 16,
+  },
+  companyLogo: {
+    width: 60,
+    height: 60,
+    borderRadius: 30,
+    marginRight: 16,
+  },
+  headerTextContainer: {
+    flex: 1,
   },
   title: {
-    fontSize: 24,
+    fontSize: 20,
     fontWeight: 'bold',
-    marginBottom: 8,
+    marginBottom: 4,
   },
-  company: {
+  companyName: {
     fontSize: 16,
     color: '#666',
+  },
+  detailsContainer: {
     marginBottom: 16,
+  },
+  detailsText: {
+    fontSize: 16,
+    color: '#666',
+    marginBottom: 4,
   },
   description: {
     fontSize: 16,
     marginBottom: 16,
   },
-  location: {
-    fontSize: 16,
-    color: '#666',
-    marginBottom: 8,
-  },
-  salary: {
-    fontSize: 16,
-    color: '#666',
-    marginBottom: 16,
-  },
   requirements: {
     fontSize: 16,
-    marginBottom: 16,
   },
   applyButton: {
     backgroundColor: '#007AFF',
@@ -205,73 +240,25 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
+    marginHorizontal: 20,
+    marginVertical: 20,
+  },
+  applyButtonIcon: {
+    color: '#FFFFFF',
+    fontSize: 20,
+    marginRight: 8,
   },
   applyButtonText: {
     color: '#FFFFFF',
     fontSize: 16,
     fontWeight: 'bold',
-    marginLeft: 8,
-  },
-  applyButtonIcon: {
-    color: '#FFFFFF',
-    fontSize: 20,
-  },
-  image: {
-    width: 80,
-    height: 80
-  },
-  scene: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-    position: 'relative',
-  },
-  addButton: {
-    position: 'absolute',
-    bottom: 20,
-    right: 20,
-    width: 50,
-    height: 50,
-    backgroundColor: '#2196F3',
-    borderRadius: 25,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  addButtonText: {
-    color: '#fff',
-    fontSize: 24,
-    fontWeight: 'bold',
   },
   modalContainer: {
     flex: 1,
-    backgroundColor: '#fff',
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    padding: 20,
     alignItems: 'center',
     justifyContent: 'center',
-    padding: 20,
-  },
-  input: {
-    width: '100%',
-    height: 40,
-    borderColor: '#ccc',
-    borderWidth: 1,
-    marginVertical: 10,
-    paddingHorizontal: 10,
-  },
-  buttonContainer: {
-    flexDirection: 'row',
-    marginTop: 20,
-  },
-  button: {
-    flex: 1,
-    backgroundColor: '#2196F3',
-    padding: 10,
-    borderRadius: 5,
-    marginHorizontal: 5,
-  },
-  buttonText: {
-    color: '#fff',
-    textAlign: 'center',
   },
   filePreview: {
     backgroundColor: '#f2f2f2',
@@ -283,4 +270,53 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: '#333',
   },
-})
+  input: {
+    width: '100%',
+    height: 100,
+    borderColor: '#ccc',
+    borderWidth: 1,
+    marginVertical: 10,
+    paddingHorizontal: 10,
+    textAlignVertical: 'top',
+  },
+  buttonContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginTop: 20,
+  },
+  button: {
+    backgroundColor: '#007AFF',
+    paddingVertical: 12,
+    paddingHorizontal: 16,
+    borderRadius: 8,
+    flex: 1,
+    marginHorizontal: 5,
+  },
+  buttonText: {
+    color: '#FFFFFF',
+    fontSize: 16,
+    fontWeight: 'bold',
+    textAlign: 'center',
+  },
+  appliedButton: {
+    backgroundColor: '#4CAF50',
+    paddingVertical: 12,
+    paddingHorizontal: 16,
+    borderRadius: 8,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginHorizontal: 20,
+    marginVertical: 20,
+  },
+  appliedButtonIcon: {
+    color: '#FFFFFF',
+    fontSize: 20,
+    marginRight: 8,
+  },
+  appliedButtonText: {
+    color: '#FFFFFF',
+    fontSize: 16,
+    fontWeight: 'bold',
+  },
+});

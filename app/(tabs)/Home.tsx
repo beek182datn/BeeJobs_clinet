@@ -39,7 +39,7 @@ const Home = () => {
     { label: "Tiêu đề", value: "title" },
     { label: "Mức lương", value: "salary" },
     { label: "Địa điểm", value: "location" },
-    { label: "Hình thức", value: "type" },
+    { label: "Ngành nghê", value: "type" },
   ]);
   const [selectedFilterOption, setSelectedFilterOption] = useState("title");
   const [inputSearch, setInputSearch] = useState("Tiêu đề");
@@ -91,7 +91,7 @@ const Home = () => {
     } else if (value === "location") {
       setInputSearch("Địa điểm");
     } else if (value === "type") {
-      setInputSearch("Hình thức");
+      setInputSearch("Ngành nghề");
     } else {
       setFilteredJobs(jobs);
     }

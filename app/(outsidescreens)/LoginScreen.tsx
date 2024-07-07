@@ -105,6 +105,10 @@ const LoginScreen = () => {
         setColor("green");
         setShowAlert(true);
         // phần này Long thêm
+
+        router.push({
+          pathname: '(outsidescreens)/CompleteProfileScreen'
+        })
         try {
           await AsyncStorage.setItem(
             "userProfile",
@@ -119,7 +123,7 @@ const LoginScreen = () => {
           console.error("Error saving user profile:", error);
         }
 
-        router.push("/Home");
+        // router.push("/Home");
       } else if (response.data.status === 400) {
         setMessage("Thông tin đăng nhập không chính xác");
         setColor("red");

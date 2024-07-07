@@ -11,7 +11,7 @@ const CompleteProfileScreen: React.FC = () => {
         router.push('/CompleteProfileScreen1');
     };
     const skipButton = () => {
-        router.push('/LoginScreen');
+        router.push('/Home');
     };
 
     return (

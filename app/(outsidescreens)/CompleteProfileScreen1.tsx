@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, ScrollView } from 'react-native';
 import Icon from "react-native-vector-icons/FontAwesome";
 import { useRouter } from 'expo-router';
 
@@ -22,6 +22,7 @@ const CompleteProfileScreen1: React.FC = () => {
   });
 
   const handleContinue = () => {
+    // sau khi hoàn thành thì cho vào màn Home
     const newErrors = {
       name: name ? '' : 'Tên không được để trống',
       phone: phone ? '' : 'Số điện thoại không được để trống',
@@ -36,12 +37,13 @@ const CompleteProfileScreen1: React.FC = () => {
     const noErrors = Object.values(newErrors).every(error => !error);
     
     if (noErrors) {
-      router.push('/CompleteProfileScreen2');
+      router.push('/Home');
     }
   };
 
   return (
-    <View style={styles.container}>
+    <ScrollView>
+      <View style={styles.container}>
       <View style={styles.headerContainer}>
         <Icon name="arrow-left" size={20} color="#000" />
         <Text style={styles.header}>Thiết lập hồ sơ của bạn</Text>
@@ -124,12 +126,13 @@ const CompleteProfileScreen1: React.FC = () => {
       </View>
       
       <TouchableOpacity style={styles.saveButton} onPress={handleContinue}>
-        <Text style={styles.buttonText}>Lưu và tiếp tục</Text>
+        <Text style={styles.buttonText}>Hoàn thành</Text>
       </TouchableOpacity>
       <TouchableOpacity>
-        <Text style={styles.skipText}>Bỏ qua</Text>
+        <Text style={styles.skipText}>Hoàn thiện sau</Text>
       </TouchableOpacity>
     </View>
+    </ScrollView>
   );
 };
 
