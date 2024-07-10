@@ -10,8 +10,9 @@ const CompleteProfileScreen: React.FC = () => {
     const continueButton = () => {
         router.push('/CompleteProfileScreen1');
     };
+    
     const skipButton = () => {
-        router.push('/LoginScreen');
+        router.push('/Home');
     };
 
     return (

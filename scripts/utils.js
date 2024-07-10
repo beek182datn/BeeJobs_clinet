@@ -1,11 +1,11 @@
-
-
 const decodeToken = (token) => {
   try {
-    const decoded = token.split('.')[1];
-    const payload = JSON.parse(atob(decoded));
-    console.log(payload);
-    return payload;
+    console.log('tokenString: ', token)
+    const payload = `"${token.split('.')[1]}"`;
+    console.log('payload: '+payload)
+    const decodedPayload = JSON.parse(atob(payload));
+    console.log('Decoded payload:', decodedPayload);
+    return decodedPayload;
   } catch (error) {
     console.error('Error decoding token:', error);
     return null;

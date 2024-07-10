@@ -13,6 +13,7 @@ import { BackHandler, Alert } from "react-native";
 import AlertComponent from "@/components/AlertComponent";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useBackHandler } from "../../components/BackHandler";
+import { findWorkerById } from "@/components/fetch_data/api";
 
 const LoginScreen = () => {
   const [username, setUsername] = useState("");
@@ -93,7 +94,7 @@ const LoginScreen = () => {
 
       // Kiểm tra phản hồi từ API
       if (response.data.status === 200) {
-        console.log("Đăng nhập thành công:", response.data);
+        // console.log("Đăng nhập thành công:", response.data);
         setLoggedInUser(response.data.user_info.email);
 
         // Reset form fields
@@ -114,13 +115,10 @@ const LoginScreen = () => {
             "user_info",
             JSON.stringify(response.data.user_info)
           );
-          console.log(response.data.user_info);
+          // console.log(response.data.user_info);
         } catch (error) {
           console.error("Error saving user profile:", error);
         }
-
-        router.push("/Home");
-
       } else if (response.data.status === 400) {
         setMessage("Thông tin đăng nhập không chính xác");
         setColor("red");

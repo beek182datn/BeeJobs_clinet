@@ -25,7 +25,7 @@ const JobsList: React.FC<JobItemProps> = ({ job }) => {
           <View style={styles.detailsContainer}>
             <Text style={styles.jobLocation}>{job.location}</Text>
           </View>
-          <Text style={styles.jobSalary}>Lương: {job.salary}</Text>
+          <Text style={styles.jobSalary}>Ngân sách: {job.salary}</Text>
         </View>
       </View>
     </Pressable>
@@ -53,6 +53,7 @@ const styles = StyleSheet.create({
     width: 64,
     height: 64,
     marginRight: 16,
+    alignSelf:'center'
   },
   infoContainer: {
     flex: 1,
@@ -65,7 +66,7 @@ const styles = StyleSheet.create({
   jobDescription: {
     fontSize: 14,
     color: '#666',
-    marginBottom: 8,
+    marginBottom: 4,
   },
   detailsContainer: {
     flexDirection: 'row',
