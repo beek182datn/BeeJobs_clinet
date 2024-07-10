@@ -5,6 +5,7 @@ import {
   TextInput,
   TouchableOpacity,
   StyleSheet,
+  Alert,
 } from "react-native";
 import Icon from "react-native-vector-icons/FontAwesome";
 import AlertComponent from "@/components/AlertComponent";
@@ -52,7 +53,6 @@ const RegisterScreen = () => {
       email.trim() === "" ||
       passwd.trim() === ""
     ) {
-      //alert("Xin Vui lòng điền đầy đủ vào những ô trống cần thiết.");
       setMessage("Vui lòng nhập đầy đủ thông tin");
       setColor("red");
       setShowMissingInfoAlert(true);
@@ -81,15 +81,17 @@ const RegisterScreen = () => {
       setEmail("");
       setPassword("");
       setShowPassword(false);
-      router.push({ pathname: 'VerifyAccount', params: email as any })
-      // Show success alert
+      router.push({ pathname: 'VerifyAccount', params: email as any });
     } catch (error) {
       console.error("Lỗi đăng ký:", error);
       setMessage("Đăng ký thất bại");
       setShowMissingInfoAlert(true);
       setColor("red");
-      // alert("Đã xảy ra lỗi trong quá trình đăng ký. Vui lòng thử lại sau.");
     }
+  };
+
+  const handleFeatureInDevelopment = () => {
+    Alert.alert("Thông báo", "Tính năng đang phát triển");
   };
 
   return (
@@ -136,13 +138,13 @@ const RegisterScreen = () => {
       </TouchableOpacity>
       <Text style={styles.continueWithText}>----- continue with -----</Text>
       <View style={styles.socialIconsContainer}>
-        <TouchableOpacity>
+        <TouchableOpacity onPress={handleFeatureInDevelopment}>
           <Icon name="facebook-square" size={35} color="#3b5998" />
         </TouchableOpacity>
-        <TouchableOpacity>
+        <TouchableOpacity onPress={handleFeatureInDevelopment}>
           <Icon name="google-plus-square" size={35} color="#db4a39" />
         </TouchableOpacity>
-        <TouchableOpacity>
+        <TouchableOpacity onPress={handleFeatureInDevelopment}>
           <Icon name="twitter-square" size={35} color="#00acee" />
         </TouchableOpacity>
       </View>
@@ -162,12 +164,6 @@ const RegisterScreen = () => {
         visible={showMissingInfoAlert}
         onClose={() => setShowMissingInfoAlert(false)}
       />
-      {/* <AlertComponent
-        color="#00FF00"
-        message="Đăng ký thành công!"
-        visible={showSuccessAlert}
-        onClose={() => setShowSuccessAlert(false)}
-      /> */}
     </View>
   );
 };
