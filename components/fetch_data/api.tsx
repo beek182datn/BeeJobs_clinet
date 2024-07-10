@@ -1,11 +1,5 @@
 import axios, { AxiosResponse } from "axios";
-import { Job } from "../Model/Model";
-
-type JobsResponse = {
-  data: Job[];
-  message: string;
-  createdBy: string;
-};
+import { Job, Company, CompanyRespone, JobsResponse } from "../Model/Model";
 
 export const fetchJobs = async (): Promise<Job[]> => {
   try {
@@ -88,5 +82,18 @@ export const findJobByWorkType = async (keyword: string): Promise<Job[]> => {
   }
 };
 
+// http://beejobs.io.vn:14307/api/companies/getCompanyById/:company_id
 
+export const findCompanyById = async (keyword: string): Promise<Company | null> => {
+  try {
+    const response: AxiosResponse<CompanyRespone> = await axios.get(
+      `http://beejobs.io.vn:14307/api/companies/getCompanyById/${keyword}`
+    );
+    const company = response.data.data;
+    return company;
+  } catch (error) { 
+    console.log(error);
+    return null;
+  }
+};
 

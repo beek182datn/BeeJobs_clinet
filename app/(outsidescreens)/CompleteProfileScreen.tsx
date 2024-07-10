@@ -11,7 +11,7 @@ const CompleteProfileScreen: React.FC = () => {
         router.push('/CompleteProfileScreen1');
     };
     const skipButton = () => {
-        router.push('/Home');
+        router.push('/LoginScreen');
     };
 
     return (
@@ -20,10 +20,10 @@ const CompleteProfileScreen: React.FC = () => {
                 <Text style={styles.text}>
                     Vui lòng hoàn thành hồ sơ của bạn để chúng tôi có thể mang lại cho bạn trải nghiệm tốt nhất
                 </Text>
-                <Image
-                    source={require('../assets/images/profile.png')} 
+                {/* <Image
+                    source={require('../../assets/images/profile.png')} 
                     style={styles.image}
-                />
+                /> */}
             </View>
             <TouchableOpacity style={styles.continueButton} onPress={continueButton}>
                 <Text style={styles.buttonText}>Tiếp tục</Text>

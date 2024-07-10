@@ -12,6 +12,7 @@ import { useRouter } from "expo-router";
 import { BackHandler, Alert } from "react-native";
 import AlertComponent from "@/components/AlertComponent";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useBackHandler } from "../../components/BackHandler";
 
 const LoginScreen = () => {
   const [username, setUsername] = useState("");
@@ -20,42 +21,41 @@ const LoginScreen = () => {
   const [rememberMe, setRememberMe] = useState(false);
   const router = useRouter();
   const [loggedInUser, setLoggedInUser] = useState(null);
-  const [showAlert, setShowAlert] = useState(false);
-  const [message, setMessage] = useState("");
-  const [color, setColor] = useState("");
-
+  // const [showAlert, setShowAlert] = useState(false);
+  // const [message, setMessage] = useState("");
+  // const [color, setColor] = useState("");
+  //const [backPressedCount, setBackPressedCount] = useState(0);
+  const [backPressedTimer, setBackPressedTimer] = useState<ReturnType<
+    typeof setTimeout
+  > | null>(null);
+  const {
+    backPressedCount,
+    setBackPressedCount,
+    showAlert,
+    setShowAlert,
+    message,
+    setMessage,
+    color,
+    setColor,
+  } = useBackHandler(true);
   useEffect(() => {
-    const backAction = () => {
-      Alert.alert("Thông báo !", "Bạn muốn thoát khỏi ứng dụng?", [
-        {
-          text: "Cancel",
-          onPress: () => null,
-          style: "cancel",
-        },
-        { text: "YES", onPress: () => BackHandler.exitApp() },
-      ]);
-      return true;
-    };
-
-    const backHandler = BackHandler.addEventListener(
-      "hardwareBackPress",
-      backAction
-    );
     const loadCredentials = async () => {
       try {
         const savedUsername = await AsyncStorage.getItem("username");
         const savedPassword = await AsyncStorage.getItem("passwd");
+        //const user_info = await AsyncStorage.getItem("user_info");
         if (savedUsername && savedPassword) {
           setUsername(savedUsername);
           setPassword(savedPassword);
           setRememberMe(true);
         }
+        //console.log(user_info);
       } catch (error) {
         console.error("Không tải được thông tin đăng nhập", error);
       }
     };
     loadCredentials();
-    return () => backHandler.remove();
+    //return () => backHandler.remove();
   }, []);
 
   const handleLogin = async () => {
@@ -104,8 +104,21 @@ const LoginScreen = () => {
         setMessage("Đăng nhập thành công");
         setColor("green");
         setShowAlert(true);
+        // phần này Long thêm
+        try {
+          await AsyncStorage.setItem(
+            "userProfile",
+            JSON.stringify(response.data)
+          );
+          await AsyncStorage.setItem(
+            "user_info",
+            JSON.stringify(response.data.user_info)
+          );
+          console.log(response.data.user_info);
+        } catch (error) {
+          console.error("Error saving user profile:", error);
+        }
 
-        // Chuyển hướng đến màn hình khác sau khi đăng nhập thành công
         router.push("/Home");
 
       } else if (response.data.status === 400) {
@@ -152,7 +165,7 @@ const LoginScreen = () => {
       </View>
       <TouchableOpacity
         style={styles.forgotPassword}
-        onPress={() => router.push("ForgotPasswordScreen")}
+        onPress={() => router.push("/ForgotPasswordScreen")}
       >
         <Text style={styles.forgotPasswordText}>Quên mật khẩu?</Text>
       </TouchableOpacity>
