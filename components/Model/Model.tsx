@@ -1,4 +1,5 @@
-import { DocumentPickerAsset } from "expo-document-picker";
+import { DocumentPickerAsset, DocumentPickerResult } from "expo-document-picker";
+import DocumentPicker, { DocumentPickerResponse } from 'react-native-document-picker';
 
 // file model này chứa các định nghĩa về các object trong dự án
 export type JobsResponse = {
@@ -7,55 +8,107 @@ export type JobsResponse = {
   createdBy: string;
 };
 
+export type JobsResponseSingle = {
+  data: Job;
+  message: string;
+  createdBy: string;
+};
+
 export type Job = {
-    _id: string;
-    company_id: string;
-    title: string;
-    desc: string;
-    requirements: string;
-    salary: string;
-    benefits: string;
-    location: string;
-    created_at: string;
-    updated_at: string;
-    company_logo: string;
-    __v: number;
+  _id: string;
+  company_id: string;
+  title: string;
+  desc: string;
+  requirements: string;
+  salary: string;
+  benefits: string;
+  location: string;
+  created_at: string;
+  updated_at: string;
+  company_logo: string;
+  major: string;
+  form: string;
+  number_of_recruitments: string;
+  deadline: string;
+  __v: number;
+};
+
+export type CompanyRespone = {
+  data: Company;
+  message: string;
+  createdBy: string;
+};
+
+export type Company = {
+  _id: string;
+  user_id: string;
+  company_name: string;
+  company_address: string;
+  company_logo: string;
+  company_scale: string;
+  company_website: string;
+  company_certification: string;
+  taxcode: string;
+  active: boolean;
+  updated_at: string;
+  created_at: string;
+  __v: number;
+}
+
+// model của user
+export interface User {
+  Role: string;
+  Username: string;
+  id_user: string;
+}
+
+// model sử dụng cho ứng tuyển
+export interface ApplyJobData {
+  cv: {
+    uri: string;
+    name: string;
+    type: string;
   };
+}
 
-  export type CompanyRespone = {
-    data: Company;
-    message: string;
-    createdBy: string;
-  };
+// việc đã ứng tuyển
+export interface AppliedJobsResponse {
+  data: AppliedJob[];
+  message: string;
+  createdBy: string;
+}
+export interface AppliedJob {
+  _id: string;
+  job_id: string;
+  worker_id: string;
+  cv: string;
+  status: string;
+  applied_at: Date;
+  __v: number;
+  job: Job
+}
 
-  export type Company =  {
-    _id: string;
-    user_id: string;
-    company_name: string;
-    company_address: string;
-    company_logo: string;
-    company_scale: string;
-    company_website: string;
-    company_certification: string;
-    taxcode: string;
-    active: boolean;
-    updated_at: string;
-    created_at: string;
-    __v: number;
-  }
+// check applied
+export interface CheckApplyJobResponse {
+  isApplied: boolean;
+  message: string;
+}
 
-  // model của user
-  export type User={
-    Role: string;
-    Username: string;
-    id_user: string;
-  }
-
-  // model sử dụng cho ứng tuyển
-  export interface ApplyJobData {
-    cv: DocumentPickerAsset | null;
-    status: string;
-  }
+// worker
+export type Worker = {
+  _id: string;
+  user_id: string;
+  worker_name: string;
+  worker_avatar: string;
+  phone: string;
+  email: string;
+  __v: number;
+}
+export type WokerRespone = {
+  worker_info: Worker;
+  message: string;
+  createdBy: string;
+}
 
 
-  
+

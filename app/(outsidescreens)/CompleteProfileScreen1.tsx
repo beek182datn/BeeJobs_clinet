@@ -31,6 +31,7 @@ const CompleteProfileScreen1: React.FC = () => {
   });
 
   const handleContinue = () => {
+    // sau khi hoàn thành thì cho vào màn Home
     const newErrors = {
       worker_name: worker_name ? "" : "Tên không được để trống",
       education: education ? "" : "Trường học không được để trống",

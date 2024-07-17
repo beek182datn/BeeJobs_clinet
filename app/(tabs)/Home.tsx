@@ -35,11 +35,12 @@ const Home = () => {
   const [filteredJobs, setFilteredJobs] = useState<Job[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [showOptions, setShowOptions] = useState(false);
+  const [ref, setRef] = useState(false);
   const [filterOptions, setFilterOptions] = useState([
     { label: "Tiêu đề", value: "title" },
     { label: "Mức lương", value: "salary" },
     { label: "Địa điểm", value: "location" },
-    { label: "Hình thức", value: "type" },
+    { label: "Ngành nghê", value: "type" },
   ]);
   const [selectedFilterOption, setSelectedFilterOption] = useState("title");
   const [inputSearch, setInputSearch] = useState("Tiêu đề");
@@ -55,7 +56,11 @@ const Home = () => {
       setIsLoading(false);
     };
     loadJobs();
-  }, []);
+  }, [ref]);
+
+  const refresh = ()=>{
+    setRef(!ref)
+  }
 
   const handleSearch = async (text: string) => {
     setSearchText(text);
@@ -91,7 +96,7 @@ const Home = () => {
     } else if (value === "location") {
       setInputSearch("Địa điểm");
     } else if (value === "type") {
-      setInputSearch("Hình thức");
+      setInputSearch("Ngành nghề");
     } else {
       setFilteredJobs(jobs);
     }
@@ -115,10 +120,11 @@ const Home = () => {
   return (
     <View style={styles.container}>
       <View style={styles.searchBar}>
-        <Image
+        <TouchableOpacity onPress={refresh}><Image
           source={require("../../assets/images/bee_jobs_light_blue.png")}
           style={styles.logo}
-        />
+        /></TouchableOpacity>
+        
         <TextInput
           style={styles.searchInput}
           placeholder={inputSearch}
@@ -228,6 +234,7 @@ const styles = StyleSheet.create({
     height: 50,
     zIndex: -1,
   },
+
 });
 
 export default Home;

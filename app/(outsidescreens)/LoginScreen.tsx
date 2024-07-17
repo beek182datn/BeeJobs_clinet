@@ -5,14 +5,14 @@ import {
   TextInput,
   TouchableOpacity,
   StyleSheet,
+  Alert,
 } from "react-native";
 import Icon from "react-native-vector-icons/FontAwesome";
-import axios, { AxiosResponse } from "axios";
+import axios from "axios";
 import { useRouter } from "expo-router";
-import { BackHandler, Alert } from "react-native";
-import AlertComponent from "@/components/AlertComponent";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useBackHandler } from "../../components/BackHandler";
+import AlertComponent from "@/components/AlertComponent";
 
 const LoginScreen = () => {
   const [username, setUsername] = useState("");
@@ -21,13 +21,7 @@ const LoginScreen = () => {
   const [rememberMe, setRememberMe] = useState(false);
   const router = useRouter();
   const [loggedInUser, setLoggedInUser] = useState(null);
-  // const [showAlert, setShowAlert] = useState(false);
-  // const [message, setMessage] = useState("");
-  // const [color, setColor] = useState("");
-  //const [backPressedCount, setBackPressedCount] = useState(0);
-  const [backPressedTimer, setBackPressedTimer] = useState<ReturnType<
-    typeof setTimeout
-  > | null>(null);
+  const [backPressedTimer, setBackPressedTimer] = useState(null);
   const {
     backPressedCount,
     setBackPressedCount,
@@ -38,24 +32,22 @@ const LoginScreen = () => {
     color,
     setColor,
   } = useBackHandler(true);
+
   useEffect(() => {
     const loadCredentials = async () => {
       try {
         const savedUsername = await AsyncStorage.getItem("username");
         const savedPassword = await AsyncStorage.getItem("passwd");
-        //const user_info = await AsyncStorage.getItem("user_info");
         if (savedUsername && savedPassword) {
           setUsername(savedUsername);
           setPassword(savedPassword);
           setRememberMe(true);
         }
-        //console.log(user_info);
       } catch (error) {
         console.error("Không tải được thông tin đăng nhập", error);
       }
     };
     loadCredentials();
-    //return () => backHandler.remove();
   }, []);
 
   const handleLogin = async () => {
@@ -91,12 +83,9 @@ const LoginScreen = () => {
         }
       );
 
-      // Kiểm tra phản hồi từ API
       if (response.data.status === 200) {
-        console.log("Đăng nhập thành công:", response.data);
         setLoggedInUser(response.data.user_info.email);
 
-        // Reset form fields
         setUsername("");
         setPassword("");
         setShowPassword(false);
@@ -104,7 +93,7 @@ const LoginScreen = () => {
         setMessage("Đăng nhập thành công");
         setColor("green");
         setShowAlert(true);
-        // phần này Long thêm
+
         try {
           await AsyncStorage.setItem(
             "userProfile",
@@ -114,12 +103,9 @@ const LoginScreen = () => {
             "user_info",
             JSON.stringify(response.data.user_info)
           );
-          console.log(response.data.user_info);
         } catch (error) {
           console.error("Error saving user profile:", error);
         }
-
-        router.push("/CompleteProfileScreen");
       } else if (response.data.status === 400) {
         setMessage("Thông tin đăng nhập không chính xác");
         setColor("red");
@@ -130,6 +116,10 @@ const LoginScreen = () => {
     } catch (error) {
       console.error("Lỗi đăng nhập:", error);
     }
+  };
+
+  const handleFeatureInDevelopment = () => {
+    Alert.alert("Thông báo", "Tính năng đang phát triển");
   };
 
   return (
@@ -175,7 +165,11 @@ const LoginScreen = () => {
             rememberMe ? styles.rememberMeCheckboxChecked : null,
           ]}
           onPress={() => setRememberMe(!rememberMe)}
-        />
+        >
+          {rememberMe && (
+            <Icon name="check" size={15} color="#fff" />
+          )}
+        </TouchableOpacity>
         <Text style={styles.rememberMeText}>Lưu mật khẩu</Text>
       </View>
       <TouchableOpacity style={styles.button} onPress={handleLogin}>
@@ -183,13 +177,13 @@ const LoginScreen = () => {
       </TouchableOpacity>
       <Text style={styles.continueWithText}>----- continue with -----</Text>
       <View style={styles.socialIconsContainer}>
-        <TouchableOpacity>
+        <TouchableOpacity onPress={handleFeatureInDevelopment}>
           <Icon name="facebook-square" size={35} color="#3b5998" />
         </TouchableOpacity>
-        <TouchableOpacity>
+        <TouchableOpacity onPress={handleFeatureInDevelopment}>
           <Icon name="google-plus-square" size={35} color="#db4a39" />
         </TouchableOpacity>
-        <TouchableOpacity>
+        <TouchableOpacity onPress={handleFeatureInDevelopment}>
           <Icon name="twitter-square" size={35} color="#00acee" />
         </TouchableOpacity>
       </View>
@@ -272,6 +266,8 @@ const styles = StyleSheet.create({
     borderColor: "#ccc",
     borderRadius: 5,
     marginRight: 10,
+    justifyContent: "center",
+    alignItems: "center",
   },
   rememberMeCheckboxChecked: {
     backgroundColor: "#007aff",

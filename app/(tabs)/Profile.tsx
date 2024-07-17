@@ -3,34 +3,27 @@ import { View, Text, StyleSheet, Image, TouchableOpacity } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useBackHandler } from "../../components/BackHandler";
 import AlertComponent from "@/components/AlertComponent";
-import { getUserData } from '@/components/fetch_data/api';
+import { getUserInfo, findWorkerById } from '@/components/fetch_data/api';
 import { useRouter } from 'expo-router';
-import axios, { AxiosResponse } from "axios";
-import { Job, Company, CompanyRespone, JobsResponse, User, ApplyJobData } from "../../components/Model/Model";
+import { User, Worker } from "../../components/Model/Model";
+
 const Profile = () => {
-  const [userData, setUserData] = useState(null);
   const { backPressedCount, setBackPressedCount, showAlert, setShowAlert, message, setMessage, color, setColor } = useBackHandler(true);
   const router = useRouter();
+  const [user, setUser] = useState<User | null>();
+  const [worker, setWorker] = useState<Worker | null>();
 
   useEffect(() => {
     const fetchUserInfo = async () => {
       try {
-        // Lấy user_info từ AsyncStorage
-        const userInfoString = await AsyncStorage.getItem('user_info');
-        if (userInfoString !== null) {
-          const userData = JSON.parse(userInfoString);
-          setUserData(userData);
+        const user: User | null = await getUserInfo();
+        setUser(user);
+        if (user) {
+          console.log('userId: ', user.id_user)
+          const worker = await findWorkerById(user.id_user);
 
-          // Lấy id_user từ userInfo
-          const id_user = userData.id_user;
-          console.log(id_user)
-
-          // Gửi yêu cầu lấy thông tin chi tiết của user
-          const response: AxiosResponse<User> = await axios.post(`http://beejobs.io.vn:14307/api/users/${id_user}`);
-          const detailedUserInfo = response.data;
-
-          // Cập nhật state với thông tin chi tiết của user
-          //setUserData(detailedUserInfo);
+          setWorker(worker);
+          console.log(JSON.stringify(worker?.worker_name))
         }
       } catch (error) {
         console.error('Error fetching user info:', error);
@@ -43,40 +36,45 @@ const Profile = () => {
   const handleLogout = async () => {
     try {
       await AsyncStorage.removeItem('userProfile');
-      setUserData(null);
+      setUser(null);
       router.push('LoginScreen')
     } catch (error) {
       console.error('Error logging out:', error);
     }
   };
 
+  const handleUpdateInfo = () => {
+    router.push('/CompleteProfileScreen1');
+  }
+
   return (
     <View style={styles.container}>
-      {userData !== null ? (
-        
+      {worker &&
         <>
-          {/* <View style={styles.profileHeader}>
-            <Image source={{ uri: userData.avatarUrl }} style={styles.avatar} />
-            <Text style={styles.name}>{userData.name}</Text>
+          <View style={styles.profileHeader}>
+            <Image source={{ uri: worker?.worker_avatar }} style={styles.avatar} />
+            <Text style={styles.name}>{worker?.worker_name}</Text>
           </View>
           <View style={styles.profileInfo}>
+            <Text style={styles.infoLabel}>Phone:</Text>
+            <Text style={styles.infoValue}>{worker?.phone}</Text>
             <Text style={styles.infoLabel}>Email:</Text>
-            <Text style={styles.infoValue}>{userData.email}</Text>
-            <Text style={styles.infoLabel}>Số điện thoại:</Text>
-            <Text style={styles.infoValue}>{userData.phoneNumber}</Text>
-          </View> */}
-          {/* <Text>{userData.msg}</Text> */}
+            <Text style={styles.infoValue}>{worker?.email}</Text>
+          </View>
+        </>
+      }
+
+      {user !== null &&
+        <>
+          <TouchableOpacity style={styles.updateButton} onPress={handleUpdateInfo}>
+            <Text style={styles.updateText}>Hoàn thiện hồ sơ</Text>
+          </TouchableOpacity>
           <TouchableOpacity style={styles.logoutButton} onPress={handleLogout}>
             <Text style={styles.logoutText}>Đăng xuất</Text>
           </TouchableOpacity>
         </>
-      ) : (
-        <View style={styles.loadingContainer}>
-          <TouchableOpacity style={styles.logoutButton1} onPress={handleLogout}>
-            <Text style={styles.logoutText}>Đăng nhập</Text>
-          </TouchableOpacity>
-        </View>
-      )}
+      }
+
       <AlertComponent
         color={color}
         message={message}
@@ -132,15 +130,21 @@ const styles = StyleSheet.create({
     color: '#666',
     marginBottom: 8,
   },
-  logoutButton: {
-    backgroundColor: '#e74c3c',
+  updateButton: {
+    backgroundColor: '#007AFF',
     paddingVertical: 12,
     paddingHorizontal: 20,
     borderRadius: 8,
     alignItems: 'center',
+    marginBottom: 10,
   },
-  logoutButton1: {
-    backgroundColor: 'blue',
+  updateText: {
+    color: 'white',
+    fontSize: 16,
+    fontWeight: 'bold',
+  },
+  logoutButton: {
+    backgroundColor: '#e74c3c',
     paddingVertical: 12,
     paddingHorizontal: 20,
     borderRadius: 8,
@@ -150,15 +154,6 @@ const styles = StyleSheet.create({
     color: 'white',
     fontSize: 16,
     fontWeight: 'bold',
-  },
-  loadingContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  loadingText: {
-    fontSize: 16,
-    color: '#666',
   },
 });
 

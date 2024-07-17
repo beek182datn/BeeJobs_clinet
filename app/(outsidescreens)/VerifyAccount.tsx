@@ -7,7 +7,7 @@ import {
   StyleSheet,
 } from "react-native";
 import axios from "axios";
-import { useRouter } from 'expo-router';
+import { useLocalSearchParams, useRouter } from 'expo-router';
 import AlertComponent from "@/components/AlertComponent";
 
 const VerifyAccount: React.FC = () => {
@@ -16,6 +16,8 @@ const VerifyAccount: React.FC = () => {
   const [showMissingInfoAlert, setShowMissingInfoAlert] = useState(false);
   const [message, setMessage] = useState("");
   const [color, setColor] = useState("");
+  const email = useLocalSearchParams();
+
   const handleVerifyOtp = async () => {
     const otpCode = otp.join("");
     if (otpCode.length !== 6) {
@@ -24,7 +26,7 @@ const VerifyAccount: React.FC = () => {
     }
 
     try {
-      // const response = await axios.post('http://beejobs.io.vn:14307/api/verify-otp', {
+      // const response = await axios.post('http://beejobs.io.vn:14307/api/usersverifyotp', {
       //   otp: otpCode,
       // });
       //console.log('Xác minh OTP thành công:', response.data);

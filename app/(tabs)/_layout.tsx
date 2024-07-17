@@ -28,9 +28,9 @@ export default () => {
         }}
       />
       <Tabs.Screen
-        name="CV_Profile"
+        name="AppliedJobs"
         options={{
-          title: "CV & AppliedJob",
+          title: "Việc đã UT",
           tabBarIcon: ({ color, focused }) => (
             <TabBarIcon
               name={focused ? "file-tray-full" : "file-tray-full-outline"}
