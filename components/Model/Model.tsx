@@ -26,6 +26,7 @@ export type Job = {
   created_at: string;
   updated_at: string;
   company_logo: string;
+  company_name: string;
   major: string;
   form: string;
   number_of_recruitments: string;
@@ -83,6 +84,8 @@ export interface AppliedJob {
   worker_id: string;
   cv: string;
   status: string;
+  name: string;
+  phone: string;
   applied_at: Date;
   __v: number;
   job: Job
@@ -104,11 +107,13 @@ export type Worker = {
   email: string;
   __v: number;
 }
+
 export type WokerRespone = {
   worker_info: Worker;
   message: string;
   createdBy: string;
 }
+
 
 
 

@@ -142,6 +142,8 @@ export const createApplyJob = async (worker_id: string, job_id: string, data: Ap
       name: data.cv.name,
       type: data.cv.type,
     } as any);
+    // formData.append('phone', phone);
+    // formData.append('name', workerName)
 
     const response = await axios.post(
       `http://beejobs.io.vn:14307/api/applyJobs/create/${worker_id}/${job_id}`,
@@ -166,9 +168,42 @@ export const createApplyJob = async (worker_id: string, job_id: string, data: Ap
 
 // danh sách việc làm đã ứng tuyển
 // tìm công việc theo hình thức
+// export const getAppliedJobsByWorker = async (worker_id: string): Promise<AppliedJob[]> => {
+//   try {
+//     const response: AxiosResponse<AppliedJobsResponse> = await axios.get(
+//       `http://beejobs.io.vn:14307/api/applyJobs/getApylyJobsByIdWorker/${worker_id}`
+//     );
+
+//     // Lấy danh sách các công việc đã ứng tuyển
+//     const appliedJobs = response.data.data;
+
+//     // Lấy thông tin job cho từng đơn ứng tuyển
+//     const updatedAppliedJobs = await Promise.all(
+//       appliedJobs.map(async (job) => {
+//         const JobResponse: AxiosResponse<JobsResponseSingle> = await axios.get(
+//           `http://beejobs.io.vn:14307/api/jobs/getJobById/${job.job_id}`
+//         );
+//         return {
+//           ...job,
+//           job: JobResponse.data.data,
+//         };
+//       })
+//     );
+
+//     return updatedAppliedJobs;
+//   } catch (error) {
+//     if (axios.isAxiosError(error) && error.response) {
+//       console.log('Error fetching applied jobs:', error.response.data);
+//       throw new Error(`Error fetching applied jobs: ${error.response.data.message}`);
+//     } else {
+//       console.log('Error fetching applied jobs:', error);
+//       throw new Error('An unexpected error occurred while fetching applied jobs.');
+//     }
+//   }
+// };
+
 export const getAppliedJobsByWorker = async (worker_id: string): Promise<AppliedJob[]> => {
   try {
-    const validWorkerId = typeof worker_id === 'string' ? new Object(worker_id) : worker_id;
     const response: AxiosResponse<AppliedJobsResponse> = await axios.get(
       `http://beejobs.io.vn:14307/api/applyJobs/getApylyJobsByIdWorker/${worker_id}`
     );
@@ -176,15 +211,28 @@ export const getAppliedJobsByWorker = async (worker_id: string): Promise<Applied
     // Lấy danh sách các công việc đã ứng tuyển
     const appliedJobs = response.data.data;
 
-    // Lấy thông tin job cho từng đơn ứng tuyển
+    // Lấy thông tin job và công ty cho từng đơn ứng tuyển
     const updatedAppliedJobs = await Promise.all(
       appliedJobs.map(async (job) => {
-        const JobResponse: AxiosResponse<JobsResponseSingle> = await axios.get(
+        const jobResponse: AxiosResponse<JobsResponseSingle> = await axios.get(
           `http://beejobs.io.vn:14307/api/jobs/getJobById/${job.job_id}`
         );
+        const jobData = jobResponse.data.data;
+
+        const companyResponse: AxiosResponse<CompanyRespone> = await axios.get(
+          `http://beejobs.io.vn:14307/api/companies/getCompanyById/${jobData.company_id}`
+        );
+        // const response: AxiosResponse<CompanyRespone> = await axios.get(
+        //   `http://beejobs.io.vn:14307/api/companies/getCompanyById/${keyword}`
+        // );
+        // const company = response.data.data;
+
         return {
           ...job,
-          job: JobResponse.data.data,
+          job: {
+            ...jobData,
+            company_name: companyResponse.data.data.company_name,
+          },
         };
       })
     );
@@ -200,6 +248,7 @@ export const getAppliedJobsByWorker = async (worker_id: string): Promise<Applied
     }
   }
 };
+
 
 export const checkApplyJob = async (worker_id: string, job_id: string): Promise<CheckApplyJobResponse> => {
   try {

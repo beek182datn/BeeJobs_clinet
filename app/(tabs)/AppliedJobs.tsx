@@ -1,14 +1,16 @@
-import { SafeAreaView, StyleSheet, FlatList, Text, View, Pressable, Image } from 'react-native';
+import { SafeAreaView, StyleSheet, FlatList, Text, View, Pressable, Image, TouchableOpacity } from 'react-native';
 import React, { useState, useEffect } from 'react';
 import { getAppliedJobsByWorker, getUserInfo } from '../../components/fetch_data/api';
 import { AppliedJob, User } from '../../components/Model/Model';
 import { router } from 'expo-router';
 import { FontAwesome } from '@expo/vector-icons'; // Thêm thư viện icon
+import { Ionicons } from '@expo/vector-icons';
 
 const AppliedJobs = () => {
   const [appliedJobs, setAppliedJobs] = useState<AppliedJob[]>([]);
   const [user, setUser] = useState<User | null>(null);
   const [ref, setRef] = useState(false);
+  const linkVps = 'http://beejobs.io.vn:14307';
 
   useEffect(() => {
     const fetchAppliedJobs = async () => {
@@ -27,16 +29,27 @@ const AppliedJobs = () => {
     fetchAppliedJobs();
   }, [ref]);
 
-  const refresh = ()=>{
+  const refresh = () => {
     setRef(!ref)
   }
 
+  const formatDate = (dateString: string): string => {
+    const date = new Date(dateString);
+    const day = String(date.getDate()).padStart(2, '0');
+    const month = String(date.getMonth() + 1).padStart(2, '0'); // Months are zero-indexed
+    const year = date.getFullYear();
+
+    return `${day}/${month}/${year}`;
+  };
+
   return (
     <SafeAreaView style={styles.container}>
-      <Text style={{alignSelf:'center', fontSize:22, color:'black', fontWeight:'bold'}}>Việc đã ứng tuyển</Text>
-      <Pressable style={styles.refreshButton} onPress={refresh}>
-        <FontAwesome name="refresh" size={24} color="#FFFFFF" />
-      </Pressable>
+      <View style={{ flexDirection: 'row', justifyContent: 'center' }}>
+        <Text style={{ fontSize: 18, color: 'black', fontWeight: 'bold' }}>Việc đã ứng tuyển</Text>
+        <Pressable style={[styles.refreshButton, { position: 'absolute', right: 0 }]} onPress={refresh}>
+          <FontAwesome name="refresh" size={18} color="#FFFFFF" />
+        </Pressable>
+      </View>
       {appliedJobs.length == 0 &&
         <View style={styles.container}>
           <View style={styles.content}>
@@ -50,7 +63,7 @@ const AppliedJobs = () => {
             </Text>
           </View>
         </View>}
-      {appliedJobs.length !== 0  &&
+      {appliedJobs.length !== 0 &&
         <FlatList
           data={appliedJobs}
           keyExtractor={(item) => item._id}
@@ -69,14 +82,42 @@ const AppliedJobs = () => {
                   });
                 }}
               >
-                <View style={styles.jobDetails}>
-                  <FontAwesome name="briefcase" size={24} color="#4A90E2" style={styles.icon} />
-                  <View style={styles.textContainer}>
-                    <Text style={styles.jobTitle}>{item.job.title}</Text>
-                    <Text style={styles.jobStatus}>CV: {fileName}</Text>
-                    <Text style={styles.jobDate}>Ứng tuyển vào: {new Date(item.applied_at).toLocaleDateString()}</Text>
+                <View>
+
+                  <View style={styles.topView}>
+                    <Image source={item.job.company_logo != '' ? { uri: linkVps + item.job.company_logo } : require('../../assets/images/profile.png')} style={styles.companyLogo} />
+                    <View>
+                      <Text style={styles.jobTitle}>{item.job.title}</Text>
+                      <Text style={styles.companyName}>{item.job.company_name}</Text>
+                    </View>
                   </View>
-                  <Text style={styles.cvText}>{item.status}</Text>
+
+                  <View style={[styles.topView, { justifyContent: 'space-between' }]}>
+                    <View>
+                      <View style={{ flexDirection: 'row' }}>
+                        <Ionicons name='location' size={14} color={'blue'} style={{ marginRight: 3 }} />
+                        <Text style={[styles.text, { width: '70%', flexWrap: 'wrap' }]}>{item.job.location}</Text>
+                      </View>
+                      <View style={{ flexDirection: 'row' }}>
+                        <Ionicons name='cash' size={14} color={'blue'} style={{ marginRight: 3 }} />
+                        <Text style={styles.text}>{item.job.salary}</Text>
+                      </View>
+                    </View>
+                    <View style={{ flexDirection: 'row' }}>
+                      <Ionicons name='time' size={14} color={'blue'} style={{ marginRight: 3 }} />
+                      <Text style={styles.text}>{formatDate(item.job.created_at)}</Text>
+                    </View>
+                  </View>
+
+                  <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
+                    <TouchableOpacity style={styles.buttonLeft}>
+                      <Text style={styles.buttonText}>Gửi Tin Nhắn</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity style={styles.buttonRight}>
+                      <Text style={styles.buttonText}>Xem Lại CV</Text>
+                    </TouchableOpacity>
+                  </View>
+
                 </View>
 
               </Pressable>
@@ -94,9 +135,10 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#f8f9fa',
     padding: 20,
+    position: 'relative'
   },
   jobItem: {
-    padding: 16,
+    padding: 10,
     borderWidth: 1,
     borderColor: '#e0e0e0',
     borderRadius: 8,
@@ -107,10 +149,6 @@ const styles = StyleSheet.create({
     shadowRadius: 1.41,
     elevation: 2,
   },
-  jobDetails: {
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
   icon: {
     marginRight: 12,
   },
@@ -118,9 +156,9 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   jobTitle: {
-    fontSize: 18,
+    fontSize: 16,
     fontWeight: 'bold',
-    color: '#333',
+    color: 'black',
   },
   jobStatus: {
     fontSize: 14,
@@ -157,7 +195,7 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     color: '#000',
     marginBottom: 10,
-    textAlign:'center'
+    textAlign: 'center'
   },
   description: {
     fontSize: 14,
@@ -167,10 +205,49 @@ const styles = StyleSheet.create({
   refreshButton: {
     backgroundColor: '#007AFF',
     borderRadius: 8,
-    padding: 10,
+    padding: 6,
     alignItems: 'center',
     justifyContent: 'center',
-    alignSelf: 'flex-end',
-    marginTop: 10,
+    zIndex: 100
+  },
+  companyLogo: {
+    width: 50,
+    height: 50,
+    marginRight: 10
+  },
+  companyName: {
+    color: 'gray',
+    fontSize: 14
+  },
+  topView: {
+    flexDirection: 'row', // Align children in a row
+    padding: 10,
+  },
+  text: {
+    color: 'gray',
+    fontSize: 12,
+    width: 'auto',
+    flexWrap: 'wrap'
+  },
+  buttonLeft: {
+    flex: 1,
+    backgroundColor: '#2196F3',
+    padding: 10,
+    alignItems: 'center',
+    marginRight: 5,
+    borderRadius: 5,
+  },
+  buttonRight: {
+    flex: 1,
+    backgroundColor: '#4CAF50',
+    padding: 10,
+    alignItems: 'center',
+    marginLeft: 5,
+    borderRadius: 5,
+  },
+  buttonText: {
+    color: 'white',
+    fontSize: 13,
+    fontWeight: 'bold',
   },
 });

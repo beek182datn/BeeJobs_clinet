@@ -20,11 +20,8 @@ const Profile = () => {
         const user: User | null = await getUserInfo();
         setUser(user);
         if (user) {
-          console.log('userId: ', user.id_user)
           const worker = await findWorkerById(user.id_user);
-          
           setWorker(worker);
-          console.log(JSON.stringify(worker?.worker_name))
         }
       } catch (error) {
         console.error('Error fetching user info:', error);
