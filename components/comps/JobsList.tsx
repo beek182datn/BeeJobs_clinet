@@ -25,7 +25,7 @@ const JobsList: React.FC<JobItemProps> = ({ job }) => {
           <View style={styles.detailsContainer}>
             <Text style={styles.jobLocation}>{job.location}</Text>
           </View>
-          <Text style={styles.jobSalary}>Ngân sách: {job.salary}</Text>
+          <Text style={styles.jobSalary}>Lương: {job.salary}</Text>
         </View>
       </View>
     </Pressable>

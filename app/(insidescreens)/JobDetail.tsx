@@ -48,7 +48,7 @@ const JobDetail = () => {
       if(user){
         const response = await checkApplyJob(user.id_user, String(job._id));
         setIsApplied(response.isApplied);
-        console.log(JSON.stringify(response.isApplied))
+        // console.log('test:',JSON.stringify(response.isApplied))
       }
       setUser(user);
       setCompanyInfo(company)

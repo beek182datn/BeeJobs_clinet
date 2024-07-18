@@ -206,7 +206,7 @@ export const checkApplyJob = async (worker_id: string, job_id: string): Promise<
     const response: AxiosResponse<CheckApplyJobResponse> = await axios.get(
       `http://beejobs.io.vn:14307/api/applyJobs/checkApplyJobs/${worker_id}/${job_id}`
     );
-    console.log(JSON.stringify(response.data.message))
+    // console.log(JSON.stringify(response.data.message))
     return response.data;
   } catch (error) {
     if (axios.isAxiosError(error) && error.response) {
@@ -224,7 +224,7 @@ export const findWorkerById = async (keyword: string): Promise<Worker | null> =>
     const response: AxiosResponse<WokerRespone> = await axios.get(
       `http://beejobs.io.vn:14307/api/workers/getInforWorker/${keyword}`
     );
-    console.log(response.status)
+    // console.log(response.status)
     const worker = response.data.worker_info;
     return worker;
   } catch (error) {
