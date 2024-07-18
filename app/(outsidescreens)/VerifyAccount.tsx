@@ -1,83 +1,117 @@
-import React, { useState } from "react";
-import {
-  View,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  StyleSheet,
-} from "react-native";
-import axios from "axios";
-import { useLocalSearchParams, useRouter } from 'expo-router';
-import AlertComponent from "@/components/AlertComponent";
+import React, { useState, useRef, useEffect  } from 'react';
+import { View, Text, TextInput, StyleSheet, TouchableOpacity, Alert, Image } from 'react-native';
+import axios, { AxiosResponse } from "axios";
+import { useRouter, useLocalSearchParams } from 'expo-router';
 
-const VerifyAccount: React.FC = () => {
-  const [otp, setOtp] = useState<string[]>(["", "", "", "", "", ""]);
+const VerifyAccount = () => {
+  const [otp, setOtp] = useState(['', '', '', '', '', '']);
+  const inputRefs = useRef<(TextInput | null)[]>([]);
+
   const router = useRouter();
-  const [showMissingInfoAlert, setShowMissingInfoAlert] = useState(false);
-  const [message, setMessage] = useState("");
-  const [color, setColor] = useState("");
-  const email = useLocalSearchParams();
+  const params = useLocalSearchParams();
 
-  const handleVerifyOtp = async () => {
-    const otpCode = otp.join("");
-    if (otpCode.length !== 6) {
-      alert("Vui lòng nhập đúng mã OTP gồm 6 ký tự.");
+  const [countdown, setCountdown] = useState(300);
+  const [intervalId, setIntervalId] = useState<NodeJS.Timeout | null>(null); 
+  const email = params.email;
+  const type = "signUp"
+
+  useEffect(() => {
+    const id = setInterval(() => {
+      setCountdown(prevCountdown => prevCountdown - 1);
+    }, 1000);
+    setIntervalId(id); 
+
+    return () => clearInterval(id); 
+  }, []);
+
+  
+  useEffect(() => {
+    if (countdown === 0) {
+      if (intervalId) {
+        clearInterval(intervalId);
+      }
+      Alert.alert('Hết thời gian', 'Vui lòng đăng ký lại để nhận OTP mới.');
+      router.push("RegisterScreen"); // Redirect to registration screen
+    }
+  }, [countdown, intervalId, router]);
+
+  const handleChange = (value: string, index: number) => {
+    if (value.length > 1) {
       return;
     }
 
-    try {
-      // const response = await axios.post('http://beejobs.io.vn:14307/api/usersverifyotp', {
-      //   otp: otpCode,
-      // });
-      //console.log('Xác minh OTP thành công:', response.data);
-      alert("Xác minh OTP thành công.");
-      //setOtp(["", "", "", "", "", ""]);
-      router.push('LoginScreen');
-      setMessage("Đăng ký thành công");
-      setColor("green");
-      setShowMissingInfoAlert(true);
-       // Điều hướng đến màn hình đặt lại mật khẩu
-    } catch (error) {
-      console.error('Lỗi xác minh OTP:', error);
-      alert("Đã xảy ra lỗi trong quá trình xác minh OTP. Vui lòng thử lại sau.");
+    const newOtp = [...otp];
+    newOtp[index] = value;
+    setOtp(newOtp);
+
+    if (value !== '' && index < 5) {
+      inputRefs.current[index + 1]?.focus();
     }
   };
 
-  const handleChangeOtp = (text: string, index: number) => {
-    const newOtp = [...otp];
-    newOtp[index] = text;
-    setOtp(newOtp);
+  const handleBackspace = (value: string, index: number) => {
+    if (value === '' && index > 0) {
+      inputRefs.current[index - 1]?.focus();
+    }
+  };
+
+  const handleSubmit = async () => {
+    const otpValue = otp.join('');
+    if (otpValue.length === 6) {
+      try {
+        const response = await axios.post('http://beejobs.io.vn:14307/api/usersverifyotp', {
+          email: email,
+          otp: otpValue,
+          type: type
+        });
+
+        if (response.data.status === 200) {
+          Alert.alert('Xác thực thành công', response.data.msg);
+          if (intervalId) {
+            clearInterval(intervalId);
+          }
+          router.push("LoginScreen")
+        } else {
+          Alert.alert('Error', response.data.msg);
+        }
+      } catch (error) {
+        Alert.alert('Error', 'An error occurred while verifying the OTP');
+      }
+    } else {
+      Alert.alert('Error', 'Please enter a valid 6-character OTP');
+    }
+  }
+
+   // Format countdown timer to mm:ss
+   const formatTime = (seconds: number) => {
+    const minutes = Math.floor(seconds / 60);
+    const remainingSeconds = seconds % 60;
+    return `${minutes}:${remainingSeconds < 10 ? '0' : ''}${remainingSeconds}`;
   };
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Xác minh OTP</Text>
-      <Text style={styles.instruction}>
-        Nhập mã OTP gồm 6 ký tự mà chúng tôi đã gửi đến email hoặc số điện thoại của bạn.
-      </Text>
+      <Text style={styles.title}>Xác nhận OTP</Text>
+      <Text style={styles.countdownText}>Hết hạn sau: {formatTime(countdown)}</Text>
       <View style={styles.otpContainer}>
         {otp.map((digit, index) => (
           <TextInput
             key={index}
             style={styles.otpInput}
-            value={digit}
-            onChangeText={(text) => handleChangeOtp(text, index)}
+            keyboardType="default"
             maxLength={1}
+            value={digit}
+            onChangeText={(value) => handleChange(value, index)}
+            onKeyPress={({ nativeEvent }) =>
+              nativeEvent.key === 'Backspace' ? handleBackspace(digit, index) : null
+            }
+            ref={(ref) => (inputRefs.current[index] = ref)}
           />
         ))}
       </View>
-      <TouchableOpacity style={styles.button} onPress={handleVerifyOtp}>
-        <Text style={styles.buttonText}>Xác minh</Text>
+      <TouchableOpacity style={styles.button} onPress={handleSubmit}>
+        <Text style={styles.buttonText}>Xác nhận OTP</Text>
       </TouchableOpacity>
-      <TouchableOpacity style={styles.backButton} onPress={() => router.push('RegisterScreen')}>
-        <Text style={styles.backButtonText}>Quay lại</Text>
-      </TouchableOpacity>
-      <AlertComponent
-        color={color}
-        message={message}
-        visible={showMissingInfoAlert}
-        onClose={() => setShowMissingInfoAlert(false)}
-      />
     </View>
   );
 };
@@ -85,61 +119,47 @@ const VerifyAccount: React.FC = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#fff",
+    backgroundColor: '#fff',
     padding: 20,
-    justifyContent: "center",
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   title: {
     fontSize: 30,
-    fontWeight: "bold",
-    alignSelf: "center",
+    fontWeight: 'bold',
     marginBottom: 30,
   },
-  instruction: {
-    fontSize: 16,
-    color: "#A9A9A9",
-    textAlign: "center",
+  countdownText: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    color:"red",
     marginBottom: 20,
   },
   otpContainer: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    marginBottom: 20,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    width: '80%',
   },
   otpInput: {
-    borderWidth: 1,
-    borderColor: "#A9A9A9",
-    borderRadius: 5,
-    width: 40,
+    width: 50,
     height: 50,
-    textAlign: "center",
+    borderWidth: 2,
+    borderColor: '#ccc',
+    textAlign: 'center',
     fontSize: 18,
-    backgroundColor: "#f9f9f9",
+    borderRadius: 10,
   },
   button: {
-    backgroundColor: "#007BFF",
+    backgroundColor: '#007BFF',
     paddingVertical: 15,
-    borderRadius: 25,
-    alignItems: "center",
-    marginBottom: 20,
+    paddingHorizontal: 40,
+    borderRadius: 15,
+    marginTop: 30,
   },
   buttonText: {
-    color: "#fff",
+    color: '#fff',
     fontSize: 18,
-    fontWeight: "bold",
-  },
-  backButton: {
-    backgroundColor: "#f9f9f9",
-    paddingVertical: 15,
-    borderRadius: 25,
-    alignItems: "center",
-    borderColor: "#007BFF",
-    borderWidth: 1,
-  },
-  backButtonText: {
-    color: "#007BFF",
-    fontSize: 18,
-    fontWeight: "bold",
+    fontWeight: 'bold',
   },
 });
 

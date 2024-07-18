@@ -45,7 +45,6 @@ const Home = () => {
   const [selectedFilterOption, setSelectedFilterOption] = useState("title");
   const [inputSearch, setInputSearch] = useState("Tiêu đề");
   const router = useRouter();
-  const { backPressedCount, setBackPressedCount, showAlert, setShowAlert, message, setMessage, color, setColor } = useBackHandler(true);
 
   useEffect(() => {
     const loadJobs = async () => {
@@ -159,12 +158,6 @@ const Home = () => {
           renderItem={({ item }) => <JobsList job={item} />}
         />
       )}
-      <AlertComponent
-        color={color}
-        message={message}
-        visible={showAlert}
-        onClose={() => setShowAlert(false)}
-      />
     </View>
   );
 };

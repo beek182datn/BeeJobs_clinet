@@ -3,11 +3,14 @@ import {
   View,
   Text,
   TextInput,
+  BackHandler,
   TouchableOpacity,
   StyleSheet,
   Alert,
+  ToastAndroid,
 } from "react-native";
 import Icon from "react-native-vector-icons/FontAwesome";
+import { Ionicons } from "@expo/vector-icons";
 import axios from "axios";
 import { useRouter } from "expo-router";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -21,10 +24,8 @@ const LoginScreen = () => {
   const [rememberMe, setRememberMe] = useState(false);
   const router = useRouter();
   const [loggedInUser, setLoggedInUser] = useState(null);
-  const [backPressedTimer, setBackPressedTimer] = useState(null);
+  const [backPressCount, setBackPressCount] = useState(0);
   const {
-    backPressedCount,
-    setBackPressedCount,
     showAlert,
     setShowAlert,
     message,
@@ -49,6 +50,30 @@ const LoginScreen = () => {
     };
     loadCredentials();
   }, []);
+
+  useEffect(() => {
+    const backAction = () => {
+      if (backPressCount === 0) {
+        setBackPressCount(1);
+        ToastAndroid.show("Chạm lần nữa để thoát", ToastAndroid.SHORT);
+        setTimeout(() => {
+          setBackPressCount(0);
+        }, 2000);
+
+        return true;
+      } else {
+        BackHandler.exitApp();
+        return true;
+      }
+    };
+
+    const backHandler = BackHandler.addEventListener(
+      "hardwareBackPress",
+      backAction
+    );
+
+    return () => backHandler.remove();
+  }, [backPressCount]);
 
   const handleLogin = async () => {
     if (username.trim() === "" || passwd.trim() === "") {
@@ -86,10 +111,10 @@ const LoginScreen = () => {
       if (response.data.status === 200) {
         setLoggedInUser(response.data.user_info.email);
 
-        setUsername("");
-        setPassword("");
-        setShowPassword(false);
-        setRememberMe(false);
+        // setUsername("");
+        // setPassword("");
+        // setShowPassword(false);
+        // setRememberMe(false);
         setMessage("Đăng nhập thành công");
         setColor("green");
         setShowAlert(true);
@@ -103,9 +128,14 @@ const LoginScreen = () => {
             "user_info",
             JSON.stringify(response.data.user_info)
           );
+          // await AsyncStorage.setItem(
+          //   "email",
+          //   JSON.stringify(response.data.email)
+          // );
         } catch (error) {
           console.error("Error saving user profile:", error);
         }
+        router.push('/Home')
       } else if (response.data.status === 400) {
         setMessage("Thông tin đăng nhập không chính xác");
         setColor("red");
@@ -178,13 +208,13 @@ const LoginScreen = () => {
       <Text style={styles.continueWithText}>----- continue with -----</Text>
       <View style={styles.socialIconsContainer}>
         <TouchableOpacity onPress={handleFeatureInDevelopment}>
-          <Icon name="facebook-square" size={35} color="#3b5998" />
+          <Ionicons name="logo-facebook" size={35} color="#3b5998" />
         </TouchableOpacity>
         <TouchableOpacity onPress={handleFeatureInDevelopment}>
-          <Icon name="google-plus-square" size={35} color="#db4a39" />
+          <Ionicons name="logo-google" size={35} color="#db4a39" />
         </TouchableOpacity>
         <TouchableOpacity onPress={handleFeatureInDevelopment}>
-          <Icon name="twitter-square" size={35} color="#00acee" />
+          <Ionicons name="logo-twitter" size={35} color="#00acee" />
         </TouchableOpacity>
       </View>
       <Text style={styles.footerText}>

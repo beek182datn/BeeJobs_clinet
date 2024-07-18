@@ -8,50 +8,49 @@ import {
   ScrollView,
 } from "react-native";
 import Icon from "react-native-vector-icons/FontAwesome";
-import { useRouter } from "expo-router";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
+import { useRouter, useLocalSearchParams } from 'expo-router';
 
 const CompleteProfileScreen1: React.FC = () => {
   const router = useRouter();
+  
   const [userData, setUserData] = useState(null);
   const [worker_name, setWorker_name] = useState("");
-  const [education, setEducation] = useState("");
-  const [email, setEmail] = useState("");
+  const [worker_avatar, setWorker_avatar] = useState("");
+  const params = useLocalSearchParams();
+  const email = params.email;
   const [age, setAge] = useState("");
-  const [gender, setGender] = useState("");
+  const [phone, setPhone] = useState("");
   const [address, setAddress] = useState("");
+  console.log(email)
   //thêm user_id vào
   const [errors, setErrors] = useState({
     worker_name: "",
-    education: "",
+    worker_avatar: "",
     email: "",
-    age: "",
-    gender: "",
-    address: "",
+    phone: ""
   });
 
   const handleContinue = () => {
     // sau khi hoàn thành thì cho vào màn Home
     const newErrors = {
       worker_name: worker_name ? "" : "Tên không được để trống",
-      education: education ? "" : "Trường học không được để trống",
+      worker_avatar: worker_avatar ? "" : "Ảnh đại diện không được bỏ trống",
       email: email ? "" : "Địa chỉ Gmail không được để trống",
-      age: age ? "" : "Tuổi không được để trống",
-      gender: gender ? "" : "Giới tính không được để trống",
-      address: address ? "" : "Địa chỉ không được để trống",
+      phone: phone ? "": "Số điện thoại không được để trống"
     };
 
-    // setErrors(newErrors);
+    setErrors(newErrors);
 
-    // const noErrors = Object.values(newErrors).every(error => !error);
+    const noErrors = Object.values(newErrors).every(error => !error);
 
-    if (2 > 0) {
+    if (noErrors) {
       router.push("/Home");
     }
   };
 
   const skipnow = () => {
-    router.push("CompleteProfileScreen2");
+    router.push("/Home");
   };
 
   return (
@@ -85,22 +84,6 @@ const CompleteProfileScreen1: React.FC = () => {
             <Text style={styles.errorText}>{errors.worker_name}</Text>
           ) : null}
           <View style={styles.inputContainer}>
-            <MaterialCommunityIcons
-              name="school"
-              size={24}
-              color="#A9A9A9" style={styles.icon}
-            />
-            <TextInput
-              style={styles.input}
-              placeholder="Trường học"
-              value={education}
-              onChangeText={setEducation}
-            />
-          </View>
-          {errors.education ? (
-            <Text style={styles.errorText}>{errors.education}</Text>
-          ) : null}
-          <View style={styles.inputContainer}>
             <Icon
               name="envelope"
               size={20}
@@ -111,77 +94,58 @@ const CompleteProfileScreen1: React.FC = () => {
               style={styles.input}
               placeholder="Địa chỉ Gmail"
               keyboardType="email-address"
-              value={email}
-              onChangeText={setEmail}
+              // value={email}
+              // onChangeText={setEmail}
             />
           </View>
           {errors.email ? (
             <Text style={styles.errorText}>{errors.email}</Text>
           ) : null}
-          <View style={styles.row}>
-            <View style={[styles.inputContainer, styles.halfInput]}>
-              <Icon
-                name="calendar"
-                size={20}
-                color="#A9A9A9"
-                style={styles.icon}
-              />
-              <TextInput
-                style={styles.input}
-                placeholder="Tuổi"
-                keyboardType="numeric"
-                value={age}
-                onChangeText={setAge}
-              />
-            </View>
-            <View style={[styles.inputContainer, styles.halfInput]}>
-              <Icon
-                name="venus-mars"
-                size={20}
-                color="#A9A9A9"
-                style={styles.icon}
-              />
-              <TextInput
-                style={styles.input}
-                placeholder="Giới tính"
-                value={gender}
-                onChangeText={setGender}
-              />
-            </View>
-          </View>
-          {errors.age ? (
-            <Text style={styles.errorText}>{errors.age}</Text>
-          ) : null}
-          {errors.gender ? (
-            <Text style={styles.errorText}>{errors.gender}</Text>
-          ) : null}
-        </View>
-
-        <Text style={styles.sectionHeader}>Địa chỉ</Text>
-        <View style={styles.section}>
           <View style={styles.inputContainer}>
             <Icon
-              name="map-marker"
+              name="image"
               size={20}
               color="#A9A9A9"
               style={styles.icon}
             />
             <TextInput
               style={styles.input}
-              placeholder="Địa chỉ"
+              placeholder="Ảnh đại diện"
+              
+              value={worker_avatar}
+              onChangeText={setWorker_avatar}
+            />
+          </View>
+          {errors.worker_avatar ? (
+            <Text style={styles.errorText}>{errors.worker_avatar}</Text>
+          ) : null}
+        </View>
+
+        <Text style={styles.sectionHeader}>Số điện thoại</Text>
+        <View style={styles.section}>
+          <View style={styles.inputContainer}>
+            <Icon
+              name="phone"
+              size={20}
+              color="#A9A9A9"
+              style={styles.icon}
+            />
+            <TextInput
+              style={styles.input}
+              placeholder="Số điện thoại"
               value={address}
               onChangeText={setAddress}
             />
           </View>
-          {errors.address ? (
-            <Text style={styles.errorText}>{errors.address}</Text>
+          {errors.phone ? (
+            <Text style={styles.errorText}>{errors.phone}</Text>
           ) : null}
         </View>
 
-        <TouchableOpacity style={styles.saveButton} onPress={skipnow}>
-          <Text style={styles.buttonText}>Lưu và tiếp tục</Text>
+        <TouchableOpacity style={styles.saveButton} onPress={handleContinue}>
+          <Text style={styles.buttonText}>Lưu</Text>
         </TouchableOpacity>
-        <TouchableOpacity onPress={handleContinue}>
+        <TouchableOpacity onPress={skipnow}>
           <Text style={styles.skipText}>Bỏ qua</Text>
         </TouchableOpacity>
       </View>
@@ -214,7 +178,7 @@ const styles = StyleSheet.create({
   },
   progress: {
     height: "100%",
-    width: "50%",
+    width: "100%",
     backgroundColor: "#6200EE",
     borderRadius: 5,
   },

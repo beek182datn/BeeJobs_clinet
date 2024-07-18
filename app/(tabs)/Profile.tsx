@@ -8,7 +8,6 @@ import { useRouter } from 'expo-router';
 import { User, Worker } from "../../components/Model/Model";
 
 const Profile = () => {
-  const { backPressedCount, setBackPressedCount, showAlert, setShowAlert, message, setMessage, color, setColor } = useBackHandler(true);
   const router = useRouter();
   const [user, setUser] = useState<User | null>();
   const [worker, setWorker] = useState<Worker | null>();
@@ -16,12 +15,14 @@ const Profile = () => {
   useEffect(() => {
     const fetchUserInfo = async () => {
       try {
+        // const emailValue = await AsyncStorage.getItem('userProfile');
+        // console.log(emailValue)
         const user: User | null = await getUserInfo();
         setUser(user);
         if (user) {
           console.log('userId: ', user.id_user)
           const worker = await findWorkerById(user.id_user);
-
+          
           setWorker(worker);
           console.log(JSON.stringify(worker?.worker_name))
         }
@@ -74,13 +75,6 @@ const Profile = () => {
           </TouchableOpacity>
         </>
       }
-
-      <AlertComponent
-        color={color}
-        message={message}
-        visible={showAlert}
-        onClose={() => setShowAlert(false)}
-      />
     </View>
   );
 };

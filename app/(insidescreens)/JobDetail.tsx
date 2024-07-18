@@ -9,6 +9,7 @@ import { createApplyJob } from '@/components/fetch_data/api';
 import * as DocumentPicker from 'expo-document-picker';
 import AlertComponent from '@/components/AlertComponent';
 import { Ionicons } from '@expo/vector-icons';
+import Icon from "react-native-vector-icons/FontAwesome";
 const { width, height } = Dimensions.get('window');
 
 
@@ -112,6 +113,10 @@ const JobDetail = () => {
 
   return (
     <ScrollView style={styles.container}>
+      <View style={styles.headerContainer}>
+        <Icon name="arrow-left" size={20} color="#000" onPress={router.back} />
+        <Text style={styles.header}>Chi tiết công việc</Text>
+      </View>
       <AlertComponent message={message} color={color} visible={visible} onClose={() => setVisible(false)} />
       <View style={styles.contentContainer}>
         <View style={styles.headerContainer}>
@@ -185,7 +190,9 @@ export default JobDetail
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#f2f2f2',
+    backgroundColor: "#f2f2f2",
+    padding: 20,
+    marginTop: 10
   },
   contentContainer: {
     padding: 20,
@@ -204,7 +211,7 @@ const styles = StyleSheet.create({
   headerContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: 16,
+    marginBottom: 20,
   },
   companyLogo: {
     width: 60,
@@ -214,6 +221,11 @@ const styles = StyleSheet.create({
   },
   headerTextContainer: {
     flex: 1,
+  },
+  header: {
+    fontSize: 20,
+    fontWeight: "bold",
+    marginLeft: 10,
   },
   title: {
     fontSize: 20,

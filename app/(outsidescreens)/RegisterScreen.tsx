@@ -12,13 +12,16 @@ import AlertComponent from "@/components/AlertComponent";
 import axios, { AxiosResponse } from "axios";
 import { useRouter } from "expo-router";
 import { BackHandler } from "react-native";
+import { Ionicons } from "@expo/vector-icons";
 // import CheckBox from '@react-native-community/checkbox';
 
 const RegisterScreen = () => {
   const [accout_name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [passwd, setPassword] = useState("");
+  const [passwd2, setPassword2] = useState("");
   const [showPassword, setShowPassword] = useState(false);
+  const [showPassword2, setShowPassword2] = useState(false);
   const router = useRouter();
   const [showMissingInfoAlert, setShowMissingInfoAlert] = useState(false);
   const [message, setMessage] = useState("");
@@ -26,21 +29,15 @@ const RegisterScreen = () => {
   const [backPressedCount, setBackPressedCount] = useState(0);
 
   useEffect(() => {
-    const backHandler = () => {
-      if (backPressedCount === 0) {
-        setBackPressedCount((prevCount) => prevCount + 1);
-        router.back();
-        return true;
-      }
-      return false; // Default behavior (exit app or go back)
+    const backAction = () => {
+      router.replace("LoginScreen");
+      return true;
     };
 
-    BackHandler.addEventListener("hardwareBackPress", backHandler);
+    const backHandler = BackHandler.addEventListener('hardwareBackPress', backAction);
 
-    // Cleanup function to remove event listener
-    return () =>
-      BackHandler.removeEventListener("hardwareBackPress", backHandler);
-  }, [backPressedCount, router]);
+    return () => backHandler.remove();
+  }, []);
 
   const isValidEmail = (email: string): boolean => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -65,6 +62,12 @@ const RegisterScreen = () => {
       setShowMissingInfoAlert(true);
       return;
     }
+    if(passwd != passwd2){
+      setMessage("Mật khẩu không khớp");
+      setColor("red");
+      setShowMissingInfoAlert(true);
+      return;
+    }
 
     try {
       const response: AxiosResponse = await axios.post(
@@ -74,14 +77,17 @@ const RegisterScreen = () => {
           email: email,
           passwd: passwd,
           type_role: "NLD",
-          verify: true,
+          verify: false,
         }
       );
-      setName("");
-      setEmail("");
-      setPassword("");
-      setShowPassword(false);
-      router.push({ pathname: 'VerifyAccount', params: email as any });
+      setMessage('Đăng ký thành công');
+      setShowMissingInfoAlert(true);
+      setColor('green');
+      // setName("");
+      // setEmail("");
+      // setPassword("");
+      // setShowPassword(false);
+      router.push({ pathname: 'VerifyAccount', params: {email: email} });
     } catch (error) {
       console.error("Lỗi đăng ký:", error);
       setMessage("Đăng ký thất bại");
@@ -133,19 +139,37 @@ const RegisterScreen = () => {
           />
         </TouchableOpacity>
       </View>
+      <View style={styles.inputContainer}>
+        <Icon name="lock" size={20} color="#A9A9A9" style={styles.icon} />
+        <TextInput
+          style={styles.input}
+          placeholder="Nhập lại mật khẩu"
+          secureTextEntry={!showPassword2}
+          value={passwd2}
+          onChangeText={setPassword2}
+        />
+        <TouchableOpacity onPress={() => setShowPassword2(!showPassword2)}>
+          <Icon
+            name={showPassword2 ? "eye-slash" : "eye"}
+            size={20}
+            color="#A9A9A9"
+            style={styles.icon}
+          />
+        </TouchableOpacity>
+      </View>
       <TouchableOpacity style={styles.button} onPress={handleRegister}>
         <Text style={styles.buttonText}>Đăng ký</Text>
       </TouchableOpacity>
       <Text style={styles.continueWithText}>----- continue with -----</Text>
       <View style={styles.socialIconsContainer}>
         <TouchableOpacity onPress={handleFeatureInDevelopment}>
-          <Icon name="facebook-square" size={35} color="#3b5998" />
+          <Ionicons name="logo-facebook" size={35} color="#3b5998" />
         </TouchableOpacity>
         <TouchableOpacity onPress={handleFeatureInDevelopment}>
-          <Icon name="google-plus-square" size={35} color="#db4a39" />
+          <Ionicons name="logo-google" size={35} color="#db4a39" />
         </TouchableOpacity>
         <TouchableOpacity onPress={handleFeatureInDevelopment}>
-          <Icon name="twitter-square" size={35} color="#00acee" />
+          <Ionicons name="logo-twitter" size={35} color="#00acee" />
         </TouchableOpacity>
       </View>
       <Text style={styles.footerText}>
