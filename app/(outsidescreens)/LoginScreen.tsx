@@ -103,6 +103,8 @@ const LoginScreen = () => {
             "user_info",
             JSON.stringify(response.data.user_info)
           );
+
+          router.push('/Home')
         } catch (error) {
           console.error("Error saving user profile:", error);
         }
