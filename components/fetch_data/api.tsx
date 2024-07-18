@@ -34,6 +34,19 @@ export const fetchJobs = async (): Promise<Job[]> => {
   }
 };
 
+// lấy danh sách công việc theo id company
+export const fetchJobsByCompanyId = async (keywword: string): Promise<Job[]> => {
+  try {
+    const response: AxiosResponse<JobsResponse> = await axios.get(
+      `http://beejobs.io.vn:14307/api/jobs/getJobsByIdCompany/${keywword}`
+    );
+    return response.data.data;
+  } catch (error) {
+    console.error('Error fetching jobs:', error);
+    return [];
+  }
+};
+
 // rìm công việc theo mức lương
 export const findJobBySalary = async (keyword: string): Promise<Job[]> => {
   try {

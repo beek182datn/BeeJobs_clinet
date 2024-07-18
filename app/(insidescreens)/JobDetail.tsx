@@ -119,20 +119,34 @@ const JobDetail = () => {
     }
   };
 
+  const handleDetailCompany = () => {
+
+    router.push({ pathname: 'CompanyDetail', params: job })
+
+  }
+
   return (
     <SafeAreaView style={styles.container}>
-      <ScrollView style={{padding:10}}>
+      <ScrollView style={{ padding: 10 }}>
         <View style={styles.headerContainer}>
-          <Icon name="arrow-left" size={20} color="#000" onPress={router.back} />
+          {/* <Icon name="arrow-left" size={20} color="#000" onPress={router.back} /> */}
+          <TouchableOpacity onPress={router.back}
+            style={{ backgroundColor: '#2196F3', borderRadius: 30, padding: 5 }}>
+            <Ionicons name="arrow-back" size={22} color="black" />
+          </TouchableOpacity>
           <Text style={styles.header}>Chi tiết công việc</Text>
         </View>
         <AlertComponent message={message} color={color} visible={visible} onClose={() => setVisible(false)} />
         <View style={styles.contentContainer}>
           <View style={styles.headerContainer}>
-            <Image source={job.company_logo != '' ? { uri: linkVps + job.company_logo } : require('../../assets/images/profile.png')} style={styles.companyLogo} />
+            <TouchableOpacity onPress={handleDetailCompany}>
+              <Image source={job.company_logo != '' ? { uri: linkVps + job.company_logo } : require('../../assets/images/profile.png')} style={styles.companyLogo} />
+            </TouchableOpacity>
             <View style={styles.headerTextContainer}>
               <Text style={styles.title}>{job.title}</Text>
-              <Text style={styles.companyName}>{companyInfo?.company_name}</Text>
+              <TouchableOpacity onPress={handleDetailCompany}>
+                <Text style={styles.companyName}>{companyInfo?.company_name}</Text>
+              </TouchableOpacity>
             </View>
           </View>
           <View>
@@ -150,10 +164,12 @@ const JobDetail = () => {
 
       <View>
         {isApplied &&
-          <View style={{flexDirection:'row',backgroundColor:'white', width:'100%', padding:10, justifyContent:'space-between', position:'absolute', bottom:0,  shadowOpacity: 0.25,
-             shadowRadius: 3.84,
-             elevation: 5,
-             shadowColor: '#000',}}>
+          <View style={{
+            flexDirection: 'row', backgroundColor: 'white', width: '100%', padding: 10, justifyContent: 'space-between', position: 'absolute', bottom: 0, shadowOpacity: 0.25,
+            shadowRadius: 3.84,
+            elevation: 5,
+            shadowColor: '#000',
+          }}>
             <TouchableOpacity style={styles.buttonLeft}>
               <Text style={styles.buttonTextN}>Gửi Tin Nhắn</Text>
             </TouchableOpacity>
@@ -164,10 +180,12 @@ const JobDetail = () => {
         }
 
         {!isApplied &&
-          <View style={{flexDirection:'row',backgroundColor:'white', width:'100%', padding:10, justifyContent:'center', alignItems:'center', position:'absolute', bottom:0,  shadowOpacity: 0.25,
+          <View style={{
+            flexDirection: 'row', backgroundColor: 'white', width: '100%', padding: 10, justifyContent: 'center', alignItems: 'center', position: 'absolute', bottom: 0, shadowOpacity: 0.25,
             shadowRadius: 3.84,
             elevation: 5,
-            shadowColor: '#000',}}>
+            shadowColor: '#000',
+          }}>
             <TouchableOpacity style={styles.applyButton} onPress={handleModalApply}>
               <Text style={styles.buttonTextN}>Ứng tuyển ngay</Text>
             </TouchableOpacity>
@@ -371,6 +389,6 @@ const styles = StyleSheet.create({
     color: 'white',
     fontSize: 13,
     fontWeight: 'bold',
-    alignSelf:'center'
+    alignSelf: 'center'
   },
 });
