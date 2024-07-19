@@ -1,67 +1,54 @@
-import React, { useState } from "react";
-import {
-  View,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  StyleSheet,
-} from "react-native";
-import axios from "axios";
-import { useRouter } from 'expo-router';
+import React, { useEffect } from 'react';
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, BackHandler } from 'react-native';
+import Icon from 'react-native-vector-icons/Ionicons'; // Thêm thư viện cho icon (nếu sử dụng)
+import { useRouter } from "expo-router";
+import { Ionicons } from '@expo/vector-icons';
 
-const ResetPasswordScreen: React.FC = () => {
-  const [password, setPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
+const ResetPasswordScreen = () => {
   const router = useRouter();
+  useEffect(() => {
+    const backAction = () => {
+      router.replace("Profile");
+      return true;
+    };
 
-  const handleResetPassword = async () => {
-    if (password !== confirmPassword) {
-      alert("Mật khẩu xác nhận không khớp.");
-      return;
-    }
+    const backHandler = BackHandler.addEventListener('hardwareBackPress', backAction);
 
-    try {
-      const response = await axios.post('http://beejobs.io.vn:14307/api/reset-password', {
-        password: password,
-      });
-      console.log('Đặt lại mật khẩu thành công:', response.data);
-      alert("Mật khẩu của bạn đã được đặt lại thành công.");
-      setPassword("");
-      setConfirmPassword("");
-      router.push('LoginScreen'); // Điều hướng đến màn hình đăng nhập
-    } catch (error) {
-      console.error('Lỗi đặt lại mật khẩu:', error);
-      alert("Đã xảy ra lỗi trong quá trình đặt lại mật khẩu. Vui lòng thử lại sau.");
-    }
-  };
+    return () => backHandler.remove();
+  }, []);
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Đặt lại mật khẩu</Text>
-      <View style={styles.inputContainer}>
-        <TextInput
-          style={styles.input}
-          placeholder="Mật khẩu mới"
-          value={password}
-          onChangeText={setPassword}
-          secureTextEntry
-        />
+      <View style={styles.header}>
+          {/* <Icon name="arrow-left" size={20} color="#000" onPress={router.back} /> */}
+          <TouchableOpacity onPress={router.back}
+            style={{ backgroundColor: '#2196F3', borderRadius: 30, padding: 5 }}>
+            <Ionicons name="arrow-back" size={22} color="black" />
+          </TouchableOpacity>
+          <Text style={styles.headerTitle}>Đổi mật khẩu</Text>
+        </View>
+      <View style={styles.form}>
+        <Text style={styles.label}>Email đăng nhập</Text>
+        <TextInput style={styles.input} value="vhuy887@gmail.com" editable={false} />
+        
+        <Text style={styles.label}>Mật khẩu hiện tại</Text>
+        <TextInput style={styles.input} placeholder="Nhập mật khẩu hiện tại" secureTextEntry />
+        
+        <Text style={styles.label}>Mật khẩu mới</Text>
+        <TextInput style={styles.input} placeholder="Nhập mật khẩu mới" secureTextEntry />
+        
+        <Text style={styles.label}>Nhập lại mật khẩu mới</Text>
+        <TextInput style={styles.input} placeholder="Nhập lại mật khẩu mới" secureTextEntry />
       </View>
-      <View style={styles.inputContainer}>
-        <TextInput
-          style={styles.input}
-          placeholder="Xác nhận mật khẩu"
-          value={confirmPassword}
-          onChangeText={setConfirmPassword}
-          secureTextEntry
-        />
+
+      <View style={styles.buttonContainer}>
+        <TouchableOpacity style={styles.buttonCancel} onPress={router.back}>
+          <Text style={styles.buttonText}>Hủy</Text>
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.buttonSave}>
+          <Text style={styles.buttonText}>Lưu</Text>
+        </TouchableOpacity>
       </View>
-      <TouchableOpacity style={styles.button} onPress={handleResetPassword}>
-        <Text style={styles.buttonText}>Đặt lại mật khẩu</Text>
-      </TouchableOpacity>
-      <TouchableOpacity style={styles.backButton} onPress={() => router.push('LoginScreen')}>
-        <Text style={styles.backButtonText}>Quay lại đăng nhập</Text>
-      </TouchableOpacity>
     </View>
   );
 };
@@ -69,54 +56,77 @@ const ResetPasswordScreen: React.FC = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#fff",
-    padding: 20,
-    justifyContent: "center",
+    backgroundColor: '#f5f5f5',
+    marginTop: 20,
+    position: 'relative',
   },
-  title: {
-    fontSize: 30,
+  header: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    padding: 16,
+    backgroundColor: '#fff',
+    borderBottomWidth: 1,
+    borderBottomColor: '#ddd',
+  },
+  
+  headerTitle: {
+    flex: 1,
+    textAlign: 'center',
+    fontSize: 18,
     fontWeight: "bold",
-    alignSelf: "center",
-    marginBottom: 30,
   },
-  inputContainer: {
-    borderWidth: 1,
-    borderColor: "#A9A9A9",
-    borderRadius: 25,
-    marginBottom: 20,
-    paddingHorizontal: 15,
-    backgroundColor: "#f9f9f9",
-    padding: 10,
+  form: {
+    padding: 16,
+    backgroundColor: '#fff',
+    marginTop: 16,
+    borderRadius: 8,
+    marginHorizontal: 16,
+  },
+  label: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    marginBottom: 8,
   },
   input: {
-    padding: 10,
-    fontSize: 16,
-    color: "#000",
+    height: 40,
+    borderColor: '#ccc',
+    borderWidth: 1,
+    borderRadius: 4,
+    marginBottom: 16,
+    paddingHorizontal: 8,
+    backgroundColor: '#f9f9f9',
   },
-  button: {
-    backgroundColor: "#007BFF",
-    paddingVertical: 15,
-    borderRadius: 25,
-    alignItems: "center",
-    marginBottom: 20,
+  buttonContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    padding: 16,
+    backgroundColor: '#fff',
+    borderTopWidth: 1,
+    borderTopColor: '#ddd',
+    position: 'absolute',
+    bottom: 0,
+    left: 0,
+    right: 0,
+  },
+  buttonCancel: {
+    flex: 1,
+    alignItems: 'center',
+    padding: 12,
+    backgroundColor: '#ccc',
+    borderRadius: 4,
+    marginRight: 8,
+  },
+  buttonSave: {
+    flex: 1,
+    alignItems: 'center',
+    padding: 12,
+    backgroundColor: '#007AFF',
+    borderRadius: 4,
+    marginLeft: 8,
   },
   buttonText: {
-    color: "#fff",
-    fontSize: 18,
-    fontWeight: "bold",
-  },
-  backButton: {
-    backgroundColor: "#f9f9f9",
-    paddingVertical: 15,
-    borderRadius: 25,
-    alignItems: "center",
-    borderColor: "#007BFF",
-    borderWidth: 1,
-  },
-  backButtonText: {
-    color: "#007BFF",
-    fontSize: 18,
-    fontWeight: "bold",
+    color: '#fff',
+    fontWeight: 'bold',
   },
 });
 
