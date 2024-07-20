@@ -42,6 +42,7 @@ const AppliedJobs = () => {
     return `${day}/${month}/${year}`;
   };
 
+
   return (
     <SafeAreaView style={styles.container}>
       <View style={{ flexDirection: 'row', justifyContent: 'center' }}>
@@ -113,7 +114,7 @@ const AppliedJobs = () => {
                     <TouchableOpacity style={styles.buttonLeft}>
                       <Text style={styles.buttonText}>Gửi Tin Nhắn</Text>
                     </TouchableOpacity>
-                    <TouchableOpacity style={styles.buttonRight}>
+                    <TouchableOpacity style={styles.buttonRight} onPress={()=>{router.push('(insidescreens)/ViewCvFile')}}>
                       <Text style={styles.buttonText}>Xem Lại CV</Text>
                     </TouchableOpacity>
                   </View>

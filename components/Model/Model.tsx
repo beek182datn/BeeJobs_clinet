@@ -45,6 +45,7 @@ export type Company = {
   user_id: string;
   company_name: string;
   company_address: string;
+  company_desc: string;
   company_logo: string;
   company_scale: string;
   company_website: string;
@@ -70,6 +71,9 @@ export interface ApplyJobData {
     name: string;
     type: string;
   };
+  fullname: string;
+  phone_number: string;
+  intro_letter: string;
 }
 
 // việc đã ứng tuyển
@@ -84,8 +88,9 @@ export interface AppliedJob {
   worker_id: string;
   cv: string;
   status: string;
-  name: string;
-  phone: string;
+  fullname: string;
+  phone_number: string;
+  intro_letter: string;
   applied_at: Date;
   __v: number;
   job: Job
