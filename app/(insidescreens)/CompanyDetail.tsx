@@ -33,7 +33,7 @@ const CompanyDetail = () => {
             {/* <View> */}
             <View style={{ position: 'relative' }}>
                 <Image source={require('../../assets/images/company.jpg')} style={{ width: '100%', height: 150 }} />
-                <TouchableOpacity onPress={router.back}
+                <TouchableOpacity onPress={()=>{router.push('/Home')}}
                     style={{ position: 'absolute', top: 20, left: 10, backgroundColor: '#2196F3', borderRadius: 30, padding: 5 }}>
                     <Ionicons name="arrow-back" size={22} color="black" />
                 </TouchableOpacity>
@@ -47,7 +47,7 @@ const CompanyDetail = () => {
                     />
                     <View style={styles.headerTextContainer}>
                         <Text style={styles.companyName}>{companyInfo?.company_name}</Text>
-                        <Text style={styles.companyInfo}>25-99 nhân viên</Text>
+                        <Text style={styles.companyInfo}>{companyInfo?.company_scale}</Text>
                     </View>
                     <TouchableOpacity style={styles.followButton} onPress={() => {
                         console.log(JSON.stringify(companyInfo))

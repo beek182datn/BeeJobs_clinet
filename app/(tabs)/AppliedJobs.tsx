@@ -1,16 +1,22 @@
-import { SafeAreaView, StyleSheet, FlatList, Text, View, Pressable, Image, TouchableOpacity } from 'react-native';
+import { SafeAreaView, StyleSheet, FlatList, Text, View, Pressable, Image, TouchableOpacity, Linking } from 'react-native';
 import React, { useState, useEffect } from 'react';
 import { getAppliedJobsByWorker, getUserInfo } from '../../components/fetch_data/api';
 import { AppliedJob, User } from '../../components/Model/Model';
 import { router } from 'expo-router';
 import { FontAwesome } from '@expo/vector-icons'; // Thêm thư viện icon
 import { Ionicons } from '@expo/vector-icons';
+import * as WebBrowser from 'expo-web-browser';
 
 const AppliedJobs = () => {
   const [appliedJobs, setAppliedJobs] = useState<AppliedJob[]>([]);
   const [user, setUser] = useState<User | null>(null);
   const [ref, setRef] = useState(false);
   const linkVps = 'http://beejobs.io.vn:14307';
+
+  const openPDF = async () => {
+    const pdfUrl = 'https://www.example.com/sample.pdf';
+    await WebBrowser.openBrowserAsync(pdfUrl);
+  };
 
   useEffect(() => {
     const fetchAppliedJobs = async () => {
@@ -41,6 +47,7 @@ const AppliedJobs = () => {
 
     return `${day}/${month}/${year}`;
   };
+
 
   return (
     <SafeAreaView style={styles.container}>
@@ -113,7 +120,10 @@ const AppliedJobs = () => {
                     <TouchableOpacity style={styles.buttonLeft}>
                       <Text style={styles.buttonText}>Gửi Tin Nhắn</Text>
                     </TouchableOpacity>
-                    <TouchableOpacity style={styles.buttonRight}>
+                    <TouchableOpacity style={styles.buttonRight} onPress={async ()=> {
+                      // await WebBrowser.openBrowserAsync(linkVps+item.cv);
+                      Linking.openURL(linkVps+item.cv);
+                    }}>
                       <Text style={styles.buttonText}>Xem Lại CV</Text>
                     </TouchableOpacity>
                   </View>

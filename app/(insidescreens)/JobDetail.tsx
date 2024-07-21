@@ -11,10 +11,16 @@ import AlertComponent from '@/components/AlertComponent';
 import { Ionicons } from '@expo/vector-icons';
 import Icon from "react-native-vector-icons/FontAwesome";
 // const { width, height } = Dimensions.get('window');
+import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
+import CompanyInfo from '@/components/comps/CompanyInfo';
+import Infomation from '@/components/comps/Infomation';
+
+
+const Tab = createMaterialTopTabNavigator();
 
 
 const JobDetail = () => {
-  const [companyInfo, setCompanyInfo] = useState<Company | null>();
+  const [companyInfo, setCompanyInfo] = useState<Company | null>(null);
   const [user, setUser] = useState<User | null>();
   const job = useLocalSearchParams();
   const linkVps = 'http://beejobs.io.vn:14307';
@@ -26,13 +32,16 @@ const JobDetail = () => {
   const [worker, setWorker] = useState<Worker | null>();
 
   const [cv, setCv] = useState<DocumentPicker.DocumentPickerAsset | null>(null);
+  const [fullname, setFullname] = useState('');
+  const [phone_number, setPhoneNumber] = useState('');
+  const [intro_letter, setIntroLetter] = useState('');
+
 
   // modal của ứng tuyển
   const [showModal, setShowModal] = useState(false);
   const [isApplied, setIsApplied] = useState(false);
 
   useEffect(() => {
-    const companyId = String(job.company_id);
     const backAction = () => {
       router.back();
       return true;
@@ -43,21 +52,27 @@ const JobDetail = () => {
       backAction
     );
 
-    const fetchCompanyData = async (company_id: string) => {
-      const company = await findCompanyById(company_id);
+    const fetchCompanyData = async () => {
+      const companyId = String(job.company_id);
+      const company = await findCompanyById(companyId);
+      if (company) {
+        setCompanyInfo(company)
+      }
+
       const user: User | null = await getUserInfo();
       if (user) {
         const response = await checkApplyJob(user.id_user, String(job._id));
         setIsApplied(response.isApplied);
       }
       setUser(user);
-      setCompanyInfo(company)
+
       if (worker && user) {
         const workerInfo = await findWorkerById(user.id_user);
         setWorker(workerInfo);
       }
-    }
-    fetchCompanyData(companyId);
+    };
+
+    fetchCompanyData();
     return () => backHandler.remove();
   }, [router])
 
@@ -79,13 +94,13 @@ const JobDetail = () => {
               uri: cv.uri,
               name: cv.name!,
               type: cv.mimeType!
-            }
+            },
+            fullname,
+            phone_number,
+            intro_letter,
           };
           const jobId = job._id;
           const userId = user.id_user;
-          const workerName = worker?.worker_name;
-          const phone = worker?.phone;
-          console.log(JSON.stringify(workerName))
 
           const response = await createApplyJob(userId, jobId as any, data);
           // console.log(response.data);
@@ -120,52 +135,108 @@ const JobDetail = () => {
   };
 
   const handleDetailCompany = () => {
-
     router.push({ pathname: 'CompanyDetail', params: job })
+  }
 
+  const getDaysLeft = (dateString: string) => {
+    const today = new Date();
+
+    const [day, month, year] = dateString.split('/').map(Number);
+    const applicationDeadlineDate = new Date(year, month - 1, day);
+
+    const timeDiff = applicationDeadlineDate.getTime() - today.getTime();
+    const daysLeft = Math.ceil(timeDiff / (1000 * 3600 * 24));
+
+    if (applicationDeadlineDate <= new Date()) {
+      return false
+    }
+    if (isNaN(daysLeft)) {
+      return false
+    }
+    return true;
   }
 
   return (
     <SafeAreaView style={styles.container}>
       <ScrollView style={{ padding: 10 }}>
+
         <View style={styles.headerContainer}>
           {/* <Icon name="arrow-left" size={20} color="#000" onPress={router.back} /> */}
-          <TouchableOpacity onPress={router.back}
+          <TouchableOpacity onPress={() => { router.push('/Home') }}
             style={{ backgroundColor: '#2196F3', borderRadius: 30, padding: 5 }}>
             <Ionicons name="arrow-back" size={22} color="black" />
           </TouchableOpacity>
           <Text style={styles.header}>Chi tiết công việc</Text>
         </View>
-        <AlertComponent message={message} color={color} visible={visible} onClose={() => setVisible(false)} />
-        <View style={styles.contentContainer}>
-          <View style={styles.headerContainer}>
-            <TouchableOpacity onPress={handleDetailCompany}>
-              <Image source={job.company_logo != '' ? { uri: linkVps + job.company_logo } : require('../../assets/images/profile.png')} style={styles.companyLogo} />
-            </TouchableOpacity>
-            <View style={styles.headerTextContainer}>
-              <Text style={styles.title}>{job.title}</Text>
-              <TouchableOpacity onPress={handleDetailCompany}>
-                <Text style={styles.companyName}>{companyInfo?.company_name}</Text>
-              </TouchableOpacity>
+
+        <View style={styles.topView}>
+          <TouchableOpacity onPress={handleDetailCompany}>
+            <Image source={job.company_logo != '' ? { uri: linkVps + job.company_logo } : require('../../assets/images/profile.png')} style={styles.companyLogo} />
+          </TouchableOpacity>
+
+          <TouchableOpacity onPress={() => { console.log(JSON.stringify(companyInfo)) }}>
+            <Text style={styles.title}>{job.title}</Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity onPress={handleDetailCompany}>
+            <Text style={styles.companyName}>{companyInfo?.company_name}</Text>
+          </TouchableOpacity>
+
+          <View style={{
+            flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center'
+            , borderTopWidth: 0.2, borderTopColor: 'gray', width: '100%',
+          }}>
+            <View style={styles.gridView}>
+              <Ionicons name='cash' size={30} color={'#4CAF50'} style={{ marginBottom: 10 }} />
+              <Text style={{ fontSize: 14, color: 'gray' }}>Mức lương</Text>
+              <Text style={styles.textGrid}>{job.salary}</Text>
             </View>
+            <View style={[styles.gridView, { borderLeftWidth: 0.5, borderLeftColor: 'gray', borderRightWidth: 0.5, borderRightColor: 'gray' }]}>
+              <Ionicons name='location' size={30} color={'#4CAF50'} style={{ marginBottom: 10 }} />
+              <Text style={{ fontSize: 14, color: 'gray' }}>Địa điểm</Text>
+              <Text style={styles.textGrid}>{job.location}</Text>
+            </View>
+            <View style={styles.gridView}>
+              <Ionicons name='star' size={30} color={'#4CAF50'} style={{ marginBottom: 10 }} />
+              <Text style={{ fontSize: 14, color: 'gray' }}>Kinh nghiệm</Text>
+              <Text style={styles.textGrid}>{job.requirements}</Text>
+            </View>
+
           </View>
-          <View>
-            <Text style={styles.detailsText}>Địa chỉ: {companyInfo?.company_address}</Text>
-            <Text style={styles.detailsText}>Liên hệ: {companyInfo?.taxcode}</Text>
-            <Text style={styles.detailsText}>Địa điểm: {job.location}</Text>
-            <Text style={styles.detailsText}>Lương: {job.salary}</Text>
-          </View>
-          <Text style={styles.description}>Mô tả: {job.desc}</Text>
-          <Text style={styles.requirements}>Yêu cầu: {job.requirements}</Text>
-          <Text style={styles.requirements}>Số lượng tuyển: {job.number_of_recruitments}</Text>
-          <Text style={styles.requirements}>Hạn ứng tuyển: {job.deadline}</Text>
         </View>
+        {companyInfo &&
+          <View style={styles.body}>
+            <Tab.Navigator
+              initialRouteName='Infomation'
+              screenOptions={{
+                tabBarActiveTintColor: 'blue',
+                tabBarInactiveTintColor: 'gray',
+                tabBarLabelStyle: { fontSize: 10, fontWeight: 'bold' },
+                tabBarStyle: { backgroundColor: 'white', height: 'auto', borderRadius: 10 },
+              }}>
+              <Tab.Screen
+                name="Infomation"
+                component={Infomation}
+                options={{ tabBarLabel: 'Thông tin' }}
+                initialParams={{ companyInfo, job }}
+              />
+              <Tab.Screen
+                name="CompanyInfo"
+                component={CompanyInfo}
+                options={{ tabBarLabel: 'Công ty' }}
+                initialParams={{ companyInfo }}
+              />
+            </Tab.Navigator>
+          </View>}
       </ScrollView>
 
-      <View>
-        {isApplied &&
+
+
+
+      <View style={{ position: 'absolute', bottom: 0, width: '100%' }}>
+        {isApplied && getDaysLeft(String(job.deadline)) &&
           <View style={{
-            flexDirection: 'row', backgroundColor: 'white', width: '100%', padding: 10, justifyContent: 'space-between', position: 'absolute', bottom: 0, shadowOpacity: 0.25,
+            flexDirection: 'row', backgroundColor: 'white', width: '100%', padding: 10, justifyContent: 'space-between', shadowOpacity: 0.25,
             shadowRadius: 3.84,
             elevation: 5,
             shadowColor: '#000',
@@ -179,7 +250,7 @@ const JobDetail = () => {
           </View>
         }
 
-        {!isApplied &&
+        {!isApplied && getDaysLeft(String(job.deadline)) &&
           <View style={{
             flexDirection: 'row', backgroundColor: 'white', width: '100%', padding: 10, justifyContent: 'center', alignItems: 'center', position: 'absolute', bottom: 0, shadowOpacity: 0.25,
             shadowRadius: 3.84,
@@ -188,6 +259,18 @@ const JobDetail = () => {
           }}>
             <TouchableOpacity style={styles.applyButton} onPress={handleModalApply}>
               <Text style={styles.buttonTextN}>Ứng tuyển ngay</Text>
+            </TouchableOpacity>
+          </View>
+        }
+        {!getDaysLeft(String(job.deadline)) &&
+          <View style={{
+            flexDirection: 'row', backgroundColor: 'white', width: '100%', padding: 10, justifyContent: 'center', alignItems: 'center', position: 'absolute', bottom: 0, shadowOpacity: 0.25,
+            shadowRadius: 3.84,
+            elevation: 5,
+            shadowColor: '#000',
+          }}>
+            <TouchableOpacity style={[styles.applyButton, { backgroundColor: '#e9967a' }]}>
+              <Text style={styles.buttonTextN}>Hết hạn ứng tuyển</Text>
             </TouchableOpacity>
           </View>
         }
@@ -205,12 +288,24 @@ const JobDetail = () => {
               <Text style={styles.filePreviewText}>Tệp đã chọn: {cv.name}</Text>
             </View>
           )}
-          {/* <TextInput
-            style={styles.input}
+          <TextInput
+            // style={styles.input}
+            placeholder="Họ và tên"
+            value={!worker?.worker_name ? worker?.worker_name : fullname}
+            onChangeText={setFullname}
+          />
+          <TextInput
+            // style={styles.input}
+            placeholder="Số điện thoại"
+            value={!worker?.phone ? worker?.phone : phone_number}
+            onChangeText={setPhoneNumber}
+          />
+          <TextInput
+            // style={styles.input}
             placeholder="Lời nhắn"
-            value={status}
-            onChangeText={setStatus}
-          /> */}
+            value={intro_letter}
+            onChangeText={setIntroLetter}
+          />
           <View style={styles.buttonContainer}>
             <TouchableOpacity style={styles.button} onPress={handleApply}>
               <Text style={styles.buttonText}>Ứng tuyển</Text>
@@ -221,6 +316,8 @@ const JobDetail = () => {
           </View>
         </View>
       </Modal>
+
+      <AlertComponent message={message} color={color} visible={visible} onClose={() => setVisible(false)} />
     </SafeAreaView>
   )
 }
@@ -234,19 +331,19 @@ const styles = StyleSheet.create({
     marginTop: 10,
     position: 'relative',
   },
-  contentContainer: {
-    // padding: 20,
-    // backgroundColor: '#fff',
-    // borderRadius: 10,
-    // shadowColor: '#000',
-    // shadowOffset: {
-    //   width: 0,
-    //   height: 2,
-    // },
-    // shadowOpacity: 0.25,
-    // shadowRadius: 3.84,
-    // elevation: 5,
-    // marginVertical: 20,
+  topView: {
+    width: '100%',
+    backgroundColor: 'white',
+    borderRadius: 10,
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+    elevation: 5,
+    padding: 10,
   },
   headerContainer: {
     flexDirection: 'row',
@@ -254,13 +351,11 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   companyLogo: {
-    width: 60,
-    height: 60,
-    borderRadius: 30,
-    marginRight: 16,
-  },
-  headerTextContainer: {
-    flex: 1,
+    width: 70,
+    height: 70,
+    borderRadius: 10,
+    top: -25,
+    alignSelf: 'center'
   },
   header: {
     fontSize: 18,
@@ -268,13 +363,16 @@ const styles = StyleSheet.create({
     marginLeft: 10,
   },
   title: {
-    fontSize: 20,
+    fontSize: 18,
     fontWeight: 'bold',
-    marginBottom: 4,
+    marginBottom: 10,
+    alignSelf: 'center',
   },
   companyName: {
     fontSize: 16,
     color: '#666',
+    alignSelf: 'center',
+    marginBottom: 10
   },
   detailsText: {
     fontSize: 16,
@@ -326,7 +424,7 @@ const styles = StyleSheet.create({
   },
   input: {
     width: '100%',
-    height: 100,
+    height: 50,
     borderColor: '#ccc',
     borderWidth: 1,
     marginVertical: 10,
@@ -391,4 +489,19 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     alignSelf: 'center'
   },
+  gridView: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingTop: 10
+  },
+  textGrid: {
+    color: '#4CAF50',
+    fontSize: 16
+  },
+  body: {
+    flex: 1,
+    width: '100%',
+    height: 800,
+  }
 });
