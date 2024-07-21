@@ -16,6 +16,8 @@ import { useRouter } from 'expo-router';
 import * as DocumentPicker from 'expo-document-picker';
 import Modal from 'react-native-modal';
 import { Picker } from '@react-native-picker/picker';
+import { User, Worker } from "../../components/Model/Model";
+import { getUserInfo, findWorkerById } from '@/components/fetch_data/api';
 
 const Profile: React.FC = () => {
   const actionSheetRef = useRef<ActionSheet>(null);
@@ -23,10 +25,31 @@ const Profile: React.FC = () => {
   const router = useRouter();
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [selectedYear, setSelectedYear] = useState("1 năm");
+  const [user, setUser] = useState<User | null>();
+  const [worker, setWorker] = useState<Worker | null>();
 
   const toggleModal = () => {
     setIsModalVisible(!isModalVisible);
   };
+
+  useEffect(() => {
+    const fetchUserInfo = async () => {
+      try {
+        // const emailValue = await AsyncStorage.getItem('userProfile');
+        // console.log(emailValue)
+        const user: User | null = await getUserInfo();
+        setUser(user);
+        if (user) {
+          const worker = await findWorkerById(user.id_user);
+          setWorker(worker);
+        }
+      } catch (error) {
+        console.error('Error fetching user info:', error);
+      }
+    };
+
+    fetchUserInfo();
+  }, []);
 
   useEffect(() => {
     Animated.parallel([
@@ -104,7 +127,7 @@ const Profile: React.FC = () => {
         <Text style={styles.name}>Lê Văn Huy</Text>
         <Text style={styles.candidateId}>Email: vhuy887@gmail.com</Text>
         <TouchableOpacity style={styles.upgradeButton}>
-          <Text style={styles.upgradeText}>Nâng cấp tài khoản</Text>
+          <Text style={styles.upgradeText}>Cập nhật tài khoản</Text>
         </TouchableOpacity>
       </View>
 
