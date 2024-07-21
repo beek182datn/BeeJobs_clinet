@@ -35,6 +35,13 @@ const JobsList: React.FC<JobItemProps> = ({ job }) => {
     }
     return 'Còn '+daysLeft+' ngày để ứng tuyển';
   }
+
+  const vv = (value: string)=>{
+    if(value.length >= 20){
+      return ' ...'
+    }
+    return''
+  }
   return (
     <Pressable onPress={handleDetail}>
       <View style={styles.container}>
@@ -46,8 +53,8 @@ const JobsList: React.FC<JobItemProps> = ({ job }) => {
             <Text style={styles.jobTitle}>{job.title}</Text>
             <Text style={styles.companyName}>{job.company_name}</Text>
             <View style={styles.detailsContainer}>
-              <Text style={styles.jobLocation}>{job.location.slice(0, 15)}</Text>
-              <Text style={styles.jobLocation}>{job.requirements}</Text>
+              <Text style={styles.jobLocation}>{job.location.slice(0, 20)}{vv(job.location)}</Text>
+              <Text style={styles.jobLocation}>{job.requirements.slice(0, 20)}{vv(job.location)}</Text>
             </View>
             <View style={{ flexDirection: 'row' }}>
               <Ionicons name='cash' size={18} color={'blue'} />
