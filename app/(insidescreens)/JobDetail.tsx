@@ -53,12 +53,6 @@ const JobDetail = () => {
     );
 
     const fetchCompanyData = async () => {
-      const companyId = String(job.company_id);
-      const company = await findCompanyById(companyId);
-      if (company) {
-        setCompanyInfo(company)
-      }
-
       const user: User | null = await getUserInfo();
       if (user) {
         const response = await checkApplyJob(user.id_user, String(job._id));
@@ -66,8 +60,14 @@ const JobDetail = () => {
       }
       setUser(user);
 
-      if (worker && user) {
-        const workerInfo = await findWorkerById(user.id_user);
+      const companyId = String(job.company_id);
+      const company = await findCompanyById(companyId);
+      if (company) {
+        setCompanyInfo(company)
+      }
+
+      if (user) {
+        const workerInfo = await findWorkerById(String(user.id_user));
         setWorker(workerInfo);
       }
     };
@@ -78,7 +78,7 @@ const JobDetail = () => {
 
   // xử lý ứng tuyển
   const handleModalApply = () => {
-    if (!worker){
+    if (!worker) {
       Alert.alert(
         "Thông báo",
         "Bạn cần hoàn thiện hồ sơ cá nhân!",
@@ -88,7 +88,7 @@ const JobDetail = () => {
       return
     }
 
-    
+
     setShowModal(true);
   };
 
@@ -98,7 +98,7 @@ const JobDetail = () => {
 
   const handleApply = async () => {
     if (cv !== null) {
-      if (user && job) {
+      if (user && job && worker) {
         try {
           const data: ApplyJobData = {
             cv: {
@@ -106,8 +106,9 @@ const JobDetail = () => {
               name: cv.name!,
               type: cv.mimeType!
             },
-            fullname,
-            phone_number,
+            fullname: worker.worker_name,
+            phone_number: worker.phone,
+            email: worker.email,
             intro_letter,
           };
           const jobId = job._id;
@@ -153,7 +154,9 @@ const JobDetail = () => {
   };
 
   const handleDetailCompany = () => {
-    router.push({ pathname: 'CompanyDetail', params: job })
+    if (user) {
+      router.push({ pathname: 'CompanyDetail', params: { ...job, userId: user.id_user } })
+    }
   }
 
   const getDaysLeft = (dateString: string) => {
@@ -330,22 +333,22 @@ const JobDetail = () => {
           <View style={styles.modalBottomView}>
             <View style={styles.modalInfo}>
               <Text>Họ và tên: </Text>
-              <Text>Email: </Text>
+              {/* <Text>Email: </Text> */}
               <Text>Số điện thoại: </Text>
             </View>
 
             {worker &&
               <View style={[styles.modalInfo, { marginLeft: 20 }]}>
                 <Text>{worker.worker_name}</Text>
-                <Text>{worker.email}</Text>
+                {/* <Text>{worker.email}</Text> */}
                 <Text>{worker.phone}</Text>
               </View>
             }
-            <View style={[styles.modalInfo, { marginLeft: 20 }]}>
+            {/* <View style={[styles.modalInfo, { marginLeft: 20 }]}>
               <Text>Phí Đình Long</Text>
               <Text>philongpdl@gmail.com</Text>
               <Text>0987654321</Text>
-            </View>
+            </View> */}
 
           </View>
         </View>

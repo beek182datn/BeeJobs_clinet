@@ -73,6 +73,7 @@ export interface ApplyJobData {
   };
   fullname: string;
   phone_number: string;
+  email: string;
   intro_letter: string;
 }
 
@@ -100,6 +101,11 @@ export interface AppliedJob {
 export interface CheckApplyJobResponse {
   isApplied: boolean;
   message: string;
+}
+
+//check folowing
+export interface CheckFolow {
+  isFollowing: boolean;
 }
 
 // worker
