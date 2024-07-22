@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View, ScrollView, Pressable, Image, Modal, TextInput, TouchableOpacity, Dimensions, SafeAreaView } from 'react-native'
+import { StyleSheet, Text, View, ScrollView, Pressable, Image, Modal, TextInput, TouchableOpacity, Dimensions, SafeAreaView, Linking, Alert } from 'react-native'
 import React, { useEffect, useState } from 'react'
 import { useLocalSearchParams } from 'expo-router'
 import { findCompanyById, getUserInfo, checkApplyJob, findWorkerById } from '@/components/fetch_data/api';
@@ -53,12 +53,6 @@ const JobDetail = () => {
     );
 
     const fetchCompanyData = async () => {
-      const companyId = String(job.company_id);
-      const company = await findCompanyById(companyId);
-      if (company) {
-        setCompanyInfo(company)
-      }
-
       const user: User | null = await getUserInfo();
       if (user) {
         const response = await checkApplyJob(user.id_user, String(job._id));
@@ -66,8 +60,14 @@ const JobDetail = () => {
       }
       setUser(user);
 
-      if (worker && user) {
-        const workerInfo = await findWorkerById(user.id_user);
+      const companyId = String(job.company_id);
+      const company = await findCompanyById(companyId);
+      if (company) {
+        setCompanyInfo(company)
+      }
+
+      if (user) {
+        const workerInfo = await findWorkerById(String(user.id_user));
         setWorker(workerInfo);
       }
     };
@@ -78,6 +78,17 @@ const JobDetail = () => {
 
   // xử lý ứng tuyển
   const handleModalApply = () => {
+    if (!worker) {
+      Alert.alert(
+        "Thông báo",
+        "Bạn cần hoàn thiện hồ sơ cá nhân!",
+        [{ text: "OK" }],
+        { cancelable: true }
+      );
+      return
+    }
+
+
     setShowModal(true);
   };
 
@@ -87,7 +98,7 @@ const JobDetail = () => {
 
   const handleApply = async () => {
     if (cv !== null) {
-      if (user && job) {
+      if (user && job && worker) {
         try {
           const data: ApplyJobData = {
             cv: {
@@ -95,8 +106,9 @@ const JobDetail = () => {
               name: cv.name!,
               type: cv.mimeType!
             },
-            fullname,
-            phone_number,
+            fullname: worker.worker_name,
+            phone_number: worker.phone,
+            email: worker.email,
             intro_letter,
           };
           const jobId = job._id;
@@ -117,6 +129,13 @@ const JobDetail = () => {
           setVisible(true);
         }
       }
+    } else {
+      Alert.alert(
+        "Thông báo",
+        "Hãy chọn file CV của bạn!",
+        [{ text: "OK" }],
+        { cancelable: true }
+      );
     }
   };
 
@@ -135,7 +154,9 @@ const JobDetail = () => {
   };
 
   const handleDetailCompany = () => {
-    router.push({ pathname: 'CompanyDetail', params: job })
+    if (user) {
+      router.push({ pathname: 'CompanyDetail', params: { ...job, userId: user.id_user } })
+    }
   }
 
   const getDaysLeft = (dateString: string) => {
@@ -154,6 +175,14 @@ const JobDetail = () => {
       return false
     }
     return true;
+  }
+
+  const handleDeleteCv = () => {
+    setCv(null);
+  }
+
+  const hanldeLoadCv = () => {
+    console.log('Xem cv')
   }
 
   return (
@@ -194,12 +223,12 @@ const JobDetail = () => {
             <View style={[styles.gridView, { borderLeftWidth: 0.5, borderLeftColor: 'gray', borderRightWidth: 0.5, borderRightColor: 'gray' }]}>
               <Ionicons name='location' size={30} color={'#4CAF50'} style={{ marginBottom: 10 }} />
               <Text style={{ fontSize: 14, color: 'gray' }}>Địa điểm</Text>
-              <Text style={styles.textGrid}>{job.location}</Text>
+              <Text style={styles.textGrid}>{job.location?.slice(0, 10)}</Text>
             </View>
             <View style={styles.gridView}>
               <Ionicons name='star' size={30} color={'#4CAF50'} style={{ marginBottom: 10 }} />
               <Text style={{ fontSize: 14, color: 'gray' }}>Kinh nghiệm</Text>
-              <Text style={styles.textGrid}>{job.requirements}</Text>
+              <Text style={styles.textGrid}>{job.requirements?.slice(0, 10)}</Text>
             </View>
 
           </View>
@@ -244,7 +273,7 @@ const JobDetail = () => {
             <TouchableOpacity style={styles.buttonLeft}>
               <Text style={styles.buttonTextN}>Gửi Tin Nhắn</Text>
             </TouchableOpacity>
-            <TouchableOpacity style={styles.buttonRight}>
+            <TouchableOpacity style={styles.buttonRight} onPress={handleModalApply}>
               <Text style={styles.buttonTextN}>Ứng tuyển lại</Text>
             </TouchableOpacity>
           </View>
@@ -276,44 +305,70 @@ const JobDetail = () => {
         }
       </View>
 
-      <Modal visible={showModal} animationType="slide">
-        <View style={styles.modalContainer}>
-          <Image style={{ width: 200, height: 200 }} source={require('../../assets/images/bee_jobs_light_blue.png')} />
-          <Pressable style={[styles.applyButton, { marginBottom: 100 }]} onPress={pickFile}>
-            <Ionicons name="document-attach-outline" style={styles.applyButtonIcon} />
-            <Text style={styles.applyButtonText}>Chọn CV của bạn</Text>
-          </Pressable>
-          {cv && (
-            <View style={styles.filePreview}>
-              <Text style={styles.filePreviewText}>Tệp đã chọn: {cv.name}</Text>
-            </View>
-          )}
-          <TextInput
-            // style={styles.input}
-            placeholder="Họ và tên"
-            value={!worker?.worker_name ? worker?.worker_name : fullname}
-            onChangeText={setFullname}
-          />
-          <TextInput
-            // style={styles.input}
-            placeholder="Số điện thoại"
-            value={!worker?.phone ? worker?.phone : phone_number}
-            onChangeText={setPhoneNumber}
-          />
-          <TextInput
-            // style={styles.input}
-            placeholder="Lời nhắn"
-            value={intro_letter}
-            onChangeText={setIntroLetter}
-          />
-          <View style={styles.buttonContainer}>
-            <TouchableOpacity style={styles.button} onPress={handleApply}>
-              <Text style={styles.buttonText}>Ứng tuyển</Text>
+
+      <Modal visible={showModal} animationType="slide" style={{ padding: 10 }}>
+        <Text style={{ margin: 10, fontSize: 18, color: 'black', fontWeight: 500 }}>CV ứng tuyển</Text>
+        <View style={styles.modalTopView}>
+          {!cv &&
+            <TouchableOpacity style={styles.buttonPickCv} onPress={pickFile}>
+              <Text style={{ color: 'white', fontWeight: '500' }}>Chọn cv</Text>
             </TouchableOpacity>
-            <TouchableOpacity style={styles.button} onPress={handleCloseModal}>
-              <Text style={styles.buttonText}>Hủy</Text>
+          }
+          {cv &&
+            <TouchableOpacity style={styles.buttonPickCv} onPress={hanldeLoadCv}>
+              <Text style={{ color: 'white', fontWeight: '500' }}>Xem CV</Text>
             </TouchableOpacity>
+          }
+          <View style={styles.hanldeCvName}>
+            {cv && (
+              <Text>Tệp đã chọn: {cv.name.slice(0, 20)}</Text>
+            )}
+            {cv && (
+              <TouchableOpacity style={{ backgroundColor: 'gray' }} onPress={handleDeleteCv}>
+                <Ionicons name='close' size={18} color={'black'} />
+              </TouchableOpacity>
+            )}
           </View>
+
+          <View style={styles.modalBottomView}>
+            <View style={styles.modalInfo}>
+              <Text>Họ và tên: </Text>
+              {/* <Text>Email: </Text> */}
+              <Text>Số điện thoại: </Text>
+            </View>
+
+            {worker &&
+              <View style={[styles.modalInfo, { marginLeft: 20 }]}>
+                <Text>{worker.worker_name}</Text>
+                {/* <Text>{worker.email}</Text> */}
+                <Text>{worker.phone}</Text>
+              </View>
+            }
+            {/* <View style={[styles.modalInfo, { marginLeft: 20 }]}>
+              <Text>Phí Đình Long</Text>
+              <Text>philongpdl@gmail.com</Text>
+              <Text>0987654321</Text>
+            </View> */}
+
+          </View>
+        </View>
+
+        <Text style={{ margin: 10, fontSize: 18, color: 'black', fontWeight: 500 }}>Thư giới thiệu</Text>
+        <TextInput
+          style={styles.input}
+          placeholder="Lời nhắn"
+          value={intro_letter}
+          onChangeText={setIntroLetter}
+          multiline={true}
+        />
+
+        <View style={styles.buttonContainer}>
+          <TouchableOpacity style={styles.button} onPress={handleCloseModal}>
+            <Text style={styles.buttonText}>Hủy</Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.button} onPress={handleApply}>
+            <Text style={styles.buttonText}>Ứng tuyển</Text>
+          </TouchableOpacity>
         </View>
       </Modal>
 
@@ -423,13 +478,13 @@ const styles = StyleSheet.create({
     color: '#333',
   },
   input: {
-    width: '100%',
-    height: 50,
+    width: 'auto',
+    height: 100,
     borderColor: '#ccc',
     borderWidth: 1,
-    marginVertical: 10,
-    paddingHorizontal: 10,
     textAlignVertical: 'top',
+    padding: 5,
+    margin: 10
   },
   buttonContainer: {
     flexDirection: 'row',
@@ -438,8 +493,7 @@ const styles = StyleSheet.create({
   },
   button: {
     backgroundColor: '#007AFF',
-    paddingVertical: 12,
-    paddingHorizontal: 16,
+    padding: 10,
     borderRadius: 8,
     flex: 1,
     marginHorizontal: 5,
@@ -503,5 +557,40 @@ const styles = StyleSheet.create({
     flex: 1,
     width: '100%',
     height: 800,
+  },
+  modalTopView: {
+    margin: 10,
+    width: 'auto',
+    padding: 10,
+    // backgroundColor: 'yellow',
+    borderRadius: 10,
+    borderColor: 'blue',
+    borderWidth: 1,
+    shadowColor: '#000',
+
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+    elevation: 5,
+  },
+  buttonPickCv: {
+    width: 'auto',
+    backgroundColor: '#4CAF50',
+    padding: 10,
+    borderRadius: 10,
+    alignSelf: 'center'
+  },
+  modalBottomView: {
+    padding: 10,
+    // backgroundColor: 'blue',
+    borderRadius: 10,
+    flexDirection: 'row'
+  },
+  modalInfo: {
+    // backgroundColor: 'green'
+  },
+  hanldeCvName: {
+    backgroundColor: '#f0f8ff',
+    flexDirection: 'row',
+    alignSelf: 'center'
   }
 });

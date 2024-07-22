@@ -3,7 +3,7 @@ import { SafeAreaView, StyleSheet, Text, View, Image, Pressable, ScrollView, Tou
 import { FontAwesome, Ionicons } from '@expo/vector-icons';
 import { router, useLocalSearchParams } from 'expo-router';
 import { Company } from '@/components/Model/Model';
-import { findCompanyById } from '@/components/fetch_data/api';
+import { findCompanyById, folowCompany, checkFolowCompany, unFolowCompany } from '@/components/fetch_data/api';
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
 import CompanyJob from '@/components/comps/CompanyJob';
 import CompanyInfo from '@/components/comps/CompanyInfo';
@@ -14,8 +14,11 @@ const Tab = createMaterialTopTabNavigator();
 
 const CompanyDetail = () => {
     const job = useLocalSearchParams();
+    // const userId = useLocalSearchParams()
     const [companyInfo, setCompanyInfo] = useState<Company | null>(null);
     const linkVps = 'http://beejobs.io.vn:14307';
+    const [isFolowing, setIsFolowing] = useState(false);
+
 
     useEffect(() => {
         const companyId = String(job.company_id);
@@ -24,16 +27,37 @@ const CompanyDetail = () => {
             if (company) {
                 setCompanyInfo(company);
             }
+
+            const folow = await checkFolowCompany(String(job.userId), String(job.company_id))
+            setIsFolowing(folow.isFollowing)
         };
         fetchData();
     }, [router]);
+
+    const handleFolowCompany = async () => {
+        try {
+            await folowCompany(String(job.userId), String(job.company_id))
+            setIsFolowing(true)
+        } catch (error) {
+            console.log(error)
+        }
+    }
+
+    const handleUnFolowCompany = async () => {
+        try {
+            await unFolowCompany(String(job.userId), String(job.company_id))
+            setIsFolowing(false)
+        } catch (error) {
+            console.log(error)
+        }
+    }
 
     return (
         <SafeAreaView style={styles.container}>
             {/* <View> */}
             <View style={{ position: 'relative' }}>
                 <Image source={require('../../assets/images/company.jpg')} style={{ width: '100%', height: 150 }} />
-                <TouchableOpacity onPress={()=>{router.push('/Home')}}
+                <TouchableOpacity onPress={() => { router.push('/Home') }}
                     style={{ position: 'absolute', top: 20, left: 10, backgroundColor: '#2196F3', borderRadius: 30, padding: 5 }}>
                     <Ionicons name="arrow-back" size={22} color="black" />
                 </TouchableOpacity>
@@ -49,18 +73,21 @@ const CompanyDetail = () => {
                         <Text style={styles.companyName}>{companyInfo?.company_name}</Text>
                         <Text style={styles.companyInfo}>{companyInfo?.company_scale}</Text>
                     </View>
-                    <TouchableOpacity style={styles.followButton} onPress={() => {
-                        console.log(JSON.stringify(companyInfo))
-                    }}>
-                        <Text style={styles.followButtonText}>Theo dõi công ty</Text>
-                    </TouchableOpacity>
-                    <TouchableOpacity style={styles.shareButton}>
+                    {!isFolowing &&
+                        <TouchableOpacity style={styles.followButton} onPress={handleFolowCompany}>
+                            <Text style={styles.followButtonText}>Theo dõi công ty</Text>
+                        </TouchableOpacity>}
+                    {isFolowing &&
+                        <TouchableOpacity style={[styles.followButton, {backgroundColor:'gray'}]} onPress={handleUnFolowCompany}>
+                            <Text style={styles.followButtonText}>Hủy theo dõi</Text>
+                        </TouchableOpacity>}
+                    {/* <TouchableOpacity style={styles.shareButton}>
                         <FontAwesome name="share-alt" size={18} color="#FFFFFF" />
-                    </TouchableOpacity>
+                    </TouchableOpacity> */}
                 </View>
-                <TouchableOpacity style={{flexDirection:'row', justifyContent:'center', backgroundColor:'#FFFFFF'}}>
-                    <Ionicons name='link' size={18} color={'blue'}/>
-                    <Text style={{marginLeft:4}}>{companyInfo?.company_website}</Text>
+                <TouchableOpacity style={{ flexDirection: 'row', justifyContent: 'center', backgroundColor: '#FFFFFF' }}>
+                    <Ionicons name='link' size={18} color={'blue'} />
+                    <Text style={{ marginLeft: 4 }}>{companyInfo?.company_website}</Text>
                 </TouchableOpacity>
             </View>
             {companyInfo &&

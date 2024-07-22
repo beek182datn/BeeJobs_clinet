@@ -1,5 +1,5 @@
 import axios, { AxiosResponse } from "axios";
-import { Job, Company, Worker, CompanyRespone, JobsResponse, User, ApplyJobData, AppliedJob, JobsResponseSingle, AppliedJobsResponse, CheckApplyJobResponse, WokerRespone } from "../Model/Model";
+import { Job, Company, Worker, CompanyRespone, JobsResponse, User, ApplyJobData, AppliedJob, JobsResponseSingle, AppliedJobsResponse, CheckApplyJobResponse, WokerRespone, CheckFolow } from "../Model/Model";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { DocumentPickerAsset } from "expo-document-picker";
 import FormData from 'form-data'
@@ -470,3 +470,36 @@ export const findWorkerById = async (keyword: string): Promise<Worker | null> =>
     return null;
   }
 };
+
+export const folowCompany = async (userId: string, companyId: string) => {
+  try {
+    const respone = await axios.post(`http://beejobs.io.vn:14307/follow/${userId}/${companyId}`)
+    // console.log(respone)
+  } catch (error) {
+    console.log(error);
+  }
+}
+
+export const checkFolowCompany = async (userId: string, companyId: string): Promise<CheckFolow> => {
+  try {
+    const respone: AxiosResponse<CheckFolow> = await axios.get(`http://beejobs.io.vn:14307/follow/${userId}/${companyId}`)
+    return respone.data;
+  } catch (error) {
+    if (axios.isAxiosError(error) && error.response) {
+      console.error('Error in checking apply job status:', error.response.data);
+      throw new Error(`Error checking apply job status: ${error.response.data.message}`);
+    } else {
+      console.error('Unexpected error in checking apply job status:', error);
+      throw new Error('An unexpected error occurred while checking apply job status.');
+    }
+  }
+}
+
+export const unFolowCompany = async (userId: string, companyId: string) => {
+  try {
+    const respone = await axios.post(`http://beejobs.io.vn:14307/unfollow/${userId}/${companyId}`)
+    // console.log(respone)
+  } catch (error) {
+    console.log(error);
+  }
+}
