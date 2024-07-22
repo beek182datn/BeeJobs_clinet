@@ -11,27 +11,19 @@ import {
   Animated,
 } from "react-native";
 import Ionicons from "react-native-vector-icons/Ionicons";
-import ActionSheet from "react-native-actionsheet";
-import { useRouter } from 'expo-router';
-import * as DocumentPicker from 'expo-document-picker';
-import Modal from 'react-native-modal';
-import { Picker } from '@react-native-picker/picker';
+//import ActionSheet from "react-native-actionsheet";
+import { useRouter } from "expo-router";
+import * as DocumentPicker from "expo-document-picker";
+import Modal from "react-native-modal";
+import { Picker } from "@react-native-picker/picker";
 import { User, Worker } from "../../components/Model/Model";
-import { getUserInfo, findWorkerById } from '@/components/fetch_data/api';
+import { getUserInfo, findWorkerById } from "@/components/fetch_data/api";
 
 const Profile: React.FC = () => {
-  const actionSheetRef = useRef<ActionSheet>(null);
-  const fadeAnim = useRef(new Animated.Value(0)).current;
   const router = useRouter();
-  const [isModalVisible, setIsModalVisible] = useState(false);
-  const [selectedYear, setSelectedYear] = useState("1 năm");
   const [user, setUser] = useState<User | null>();
   const [worker, setWorker] = useState<Worker | null>();
-
-  const toggleModal = () => {
-    setIsModalVisible(!isModalVisible);
-  };
-
+  console.log(worker)
   useEffect(() => {
     const fetchUserInfo = async () => {
       try {
@@ -41,228 +33,210 @@ const Profile: React.FC = () => {
         setUser(user);
         if (user) {
           const worker = await findWorkerById(user.id_user);
+          //console.log(user.id_user);
           setWorker(worker);
         }
       } catch (error) {
-        console.error('Error fetching user info:', error);
+        console.error("Error fetching user info:", error);
       }
     };
 
     fetchUserInfo();
   }, []);
 
-  useEffect(() => {
-    Animated.parallel([
-      Animated.spring(fadeAnim, {
-        toValue: 1,
-        friction: 4,
-        useNativeDriver: true,
-      }),
-    ]).start();
-  }, [fadeAnim]);
-
   const handleLogoutPress = () => {
     Alert.alert(
-      'Xác nhận đăng xuất',
-      'Bạn có chắc chắn muốn đăng xuất?',
+      "Xác nhận đăng xuất",
+      "Bạn có chắc chắn muốn đăng xuất?",
       [
         {
-          text: 'Hủy',
-          style: 'cancel',
+          text: "Hủy",
+          style: "cancel",
         },
         {
-          text: 'Đăng xuất',
-          onPress: () => {router.push('/LoginScreen')},
+          text: "Đăng xuất",
+          onPress: () => {
+            router.push("/LoginScreen");
+          },
         },
       ],
       { cancelable: false }
     );
   };
 
-  const showActionSheet = () => {
-    if (actionSheetRef.current) {
-      actionSheetRef.current.show();
+  const goCreate = () => {
+    router.push({
+      pathname: "CompleteProfileScreen1",
+      params: { id_user: user?.id_user },
+    });
+  };
+
+  const goUpdate = () => {
+    if(worker){
+      router.push({
+        pathname: "CompleteProfileScreen2",
+        params:  worker,
+      });
     }
   };
 
-  const handleActionSheetPress = (index: number) => {
-    switch (index) {
-      case 0:
-        //Alert.alert('Chụp ảnh');
-        break;
-      case 1:
-        DocumentPicker.getDocumentAsync({
-          type: '*/*', // Allow any file type, you can specify MIME types if needed
-          copyToCacheDirectory: true
-        })
-          .then((response) => {
-            if (2>0) {
-              console.log('Selected file: ', response);
-              // Process the selected file here
-            } else {
-              console.log('User cancelled the picker');
-            }
-          })
-          .catch((err) => {
-            console.error('DocumentPicker Error: ', err);
-          });
-        break;
-      case 2:
-        //Alert.alert('Xóa ảnh đại diện');
-        break;
-      default:
-        break;
-    }
+  const goResetpasswd = () => {
+    router.push({
+      pathname: "ResetPasswordScreen",
+      params: { email: worker?.email },
+    });
+  };
+
+  const showActionSheet = () => {
+    handleActionSheetPress;
+  };
+
+  const handleActionSheetPress = () => {
+    DocumentPicker.getDocumentAsync({
+      type: "*/*", // Allow any file type, you can specify MIME types if needed
+      copyToCacheDirectory: true,
+    }).then((response) => {
+      if (2 > 0) {
+        console.log("Selected file: ", response);
+        // Process the selected file here
+      } else {
+        console.log("User cancelled the picker");
+      }
+    });
   };
 
   return (
     <ScrollView style={styles.container}>
-      <View style={styles.profileHeader}>
-        <TouchableOpacity onPress={showActionSheet}>
-          <Image
-            source={{ uri: "https://via.placeholder.com/100" }}
-            style={styles.avatar}
-          />
-        </TouchableOpacity>
-        <Text style={styles.name}>Lê Văn Huy</Text>
-        <Text style={styles.candidateId}>Email: vhuy887@gmail.com</Text>
-        <TouchableOpacity style={styles.upgradeButton}>
-          <Text style={styles.upgradeText}>Cập nhật tài khoản</Text>
-        </TouchableOpacity>
-      </View>
-
-      <View style={styles.section}>
-        <View style={styles.row}>
-          <Text style={styles.title}>Kinh nghiệm làm việc</Text>
-          <TouchableOpacity onPress={toggleModal}>
-            <Text style={styles.editText}>Sửa</Text>
-          </TouchableOpacity>
-        </View>
-        <Text style={styles.subtitle}>Chưa cập nhật</Text>
-      </View>
-
-      <View style={styles.section}>
-        <View style={styles.row}>
-          <Text style={styles.title}>Công việc mong muốn</Text>
-          <TouchableOpacity>
-            <Text style={styles.editText}>Sửa</Text>
-          </TouchableOpacity>
-        </View>
-        <Text style={styles.subtitle}>Chưa cập nhật</Text>
-      </View>
-
-      <View style={styles.section}>
-        <View style={styles.row}>
-          <Text style={styles.title}>Địa điểm làm việc mong muốn</Text>
-          <TouchableOpacity>
-            <Text style={styles.editText}>Sửa</Text>
-          </TouchableOpacity>
-        </View>
-        <Text style={styles.subtitle}>Chưa cập nhật</Text>
-      </View>
-
-      <View style={styles.jobManagement}>
-        <Text style={styles.managementTitle}>Quản lý tìm việc</Text>
-        <View style={styles.row}>
-          <View style={styles.managementBox}>
-            <Ionicons name="briefcase" size={30} color="#0099CC" />
-            <Text style={styles.managementText}>Việc làm đã ứng tuyển</Text>
+      {worker && (
+        <>
+          <View style={styles.profileHeader}>
+            <TouchableOpacity>
+              <Image
+                source={{
+                  uri: `http://beejobs.io.vn:14307${worker.worker_avatar}`,
+                }}
+                style={styles.avatar}
+              />
+            </TouchableOpacity>
+            <Text style={styles.name}>{worker?.worker_name}</Text>
+            <Text style={styles.candidateId}>{worker?.email}</Text>
+            <TouchableOpacity style={styles.upgradeButton}>
+              <Text style={styles.upgradeText}>Nâng cấp tài khoản</Text>
+            </TouchableOpacity>
+            <TouchableOpacity style={styles.editButton} onPress={goUpdate}>
+              <Text style={{color: "black", fontWeight: "bold"}}>Sửa</Text>
+            </TouchableOpacity>
           </View>
-          <View style={styles.managementBox}>
-            <Ionicons name="bookmark" size={30} color="#0099CC" />
-            <Text style={styles.managementText}>Việc làm đã lưu</Text>
+
+          <View style={styles.jobManagement}>
+            <Text style={styles.managementTitle}>Quản lý tìm việc</Text>
+            <View style={styles.row}>
+              <View style={styles.managementBox}>
+                <Ionicons name="briefcase" size={30} color="#0099CC" />
+                <Text style={styles.managementText}>Việc làm đã ứng tuyển</Text>
+                <Text style={styles.infoNumber}>0</Text>
+              </View>
+              <View style={styles.managementBox}>
+                <Ionicons name="bookmark" size={30} color="#0099CC" />
+                <Text style={styles.managementText}>Việc làm đã lưu</Text>
+                <Text style={styles.infoNumber}>0</Text>
+              </View>
+            </View>
           </View>
-        </View>
-      </View>
 
-      <View style={styles.section}>
-        <View style={styles.row}>
-          <View style={styles.infoBox}>
-            <Ionicons name="checkmark-circle" size={30} color="#0099CC" />
-            <Text style={styles.infoText}>Việc làm phù hợp</Text>
-            <Text style={styles.infoNumber}>0</Text>
+          <View style={styles.section}>
+            <View style={styles.row}>
+              <View style={styles.infoBox}>
+                <Ionicons name="eye" size={30} color="#0099CC" />
+                <Text style={styles.infoText}>NTD đã xem hồ sơ</Text>
+                <Text style={styles.infoNumber}>0</Text>
+              </View>
+              <View style={styles.infoBox}>
+                <Ionicons name="business" size={30} color="#0099CC" />
+                <Text style={styles.infoText}>Công ty đang theo dõi</Text>
+                <Text style={styles.infoNumber}>0</Text>
+              </View>
+            </View>
           </View>
-          <View style={styles.infoBox}>
-            <Ionicons name="business" size={30} color="#0099CC" />
-            <Text style={styles.infoText}>Công ty đang theo dõi</Text>
-            <Text style={styles.infoNumber}>0</Text>
+          <View style={styles.section}>
+            <Text style={styles.accountSettingsTitle}>Cài đặt tài khoản</Text>
+            <TouchableOpacity
+              style={styles.utilityItem}
+              onPress={goResetpasswd}
+            >
+              <Ionicons name="key" size={30} color="#0099CC" />
+              <Text style={styles.utilityText}>Đổi mật khẩu</Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity style={styles.utilityItem}>
+              <Ionicons name="lock-closed" size={30} color="#0099CC" />
+              <Text style={styles.utilityText}>Vô hiệu hóa tài khoản</Text>
+            </TouchableOpacity>
           </View>
-        </View>
-        <View style={styles.row}>
-          <View style={styles.infoBox}>
-            <Ionicons name="eye" size={30} color="#0099CC" />
-            <Text style={styles.infoText}>NTD đã xem hồ sơ</Text>
-            <Text style={styles.infoNumber}>0</Text>
-          </View>
-        </View>
-      </View>
 
-      <View style={styles.section}>
-        <TouchableOpacity style={styles.banner}>
-          <Text style={styles.bannerText}>Khám phá việc làm gần bạn</Text>
-          <Text style={styles.bannerButton}>XEM NGAY</Text>
-        </TouchableOpacity>
-      </View>
-
-      <View style={styles.section}>
-        <Text style={styles.utilitiesTitle}>Tiện ích</Text>
-        <TouchableOpacity style={styles.utilityItem}>
-          <Ionicons name="document" size={30} color="#0099CC" />
-          <Text style={styles.utilityText}>Hướng dẫn viết CV</Text>
-        </TouchableOpacity>
-      </View>
-
-      <View style={styles.section}>
-        <Text style={styles.accountSettingsTitle}>Cài đặt tài khoản</Text>
-        <TouchableOpacity style={styles.utilityItem} onPress={() => router.push("ResetPasswordScreen")}>
-          <Ionicons name="key" size={30} color="#0099CC" />
-          <Text style={styles.utilityText}>Đổi mật khẩu</Text>
-        </TouchableOpacity>
-
-        <TouchableOpacity style={styles.utilityItem}>
-          <Ionicons name="lock-closed" size={30} color="#0099CC" />
-          <Text style={styles.utilityText}>Vô hiệu hóa tài khoản</Text>
-        </TouchableOpacity>
-      </View>
-
-      <TouchableOpacity style={styles.logoutButton} onPress={handleLogoutPress}>
-        <Text style={styles.logoutText}>Đăng xuất</Text>
-        <Ionicons name="log-out-outline" size={20} color="#333" />
-      </TouchableOpacity>
-
-      <ActionSheet
-        ref={actionSheetRef}
-        style={styles.actionsheet}
-        title={"Cập nhật ảnh đại diện"}
-        options={["Chụp ảnh", "Chọn từ thư viện", "Xóa ảnh đại diện", "Đóng"]}
-        cancelButtonIndex={3}
-        destructiveButtonIndex={2}
-        onPress={handleActionSheetPress}
-      />
-      <Modal 
-        isVisible={isModalVisible}
-        onBackdropPress={toggleModal}
-        style={styles.modal}
-      >
-        <View style={styles.modalContent}>
-          <Text style={styles.modalTitle}>Chọn số năm đi làm</Text>
-          <Picker
-            selectedValue={selectedYear}
-            onValueChange={(itemValue) => setSelectedYear(itemValue)}
-            style={styles.picker}
+          <TouchableOpacity
+            style={styles.logoutButton}
+            onPress={handleLogoutPress}
           >
-            <Picker.Item label="Sắp đi làm" value="Sắp đi làm" />
-            <Picker.Item label="Dưới 1 năm" value="Dưới 1 năm" />
-            <Picker.Item label="1 năm" value="1 năm" />
-            <Picker.Item label="2 năm" value="2 năm" />
-            <Picker.Item label="3 năm" value="3 năm" />
-            <Picker.Item label="4 năm" value="4 năm" />
-          </Picker>
-          <TouchableOpacity onPress={toggleModal}>
-            <Text style={styles.doneText}>Xong</Text>
+            <Text style={styles.logoutText}>Đăng xuất</Text>
+            <Ionicons name="log-out-outline" size={20} color="#333" />
           </TouchableOpacity>
-        </View>
-      </Modal>
+        </>
+      )}
+      {!worker && (
+        <>
+          <View style={styles.profileHeader}>
+            <TouchableOpacity>
+              <Image
+                source={{ uri: "https://via.placeholder.com/100" }}
+                style={styles.avatar}
+              />
+            </TouchableOpacity>
+            <Text style={styles.name}>Bạn chưa cập nhật hồ sơ</Text>
+            <TouchableOpacity style={styles.upgradeButton} onPress={goCreate}>
+              <Text style={styles.upgradeText}>Cập nhật</Text>
+            </TouchableOpacity>
+          </View>
+
+          <View style={styles.jobManagement}>
+            <Text style={styles.managementTitle}>Quản lý tìm việc</Text>
+            <View style={styles.row}>
+              <View style={styles.managementBox}>
+                <Ionicons name="briefcase" size={30} color="#0099CC" />
+                <Text style={styles.managementText}>Việc làm đã ứng tuyển</Text>
+                <Text style={styles.infoNumber}>0</Text>
+              </View>
+              <View style={styles.managementBox}>
+                <Ionicons name="bookmark" size={30} color="#0099CC" />
+                <Text style={styles.managementText}>Việc làm đã lưu</Text>
+                <Text style={styles.infoNumber}>0</Text>
+              </View>
+            </View>
+          </View>
+
+          <View style={styles.section}>
+            <View style={styles.row}>
+              <View style={styles.infoBox}>
+                <Ionicons name="eye" size={30} color="#0099CC" />
+                <Text style={styles.infoText}>NTD đã xem hồ sơ</Text>
+                <Text style={styles.infoNumber}>0</Text>
+              </View>
+              <View style={styles.infoBox}>
+                <Ionicons name="business" size={30} color="#0099CC" />
+                <Text style={styles.infoText}>Công ty đang theo dõi</Text>
+                <Text style={styles.infoNumber}>0</Text>
+              </View>
+            </View>
+          </View>
+          <TouchableOpacity
+            style={styles.logoutButton}
+            onPress={handleLogoutPress}
+          >
+            <Text style={styles.logoutText}>Đăng xuất</Text>
+            <Ionicons name="log-out-outline" size={20} color="#333" />
+          </TouchableOpacity>
+        </>
+      )}
     </ScrollView>
   );
 };
@@ -271,6 +245,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "#fff",
+    marginTop: 10,
   },
   profileHeader: {
     alignItems: "center",
@@ -282,6 +257,8 @@ const styles = StyleSheet.create({
     height: 100,
     borderRadius: 50,
     marginBottom: 10,
+    borderColor: "#0099CC",
+    borderWidth: 2,
   },
   name: {
     fontSize: 18,
@@ -289,7 +266,8 @@ const styles = StyleSheet.create({
   },
   candidateId: {
     fontSize: 14,
-    color: "gray",
+    color: "#0099CC",
+    fontWeight: "bold",
   },
   upgradeButton: {
     marginTop: 10,
@@ -442,37 +420,47 @@ const styles = StyleSheet.create({
   },
   button: {
     padding: 10,
-    backgroundColor: '#007bff',
+    backgroundColor: "#007bff",
     borderRadius: 5,
   },
   buttonText: {
-    color: 'white',
+    color: "white",
     fontSize: 16,
   },
   modal: {
-    justifyContent: 'flex-end',
+    justifyContent: "flex-end",
     margin: 0,
   },
   modalContent: {
-    backgroundColor: 'white',
+    backgroundColor: "white",
     padding: 20,
     borderRadius: 10,
   },
   modalTitle: {
     fontSize: 18,
-    fontWeight: 'bold',
-    textAlign: 'center',
+    fontWeight: "bold",
+    textAlign: "center",
     marginBottom: 10,
   },
   picker: {
     height: 150,
   },
   doneText: {
-    textAlign: 'right',
-    color: '#007bff',
+    textAlign: "right",
+    color: "#007bff",
     fontSize: 16,
     marginTop: 10,
   },
+  editButton: {
+    position: 'absolute',
+    right: 10,
+    top: 20,
+    padding: 10,
+    borderColor: "#0099CC",
+    backgroundColor: "#0099CC",
+    borderWidth: 1,
+    borderRadius: 5,
+  }
 });
 
 export default Profile;

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   View,
   Text,
@@ -6,30 +6,72 @@ import {
   TouchableOpacity,
   StyleSheet,
   ScrollView,
+  Image,
 } from "react-native";
 import Icon from "react-native-vector-icons/FontAwesome";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
-import { useRouter, useLocalSearchParams } from 'expo-router';
+import { useRouter, useLocalSearchParams } from "expo-router";
+import * as DocumentPicker from "expo-document-picker";
+import axios, { AxiosResponse } from "axios";
+import * as ImagePicker from "expo-image-picker";
+type SetterFunction = (uri: string) => void;
+
+const pickImage = async (setter: SetterFunction) => {
+  const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
+  if (status !== 'granted') {
+    alert('Permission to access media library is required!');
+    return;
+  }
+
+  const result = await ImagePicker.launchImageLibraryAsync({
+    mediaTypes: ImagePicker.MediaTypeOptions.Images,
+    allowsEditing: true,
+    aspect: [4, 3],
+    quality: 1,
+  });
+
+  if (!result.canceled && result.assets && result.assets.length > 0) {
+    setter(result.assets[0].uri);
+  }
+};
 
 const CompleteProfileScreen1: React.FC = () => {
   const router = useRouter();
-  
-  const [userData, setUserData] = useState(null);
   const [worker_name, setWorker_name] = useState("");
-  const [worker_avatar, setWorker_avatar] = useState("");
+  const [worker_avatar, setWorker_avatar] = useState<string | null>(null);
   const params = useLocalSearchParams();
-  const email = params.email;
-  const [age, setAge] = useState("");
+  const user_id = params.id_user;
   const [phone, setPhone] = useState("");
+  const [email, setEmail] = useState("");
   const [address, setAddress] = useState("");
-  console.log(email)
-  //thêm user_id vào
+  //console.log(user_id);
   const [errors, setErrors] = useState({
     worker_name: "",
     worker_avatar: "",
     email: "",
-    phone: ""
+    phone: "",
   });
+
+  useEffect(() => {
+    const fetchUserData = async () => {
+      try {
+        //console.log(`Fetching data for user ID: ${user_id}`);
+        const response = await axios.get(
+          `http://beejobs.io.vn:14307/user/${user_id}`
+        );
+        const userData = response.data.user;
+        if (userData && userData.email) {
+          setEmail(userData.email);
+        } else {
+          console.error("Email not found in user data");
+        }
+      } catch (error) {
+        console.error("Error fetching user data:", error);
+      }
+    };
+
+    fetchUserData();
+  }, [user_id]);
 
   const handleContinue = () => {
     // sau khi hoàn thành thì cho vào màn Home
@@ -37,24 +79,65 @@ const CompleteProfileScreen1: React.FC = () => {
       worker_name: worker_name ? "" : "Tên không được để trống",
       worker_avatar: worker_avatar ? "" : "Ảnh đại diện không được bỏ trống",
       email: email ? "" : "Địa chỉ Gmail không được để trống",
-      phone: phone ? "": "Số điện thoại không được để trống"
+      phone: phone ? "" : "Số điện thoại không được để trống",
     };
 
     setErrors(newErrors);
+    const noErrors = Object.values(newErrors).every((error) => !error);
+  };
 
-    const noErrors = Object.values(newErrors).every(error => !error);
+  
 
-    if (noErrors) {
-      router.push("/Home");
+  // const uploadImage = async (uri: string) => {
+  //   const formData = new FormData();
+  //   formData.append('worker_avatar', {
+  //     uri,
+  //     name: 'photo.jpg',
+  //     type: 'image/jpeg'
+  //   } as any);  // Casting to 'any' to avoid TypeScript errors
+    
+  // };
+  const handleRegister = async (): Promise<void> => {
+    handleContinue();
+    try {
+      const avatarUrl = worker_avatar;
+      if (avatarUrl) {
+        const formData = new FormData();
+        formData.append('worker_name', worker_name);
+        formData.append('worker_avatar', avatarUrl);
+        formData.append('email', email);  // Replace with actual email
+        formData.append('phone', phone);
+        if (worker_avatar) {
+          const response = await fetch(worker_avatar);
+          const blob = await response.blob();
+          formData.append('worker_avatar', {
+            uri: worker_avatar,
+            type: blob.type,
+            name: 'logo.jpg',
+          }as any);
+        }
+  
+        const response: AxiosResponse = await axios.post(
+          `http://beejobs.io.vn:14307/workers/create/${user_id}`,
+          formData,
+          {
+            headers: {
+              'Content-Type': 'multipart/form-data',
+            },
+          }
+        );
+        
+        router.push('/Profile');
+      } else {
+        console.error('Failed to upload image, registration aborted.');
+      }
+    } catch (error) {
+      console.error('Lỗi đăng ký:', error);
     }
   };
 
-  const skipnow = () => {
-    router.push("/Home");
-  };
-
   return (
-    <ScrollView>
+    <ScrollView style={{ backgroundColor: "#fff" }}>
       <View style={styles.container}>
         <View style={styles.headerContainer}>
           <Icon
@@ -70,6 +153,18 @@ const CompleteProfileScreen1: React.FC = () => {
         </View>
 
         <Text style={styles.sectionHeader}>Thông tin cá nhân</Text>
+        <View style={styles.profileHeader}>
+          <TouchableOpacity onPress={() => pickImage(setWorker_avatar)}>
+            <Image
+              source={{
+                uri: worker_avatar
+                  ? worker_avatar
+                  : "https://via.placeholder.com/100",
+              }}
+              style={styles.avatar}
+            />
+          </TouchableOpacity>
+        </View>
         <View style={styles.section}>
           <View style={styles.inputContainer}>
             <Icon name="user" size={20} color="#A9A9A9" style={styles.icon} />
@@ -92,49 +187,28 @@ const CompleteProfileScreen1: React.FC = () => {
             />
             <TextInput
               style={styles.input}
-              placeholder="Địa chỉ Gmail"
+              placeholder="Gmail"
               keyboardType="email-address"
-              // value={email}
-              // onChangeText={setEmail}
+              value={email}
+              onChangeText={setEmail}
+              editable={false}
             />
           </View>
           {errors.email ? (
             <Text style={styles.errorText}>{errors.email}</Text>
-          ) : null}
-          <View style={styles.inputContainer}>
-            <Icon
-              name="image"
-              size={20}
-              color="#A9A9A9"
-              style={styles.icon}
-            />
-            <TextInput
-              style={styles.input}
-              placeholder="Ảnh đại diện"
-              
-              value={worker_avatar}
-              onChangeText={setWorker_avatar}
-            />
-          </View>
-          {errors.worker_avatar ? (
-            <Text style={styles.errorText}>{errors.worker_avatar}</Text>
           ) : null}
         </View>
 
         <Text style={styles.sectionHeader}>Số điện thoại</Text>
         <View style={styles.section}>
           <View style={styles.inputContainer}>
-            <Icon
-              name="phone"
-              size={20}
-              color="#A9A9A9"
-              style={styles.icon}
-            />
+            <Icon name="phone" size={20} color="#A9A9A9" style={styles.icon} />
             <TextInput
               style={styles.input}
               placeholder="Số điện thoại"
-              value={address}
-              onChangeText={setAddress}
+              keyboardType="numeric"
+              value={phone}
+              onChangeText={setPhone}
             />
           </View>
           {errors.phone ? (
@@ -142,11 +216,8 @@ const CompleteProfileScreen1: React.FC = () => {
           ) : null}
         </View>
 
-        <TouchableOpacity style={styles.saveButton} onPress={handleContinue}>
+        <TouchableOpacity style={styles.saveButton} onPress={handleRegister}>
           <Text style={styles.buttonText}>Lưu</Text>
-        </TouchableOpacity>
-        <TouchableOpacity onPress={skipnow}>
-          <Text style={styles.skipText}>Bỏ qua</Text>
         </TouchableOpacity>
       </View>
     </ScrollView>
@@ -158,7 +229,7 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: "#fff",
     padding: 20,
-    marginTop: 10
+    marginTop: 10,
   },
   headerContainer: {
     flexDirection: "row",
@@ -239,6 +310,18 @@ const styles = StyleSheet.create({
     fontSize: 14,
     marginBottom: 10,
     marginLeft: 10,
+  },
+  profileHeader: {
+    alignItems: "center",
+    padding: 20,
+  },
+  avatar: {
+    width: 120,
+    height: 120,
+    borderRadius: 50,
+    marginBottom: 10,
+    borderColor: 'blue',
+    borderWidth: 2
   },
 });
 
