@@ -473,7 +473,7 @@ export const findWorkerById = async (keyword: string): Promise<Worker | null> =>
 
 export const folowCompany = async (userId: string, companyId: string) => {
   try {
-    const respone = await axios.post(`http://beejobs.io.vn:14307/folow/${userId}/${companyId}`)
+    const respone = await axios.post(`http://beejobs.io.vn:14307/follow/${userId}/${companyId}`)
     // console.log(respone)
   } catch (error) {
     console.log(error);
@@ -482,7 +482,7 @@ export const folowCompany = async (userId: string, companyId: string) => {
 
 export const checkFolowCompany = async (userId: string, companyId: string): Promise<CheckFolow> => {
   try {
-    const respone: AxiosResponse<CheckFolow> = await axios.get(`http://beejobs.io.vn:14307/folow/${userId}/${companyId}`)
+    const respone: AxiosResponse<CheckFolow> = await axios.get(`http://beejobs.io.vn:14307/follow/${userId}/${companyId}`)
     return respone.data;
   } catch (error) {
     if (axios.isAxiosError(error) && error.response) {
