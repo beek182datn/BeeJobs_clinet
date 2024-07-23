@@ -5,34 +5,67 @@ import {
   TextInput,
   TouchableOpacity,
   StyleSheet,
+  Alert
 } from "react-native";
 import axios from "axios";
-import { useRouter } from 'expo-router';
-
+import { useRouter, useLocalSearchParams } from 'expo-router';
 const OtpVerificationScreen: React.FC = () => {
   const [otp, setOtp] = useState<string[]>(["", "", "", "", "", ""]);
+  const [intervalId, setIntervalId] = useState<NodeJS.Timeout | null>(null); 
   const router = useRouter();
+  const params = useLocalSearchParams();
+  const email = params.email;
+  const type = "FogotPassword"
 
-  const handleVerifyOtp = async () => {
-    const otpCode = otp.join("");
-    if (otpCode.length !== 6) {
-      alert("Vui lòng nhập đúng mã OTP gồm 6 ký tự.");
-      return;
-    }
+  // const handleVerifyOtp = async () => {
+  //   const otpCode = otp.join("");
+  //   if (otpCode.length !== 6) {
+  //     alert("Vui lòng nhập đúng mã OTP gồm 6 ký tự.");
+  //     return;
+  //   }
 
-    try {
-      const response = await axios.post('http://beejobs.io.vn:14307/api/verify-otp', {
-        otp: otpCode,
-      });
-      console.log('Xác minh OTP thành công:', response.data);
-      alert("Xác minh OTP thành công.");
-      setOtp(["", "", "", "", "", ""]);
-      router.push('ResetPasswordScreen'); // Điều hướng đến màn hình đặt lại mật khẩu
-    } catch (error) {
-      console.error('Lỗi xác minh OTP:', error);
-      alert("Đã xảy ra lỗi trong quá trình xác minh OTP. Vui lòng thử lại sau.");
+  //   try {
+  //     const response = await axios.post('http://beejobs.io.vn:14307/api/usersverifyotp', {
+  //       otp: otpCode,
+  //     });
+  //     console.log('Xác minh OTP thành công:', response.data);
+  //     alert("Xác minh OTP thành công.");
+  //     setOtp(["", "", "", "", "", ""]);
+  //     router.push('ResetPasswordScreen'); // Điều hướng đến màn hình đặt lại mật khẩu
+  //   } catch (error) {
+  //     console.error('Lỗi xác minh OTP:', error);
+  //     alert("Đã xảy ra lỗi trong quá trình xác minh OTP. Vui lòng thử lại sau.");
+  //   }
+  // };
+
+  const handleSubmit = async () => {
+    const otpValue = otp.join('');
+    if (otpValue.length === 6) {
+      try {
+        const response = await axios.post('http://beejobs.io.vn:14307/api/usersverifyotp', {
+          email: email,
+          otp: otpValue,
+          type: type
+        });
+
+        if (response.data.status === 200) {
+          Alert.alert('Xác thực thành công', response.data.msg);
+          if (intervalId) {
+            clearInterval(intervalId);
+          }
+          const user_id = response.data.id_User;
+          router.push({ pathname: 'ResetPasswordScreen', params: {user_id: user_id} });
+          //console.log( 'IDID: ' + user_id);
+        } else {
+          Alert.alert('Error', response.data.msg);
+        }
+      } catch (error) {
+        Alert.alert('Error', 'An error occurred while verifying the OTP');
+      }
+    } else {
+      Alert.alert('Error', 'Please enter a valid 6-character OTP');
     }
-  };
+  }
 
   const handleChangeOtp = (text: string, index: number) => {
     const newOtp = [...otp];
@@ -57,7 +90,7 @@ const OtpVerificationScreen: React.FC = () => {
           />
         ))}
       </View>
-      <TouchableOpacity style={styles.button} onPress={handleVerifyOtp}>
+      <TouchableOpacity style={styles.button} onPress={handleSubmit}>
         <Text style={styles.buttonText}>Xác minh</Text>
       </TouchableOpacity>
       <TouchableOpacity style={styles.backButton} onPress={() => router.push('ForgotPasswordScreen')}>

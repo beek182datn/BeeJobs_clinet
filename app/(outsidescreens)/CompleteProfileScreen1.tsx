@@ -7,6 +7,7 @@ import {
   StyleSheet,
   ScrollView,
   Image,
+  SafeAreaView
 } from "react-native";
 import Icon from "react-native-vector-icons/FontAwesome";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
@@ -137,7 +138,7 @@ const CompleteProfileScreen1: React.FC = () => {
   };
 
   return (
-    <ScrollView style={{ backgroundColor: "#fff" }}>
+    <SafeAreaView style={styles.container}>
       <View style={styles.container}>
         <View style={styles.headerContainer}>
           <Icon
@@ -186,7 +187,7 @@ const CompleteProfileScreen1: React.FC = () => {
               style={styles.icon}
             />
             <TextInput
-              style={styles.input}
+              style={styles.inputemail}
               placeholder="Gmail"
               keyboardType="email-address"
               value={email}
@@ -206,7 +207,7 @@ const CompleteProfileScreen1: React.FC = () => {
             <TextInput
               style={styles.input}
               placeholder="Số điện thoại"
-              keyboardType="numeric"
+              // keyboardType="numeric"
               value={phone}
               onChangeText={setPhone}
             />
@@ -220,7 +221,7 @@ const CompleteProfileScreen1: React.FC = () => {
           <Text style={styles.buttonText}>Lưu</Text>
         </TouchableOpacity>
       </View>
-    </ScrollView>
+    </SafeAreaView>
   );
 };
 
@@ -229,7 +230,6 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: "#fff",
     padding: 20,
-    marginTop: 10,
   },
   headerContainer: {
     flexDirection: "row",
@@ -278,6 +278,12 @@ const styles = StyleSheet.create({
     padding: 10,
     fontSize: 16,
     color: "#000",
+  },
+  inputemail: {
+    flex: 1,
+    padding: 10,
+    fontSize: 16,
+    color: "#ccc",
   },
   row: {
     flexDirection: "row",

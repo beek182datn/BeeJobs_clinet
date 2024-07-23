@@ -9,6 +9,7 @@ import {
   ScrollView,
   Alert,
   Animated,
+  SafeAreaView,
 } from "react-native";
 import Ionicons from "react-native-vector-icons/Ionicons";
 //import ActionSheet from "react-native-actionsheet";
@@ -23,7 +24,7 @@ const Profile: React.FC = () => {
   const router = useRouter();
   const [user, setUser] = useState<User | null>();
   const [worker, setWorker] = useState<Worker | null>();
-  console.log(worker)
+  console.log(worker);
   useEffect(() => {
     const fetchUserInfo = async () => {
       try {
@@ -72,19 +73,20 @@ const Profile: React.FC = () => {
   };
 
   const goUpdate = () => {
-    if(worker){
+    if (worker) {
       router.push({
         pathname: "CompleteProfileScreen2",
-        params:  worker,
+        params: worker,
       });
     }
   };
 
-  const goResetpasswd = () => {
-    router.push({
-      pathname: "ResetPasswordScreen",
-      params: { email: worker?.email },
-    });
+  const goChangepasswd = () => {
+      router.push({
+        pathname: "ChangePassword",
+        params: { id_user: user?.id_user }
+      });
+      
   };
 
   const showActionSheet = () => {
@@ -118,14 +120,16 @@ const Profile: React.FC = () => {
                 style={styles.avatar}
               />
             </TouchableOpacity>
-            <Text style={styles.name}>{worker?.worker_name}</Text>
-            <Text style={styles.candidateId}>{worker?.email}</Text>
-            <TouchableOpacity style={styles.upgradeButton}>
-              <Text style={styles.upgradeText}>Nâng cấp tài khoản</Text>
-            </TouchableOpacity>
-            <TouchableOpacity style={styles.editButton} onPress={goUpdate}>
-              <Text style={{color: "black", fontWeight: "bold"}}>Sửa</Text>
-            </TouchableOpacity>
+            <View style={styles.infoContainer}>
+              <Text style={styles.name}>{worker?.worker_name}</Text>
+              <Text style={styles.candidateId}>{worker?.email}</Text>
+
+              <View style={styles.buttonContainer}>
+                <TouchableOpacity style={styles.upgradeButton}>
+                  <Text style={styles.upgradeText}>Nâng cấp tài khoản</Text>
+                </TouchableOpacity>
+              </View>
+            </View>
           </View>
 
           <View style={styles.jobManagement}>
@@ -160,9 +164,13 @@ const Profile: React.FC = () => {
           </View>
           <View style={styles.section}>
             <Text style={styles.accountSettingsTitle}>Cài đặt tài khoản</Text>
+            <TouchableOpacity style={styles.utilityItem} onPress={goUpdate}>
+              <Ionicons name="albums" size={30} color="#0099CC" />
+              <Text style={styles.utilityText}>Thay đổi thông tin</Text>
+            </TouchableOpacity>
             <TouchableOpacity
               style={styles.utilityItem}
-              onPress={goResetpasswd}
+              onPress={goChangepasswd}
             >
               <Ionicons name="key" size={30} color="#0099CC" />
               <Text style={styles.utilityText}>Đổi mật khẩu</Text>
@@ -192,10 +200,14 @@ const Profile: React.FC = () => {
                 style={styles.avatar}
               />
             </TouchableOpacity>
-            <Text style={styles.name}>Bạn chưa cập nhật hồ sơ</Text>
-            <TouchableOpacity style={styles.upgradeButton} onPress={goCreate}>
-              <Text style={styles.upgradeText}>Cập nhật</Text>
-            </TouchableOpacity>
+            <View style={styles.infoContainer}>
+              <Text style={styles.name}>Bạn chưa cập nhật hồ sơ</Text>
+              <View style={styles.buttonContainer}>
+              <TouchableOpacity style={styles.upgradeButton} onPress={goCreate}>
+                <Text style={styles.upgradeText}>Cập nhật</Text>
+              </TouchableOpacity>
+              </View>
+            </View>
           </View>
 
           <View style={styles.jobManagement}>
@@ -245,9 +257,10 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "#fff",
-    marginTop: 10,
+    marginTop: 50,
   },
   profileHeader: {
+    flexDirection: "row",
     alignItems: "center",
     padding: 20,
     backgroundColor: "#f5f5f5",
@@ -255,7 +268,7 @@ const styles = StyleSheet.create({
   avatar: {
     width: 100,
     height: 100,
-    borderRadius: 50,
+    borderRadius: 30,
     marginBottom: 10,
     borderColor: "#0099CC",
     borderWidth: 2,
@@ -311,6 +324,8 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   managementBox: {
+    width: "100%",
+    height: "100%",
     flex: 1,
     alignItems: "center",
     padding: 20,
@@ -322,8 +337,12 @@ const styles = StyleSheet.create({
     marginTop: 5,
     fontSize: 14,
     color: "gray",
+    justifyContent: "center",
+    textAlign: "center",
   },
   infoBox: {
+    width: "85%",
+    height: "85%",
     flex: 1,
     alignItems: "center",
     padding: 20,
@@ -336,6 +355,7 @@ const styles = StyleSheet.create({
     marginTop: 5,
     fontSize: 14,
     color: "gray",
+    textAlign: "center",
   },
   infoNumber: {
     marginTop: 5,
@@ -452,7 +472,7 @@ const styles = StyleSheet.create({
     marginTop: 10,
   },
   editButton: {
-    position: 'absolute',
+    position: "absolute",
     right: 10,
     top: 20,
     padding: 10,
@@ -460,7 +480,16 @@ const styles = StyleSheet.create({
     backgroundColor: "#0099CC",
     borderWidth: 1,
     borderRadius: 5,
-  }
+  },
+  infoContainer: {
+    flex: 1,
+    justifyContent: "center",
+    marginLeft: 10,
+  },
+  buttonContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+  },
 });
 
 export default Profile;
