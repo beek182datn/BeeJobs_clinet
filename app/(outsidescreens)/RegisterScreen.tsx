@@ -71,12 +71,14 @@ const RegisterScreen = () => {
         setMessage("Email không hợp lệ");
         setColor("red");
         setShowMissingInfoAlert(true);
+        setLoading(false);
         return;
       }
       if (passwd != passwd2) {
         setMessage("Mật khẩu không khớp");
         setColor("red");
         setShowMissingInfoAlert(true);
+        setLoading(false);
         return;
       }
 

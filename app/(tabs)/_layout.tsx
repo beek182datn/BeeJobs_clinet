@@ -4,7 +4,6 @@ import { TabBarIcon } from "@/components/navigation/TabBarIcon";
 import { Colors } from "@/constants/Colors";
 import { useColorScheme } from "@/hooks/useColorScheme";
 
-
 export default () => {
   const colorScheme = useColorScheme();
   return (
@@ -18,15 +17,18 @@ export default () => {
         name="Home"
         options={{
           title: "Việc làm",
+          tabBarLabel: "Việc làm",
           tabBarIcon: ({ color, focused }) => (
             <TabBarIcon
               name={focused ? "bag" : "bag-outline"}
-              color={color}
+              color= "#0099CC"
               size={20}
             />
           ),
+          
         }}
       />
+      
       <Tabs.Screen
         name="AppliedJobs"
         options={{
@@ -34,7 +36,7 @@ export default () => {
           tabBarIcon: ({ color, focused }) => (
             <TabBarIcon
               name={focused ? "file-tray-full" : "file-tray-full-outline"}
-              color={color}
+              color= "#0099CC"
               size={20}
             />
           ),
@@ -47,7 +49,7 @@ export default () => {
           tabBarIcon: ({ color, focused }) => (
             <TabBarIcon
               name={focused ? "notifications" : "notifications-outline"}
-              color={color}
+              color= "#0099CC"
               size={20}
             />
           ),
@@ -60,7 +62,7 @@ export default () => {
           tabBarIcon: ({ color, focused }) => (
             <TabBarIcon
               name={focused ? "person" : "person-outline"}
-              color={color}
+              color= "#0099CC"
               size={20}
             />
           ),
