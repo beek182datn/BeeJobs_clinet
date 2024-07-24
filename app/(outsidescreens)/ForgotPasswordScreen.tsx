@@ -20,13 +20,13 @@ const ForgotPasswordScreen = () => {
     }
 
     try {
-      const response: AxiosResponse = await axios.post('http://beejobs.io.vn:14307/api/forgot-password', {
+      const response: AxiosResponse = await axios.post('http://beejobs.io.vn:14307/api/forgottpass', {
         email: email,
       });
       console.log('Yêu cầu đặt lại mật khẩu thành công:', response.data);
       alert("Yêu cầu đặt lại mật khẩu đã được gửi. Vui lòng kiểm tra email của bạn.");
       setEmail("");
-      router.push('LoginScreen');
+      router.push({ pathname: 'OtpVerificationScreen', params: {email: email} });
     } catch (error) {
       console.error('Lỗi đặt lại mật khẩu:', error);
       alert("Đã xảy ra lỗi trong quá trình đặt lại mật khẩu. Vui lòng thử lại sau.");

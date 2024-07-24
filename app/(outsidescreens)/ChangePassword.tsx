@@ -13,16 +13,21 @@ import Icon from "react-native-vector-icons/Ionicons"; // Thêm thư viện cho 
 import { useRouter, useLocalSearchParams } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
 import axios, { AxiosResponse } from "axios";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
-const ResetPasswordScreen = () => {
+const ChangePassword = () => {
   const router = useRouter();
   const params = useLocalSearchParams();
-  const user_id = params.user_id;
-  console.log('user_id: ' + user_id);
+  const user_id = params.id_user;
+  const userinfo = useLocalSearchParams();
+  //const token = params.token;
+  const [currentPassword, setCurrentPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [confirmNewPassword, setConfirmNewPassword] = useState("");
   const [email, setEmail] = useState("");
+  const [saveToken, setsaveToken] = useState("");
   useEffect(() => {
+    getToken();
     const backAction = () => {
       router.replace("Profile");
       return true;
@@ -36,9 +41,27 @@ const ResetPasswordScreen = () => {
     return () => backHandler.remove();
   }, []);
 
+  const getToken = async () => {
+    try {
+      const token = await AsyncStorage.getItem("token");
+      if (token !== null) {
+        console.log("Token đã được truy xuất:", token);
+        setsaveToken(token);
+        return token;
+      } else {
+        console.log("Không tìm thấy token");
+        return null;
+      }
+    } catch (error) {
+      console.log("Có lỗi xảy ra khi truy xuất token:", error);
+      return null;
+    }
+  };
+
   useEffect(() => {
     const fetchUserData = async () => {
       try {
+        //console.log(`Fetching data for user ID: ${user_id}`);
         const response = await axios.get(
           `http://beejobs.io.vn:14307/user/${user_id}`
         );
@@ -58,26 +81,25 @@ const ResetPasswordScreen = () => {
   }, [user_id]);
 
   const handleSave = async () => {
-    if (newPassword.trim() === "" || confirmNewPassword.trim() === "" ) {
-        Alert.alert("Lỗi", "Hãy nhập đầy đủ thông tin");
-        return;
-      }
     if (newPassword !== confirmNewPassword) {
       Alert.alert("Lỗi", "Mật khẩu mới và xác nhận mật khẩu không khớp");
       return;
     }
 
-    const url = `http://beejobs.io.vn:14307/api/changepass`;
+    const url = `http://beejobs.io.vn:14307/api/changepassword/${user_id}`;
 
     try {
       const response = await axios.post(url, {
-        IdUser: user_id,
-        newPass: newPassword
+        newPassword: newPassword,
+        currentPassword: currentPassword,
       });
 
       if (response.data.status === 200) {
         Alert.alert("Thông báo", "Đổi mật khẩu thành công");
-        router.replace("/LoginScreen");
+        router.replace("Profile");
+      } else if (response.data.status === 400) {
+        Alert.alert("Lỗi", "Mật khẩu cũ không đúng");
+        return;
       } else {
         Alert.alert("Lỗi", "Đổi mật khẩu thất bại");
       }
@@ -96,7 +118,7 @@ const ResetPasswordScreen = () => {
         >
           <Ionicons name="arrow-back" size={22} color="black" />
         </TouchableOpacity>
-        <Text style={styles.headerTitle}>Đặt lại mật khẩu</Text>
+        <Text style={styles.headerTitle}>Đổi mật khẩu</Text>
       </View>
       <View style={styles.form}>
         <Text style={styles.label}>Email đăng nhập</Text>
@@ -105,6 +127,16 @@ const ResetPasswordScreen = () => {
           value={String(email)}
           editable={false}
         />
+
+        <Text style={styles.label}>Mật khẩu hiện tại</Text>
+        <TextInput
+          style={styles.input}
+          placeholder="Nhập mật khẩu hiện tại"
+          secureTextEntry
+          value={currentPassword}
+          onChangeText={setCurrentPassword}
+        />
+
         <Text style={styles.label}>Mật khẩu mới</Text>
         <TextInput
           style={styles.input}
@@ -223,5 +255,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default ResetPasswordScreen;
-
+export default ChangePassword;

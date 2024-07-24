@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect  } from 'react';
-import { View, Text, TextInput, StyleSheet, TouchableOpacity, Alert, Image } from 'react-native';
+import { View, Text, TextInput,BackHandler, StyleSheet, TouchableOpacity, Alert, Image } from 'react-native';
 import axios, { AxiosResponse } from "axios";
 import { useRouter, useLocalSearchParams } from 'expo-router';
 
@@ -16,14 +16,15 @@ const VerifyAccount = () => {
   const type = "signUp"
 
   useEffect(() => {
-    const id = setInterval(() => {
-      setCountdown(prevCountdown => prevCountdown - 1);
-    }, 1000);
-    setIntervalId(id); 
+    const backAction = () => {
+      router.replace("RegisterScreen");
+      return true;
+    };
 
-    return () => clearInterval(id); 
+    const backHandler = BackHandler.addEventListener('hardwareBackPress', backAction);
+
+    return () => backHandler.remove();
   }, []);
-
   
   useEffect(() => {
     if (countdown === 0) {

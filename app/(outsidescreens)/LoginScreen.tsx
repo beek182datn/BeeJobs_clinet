@@ -128,7 +128,12 @@ const LoginScreen = () => {
             "user_info",
             JSON.stringify(response.data.user_info)
           );
-
+          
+          await AsyncStorage.setItem(
+            "token",
+            JSON.stringify(response.data.token)
+          );
+          console.log(response.data.token);
           router.push('/Home')
         } catch (error) {
           console.error("Error saving user profile:", error);

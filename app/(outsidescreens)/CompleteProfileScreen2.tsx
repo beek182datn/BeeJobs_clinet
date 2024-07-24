@@ -7,6 +7,7 @@ import {
   StyleSheet,
   ScrollView,
   Image,
+  SafeAreaView
 } from "react-native";
 import Icon from "react-native-vector-icons/FontAwesome";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
@@ -88,7 +89,11 @@ const CompleteProfileScreen2: React.FC = () => {
     };
 
     setErrors(newErrors);
+    
     const noErrors = Object.values(newErrors).every((error) => !error);
+    if(noErrors){
+      router.push('/Profile');
+    }
   };
   const handleRegister = async (): Promise<void> => {
     handleContinue();
@@ -121,7 +126,7 @@ const CompleteProfileScreen2: React.FC = () => {
             }
           );
           
-          router.push('/Profile');
+          
         }
         
       } else {
@@ -133,7 +138,7 @@ const CompleteProfileScreen2: React.FC = () => {
   };
 
   return (
-    <ScrollView style={{ backgroundColor: "#fff" }}>
+    <SafeAreaView style={styles.container}>
       <View style={styles.container}>
         <View style={styles.headerContainer}>
           <Icon
@@ -142,7 +147,7 @@ const CompleteProfileScreen2: React.FC = () => {
             color="#000"
             onPress={router.back}
           />
-          <Text style={styles.header}>Sửa hồ sơ của bạn</Text>
+          <Text style={styles.header}>Thay đổi thông tin của bạn</Text>
         </View>
         <View style={styles.progressBar}>
           <View style={styles.progress} />
@@ -182,7 +187,7 @@ const CompleteProfileScreen2: React.FC = () => {
               style={styles.icon}
             />
             <TextInput
-              style={styles.input}
+              style={styles.inputemail}
               placeholder="Gmail"
               keyboardType="email-address"
               value={String(email)}
@@ -202,7 +207,6 @@ const CompleteProfileScreen2: React.FC = () => {
             <TextInput
               style={styles.input}
               placeholder="Số điện thoại"
-              keyboardType="numeric"
               value={String(phone)}
               onChangeText={setPhone}
             />
@@ -213,10 +217,10 @@ const CompleteProfileScreen2: React.FC = () => {
         </View>
 
         <TouchableOpacity style={styles.saveButton} onPress={handleRegister}>
-          <Text style={styles.buttonText}>Sửa</Text>
+          <Text style={styles.buttonText}>Lưu</Text>
         </TouchableOpacity>
       </View>
-    </ScrollView>
+    </SafeAreaView>
   );
 };
 
@@ -224,8 +228,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "#fff",
-    padding: 20,
-    marginTop: 10,
+    padding: 10,
   },
   headerContainer: {
     flexDirection: "row",
@@ -274,6 +277,12 @@ const styles = StyleSheet.create({
     padding: 10,
     fontSize: 16,
     color: "#000",
+  },
+  inputemail: {
+    flex: 1,
+    padding: 10,
+    fontSize: 16,
+    color: "#ccc",
   },
   row: {
     flexDirection: "row",
