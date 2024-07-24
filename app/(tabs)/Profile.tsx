@@ -19,12 +19,35 @@ import Modal from "react-native-modal";
 import { Picker } from "@react-native-picker/picker";
 import { User, Worker } from "../../components/Model/Model";
 import { getUserInfo, findWorkerById } from "@/components/fetch_data/api";
+import * as ImagePicker from "expo-image-picker";
+type SetterFunction = (uri: string) => void;
+
+const pickImage = async (setter: SetterFunction) => {
+  const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
+  if (status !== 'granted') {
+    alert('Permission to access media library is required!');
+    return;
+  }
+
+  const result = await ImagePicker.launchImageLibraryAsync({
+    mediaTypes: ImagePicker.MediaTypeOptions.Images,
+    allowsEditing: true,
+    aspect: [4, 3],
+    quality: 1,
+  });
+
+  if (!result.canceled && result.assets && result.assets.length > 0) {
+    setter(result.assets[0].uri);
+  }
+};
 
 const Profile: React.FC = () => {
   const router = useRouter();
   const [user, setUser] = useState<User | null>();
   const [worker, setWorker] = useState<Worker | null>();
   console.log(worker);
+  const [worker_avatars, setWorker_avatars] = useState<string | null>(null);
+
   useEffect(() => {
     const fetchUserInfo = async () => {
       try {
@@ -112,10 +135,12 @@ const Profile: React.FC = () => {
       {worker && (
         <>
           <View style={styles.profileHeader}>
-            <TouchableOpacity>
+            <TouchableOpacity onPress={() => pickImage(setWorker_avatars)}>
               <Image
                 source={{
-                  uri: `http://beejobs.io.vn:14307${worker.worker_avatar}`,
+                  uri: !worker_avatars
+                  ? `http://beejobs.io.vn:14307${worker.worker_avatar}`
+                  : worker_avatars,
                 }}
                 style={styles.avatar}
               />
@@ -190,7 +215,7 @@ const Profile: React.FC = () => {
             </TouchableOpacity>
             <TouchableOpacity
               style={styles.utilityItem}
-              onPress={goChangepasswd}
+              
             >
               <Ionicons name="document-text" size={30} color="#0099CC" />
               <Text style={styles.utilityText}>Điều khoản dịch vụ</Text>
@@ -201,7 +226,7 @@ const Profile: React.FC = () => {
               <Text style={styles.utilityText}>Chính sách bảo mật</Text>
             </TouchableOpacity>
             <TouchableOpacity style={styles.utilityItem}>
-              <Ionicons name="call-outline" size={30} color="#0099CC" />
+              <Ionicons name="call" size={30} color="#0099CC" />
               <Text style={styles.utilityText}>Trợ giúp</Text>
             </TouchableOpacity>
           </View>
@@ -272,7 +297,7 @@ const Profile: React.FC = () => {
             </TouchableOpacity>
             <TouchableOpacity
               style={styles.utilityItem}
-              onPress={goChangepasswd}
+              
             >
               <Ionicons name="document-text" size={30} color="#0099CC" />
               <Text style={styles.utilityText}>Điều khoản dịch vụ</Text>
@@ -283,7 +308,7 @@ const Profile: React.FC = () => {
               <Text style={styles.utilityText}>Chính sách bảo mật</Text>
             </TouchableOpacity>
             <TouchableOpacity style={styles.utilityItem}>
-              <Ionicons name="call-outline" size={30} color="#0099CC" />
+              <Ionicons name="call" size={30} color="#0099CC" />
               <Text style={styles.utilityText}>Trợ giúp</Text>
             </TouchableOpacity>
           </View>

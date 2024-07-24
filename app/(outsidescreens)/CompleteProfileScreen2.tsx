@@ -96,7 +96,7 @@ const CompleteProfileScreen2: React.FC = () => {
     }
   };
   const handleRegister = async (): Promise<void> => {
-    handleContinue();
+    
     try {
       const avatarUrl = worker_avatar;
       if (avatarUrl) {
@@ -135,6 +135,7 @@ const CompleteProfileScreen2: React.FC = () => {
     } catch (error) {
       console.error('Lỗi đăng ký:', error);
     }
+    handleContinue();
   };
 
   return (
@@ -159,7 +160,7 @@ const CompleteProfileScreen2: React.FC = () => {
             <Image
               source={{
                 uri: !worker_avatars
-                  ? `http://beejobs.io.vn:14307${worker_avatar}`
+                  ? `http://beejobs.io.vn:14307${workerinfo.worker_avatar}`
                   : worker_avatars,
               }}
               style={styles.avatar}
