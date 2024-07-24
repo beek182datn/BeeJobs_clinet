@@ -4,7 +4,8 @@ import { useLocalSearchParams, router } from 'expo-router';
 import { findCompanyById, sendMessage as apiSendMessage, getMessages } from '@/components/fetch_data/api';
 import { Company, User } from '@/components/Model/Model';
 import { Ionicons } from '@expo/vector-icons';
-
+import io from 'socket.io-client';
+import socket from '@/components/fetch_data/config';
 interface Message {
     _id: string;
     content: string;
@@ -21,6 +22,7 @@ const ChatRoom: React.FC = () => {
     const linkVps = 'http://beejobs.io.vn:14307';
     const [user, setUser] = useState<User | null>(null);
 
+
     useEffect(() => {
         const fetchData = async () => {
             const companyInfo = await findCompanyById(String(info.company_id));
@@ -29,28 +31,41 @@ const ChatRoom: React.FC = () => {
             }
 
             // Fetch messages for the chat room
-            if(info){
-                // console.log(JSON.stringify(info.userId))
-                const fetchedMessages = await getMessages(String(info.userId) ,String(info.company_id)); // Assuming company_id is the chatRoomId
+            if (info) {
+                const fetchedMessages = await getMessages(String(info.userId), String(info.company_id));
                 setMessages(fetchedMessages);
-                console.log(JSON.stringify(messages))
             }
-            
+            // Socket.IO setup
+            socket.emit('joinRoom', String(info.company_id)); // Tham gia phòng chat
         };
+
         fetchData();
-    }, [info.company_id]);
+
+
+        // Lắng nghe sự kiện message
+        socket.on('message', (message) => {
+            setMessages((prevMessages) => [...prevMessages, message]);
+        });
+
+        return () => {
+            socket.disconnect(); // Ngắt kết nối khi component unmount
+        };
+    }, []);
 
     const handleSendMessage = async () => {
         if (newMessage.trim()) {
             const message: Omit<Message, '_id'> = {
                 content: newMessage,
-                senderId: String(info.userId), // Thay thế bằng ID người dùng thực tế
-                chatRoomId: String(info.company_id), // Assuming company_id is the chatRoomId
+                senderId: String(info.userId),
+                chatRoomId: String(info.company_id),
                 createdAt: new Date().toISOString(),
             };
 
             try {
                 const sentMessage = await apiSendMessage(message.senderId, String(info.company_id), message.content);
+                // Gửi tin nhắn qua Socket.IO
+                socket.emit('newMessage', sentMessage); // Gửi tin nhắn đến server
+
                 setMessages((prevMessages) => [...prevMessages, sentMessage]);
                 setNewMessage('');
             } catch (error) {
