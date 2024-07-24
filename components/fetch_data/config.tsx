@@ -1,9 +1,7 @@
-// src/api/axiosConfig.ts
-import axios from 'axios';
+import { io } from 'socket.io-client';
 
-const axiosInstance = axios.create({
-    baseURL: 'http://beejobs.io.vn:14307', // Update with your server URL
-    timeout: 10000,
-});
+const baseUrl = 'http://beejobs.io.vn:14307';
 
-export default axiosInstance;
+const socket = io(baseUrl); // Khởi tạo kết nối Socket.IO
+
+export default socket;
