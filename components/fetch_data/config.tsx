@@ -1,7 +1,18 @@
 import { io } from 'socket.io-client';
 
 const baseUrl = 'http://beejobs.io.vn:14307';
+const socket = io(baseUrl);
 
-const socket = io(baseUrl); // Khởi tạo kết nối Socket.IO
+// Hàm lắng nghe tin nhắn mới
+export const listenForNewMessages = (callback: (message: any) => void) => {
+    socket.on('message', (message: any) => {
+        console.log('Received new message:', message);
+        callback(message); // Gọi callback với tin nhắn mới
+    });
+};
+
+// export const disconnectSocket = () => {
+//     socket.disconnect();
+// };
 
 export default socket;
