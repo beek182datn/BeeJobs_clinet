@@ -1,5 +1,5 @@
 import axios, { AxiosResponse } from "axios";
-import { Job, Company, Worker, CompanyRespone, JobsResponse, User, ApplyJobData, AppliedJob, JobsResponseSingle, AppliedJobsResponse, CheckApplyJobResponse, WokerRespone, CheckFolow } from "../Model/Model";
+import { Job, Company, Worker, CompanyRespone, JobsResponse, User, ApplyJobData, AppliedJob, JobsResponseSingle, AppliedJobsResponse, CheckApplyJobResponse, WokerRespone, CheckFolow, Message } from "../Model/Model";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { DocumentPickerAsset } from "expo-document-picker";
 import FormData from 'form-data'
@@ -503,3 +503,49 @@ export const unFolowCompany = async (userId: string, companyId: string) => {
     console.log(error);
   }
 }
+
+
+export const getMessages = async (senderId: string, receiverId: string):Promise<Message[]> => {
+  try {
+    const response = await axios.get(`http://beejobs.io.vn:14307/api/chat/getMessages/${senderId}/${receiverId}`);
+    // console.log(JSON.stringify(response.data))
+    return response.data;
+  } catch (error) {
+    if (error)
+      console.log(error + ' getMessages')
+    throw new Error(String(error) || 'Error fetching messages');
+  }
+};
+
+export const sendMessage = async (senderId: string, receiverId: string, content: string) => {
+  try {
+    // console.log(JSON.stringify(`http://beejobs.io.vn:14307/chat/sendmessage/${senderId}/${receiverId}`))
+    const response = await axios.post(`http://beejobs.io.vn:14307/api/chat/sendmessage/${senderId}/${receiverId}`, { 
+      content: content
+     });
+    return response.data;
+  } catch (error) {
+    console.log(error + ' sendMessage')
+    throw new Error(String(error) || 'Error sending message');
+  }
+};
+
+// export const getMessagesByRoomId = async (chatroomId: string) => {
+//   try {
+//     const response = await axios.get(`/chat/messages/${chatroomId}`);
+//     return response.data;
+//   } catch (error) {
+//     console.log(error +' getMessagesByRoomId')
+//     throw new Error(String(error) || 'Error fetching messages');
+//   }
+// };
+
+export const getChatRoomInfo = async (senderId: string, receiverId: string) => {
+  try {
+    const response = await axios.get(`/api/chat/chatroom/${senderId}/${receiverId}`);
+    return response.data;
+  } catch (error) {
+    console.log(error +' getChatRoomInfo')
+    throw new Error(String(error) || 'Error fetching chat room info');
+  }
+};

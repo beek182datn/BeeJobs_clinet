@@ -125,6 +125,21 @@ export type WokerRespone = {
   createdBy: string;
 }
 
+// chat
+export interface Message {
+  _id: string;           // ID của tin nhắn
+  content: string;       // Nội dung tin nhắn
+  senderId: string;      // ID của người gửi
+  createdAt: string;     // Thời gian tạo tin nhắn (dạng ISO 8601)
+  chatRoomId: string;    // ID của phòng chat
+}
+
+export interface ChatRoom {
+  _id: string;                // ID của phòng chat
+  userIds: string[];          // Danh sách ID của người dùng tham gia phòng chat
+  typeChat: string;           // Loại chat (ví dụ: "NLD to DN")
+}
+
 
 
 
