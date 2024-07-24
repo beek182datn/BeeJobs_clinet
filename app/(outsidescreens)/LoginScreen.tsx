@@ -8,6 +8,7 @@ import {
   StyleSheet,
   Alert,
   ToastAndroid,
+  ActivityIndicator,
 } from "react-native";
 import Icon from "react-native-vector-icons/FontAwesome";
 import { Ionicons } from "@expo/vector-icons";
@@ -25,14 +26,13 @@ const LoginScreen = () => {
   const router = useRouter();
   const [loggedInUser, setLoggedInUser] = useState(null);
   const [backPressCount, setBackPressCount] = useState(0);
-  const {
-    showAlert,
-    setShowAlert,
-    message,
-    setMessage,
-    color,
-    setColor,
-  } = useBackHandler(true);
+  const [loading, setLoading] = useState(false);
+  const { showAlert, setShowAlert, message, setMessage, color, setColor } =
+    useBackHandler(true);
+  const [errors, setErrors] = useState({
+    username: "",
+    passwd: "",
+  });
 
   useEffect(() => {
     const loadCredentials = async () => {
@@ -76,78 +76,77 @@ const LoginScreen = () => {
   }, [backPressCount]);
 
   const handleLogin = async () => {
-    if (username.trim() === "" || passwd.trim() === "") {
-      setMessage("Hãy nhập đầy đủ thông tin");
-      setColor("red");
-      setShowAlert(true);
-      return;
-    }
+    const newErrors = {
+      username: username ? "" : "Cho chúng tôi biết email của bạn",
+      passwd: passwd ? "" : "Mật khẩu không được trống",
+    };
 
-    if (rememberMe) {
-      try {
-        await AsyncStorage.setItem("username", username);
-        await AsyncStorage.setItem("passwd", passwd);
-      } catch (error) {
-        console.error("Không lưu được thông tin đăng nhập", error);
-      }
-    } else {
-      try {
-        await AsyncStorage.removeItem("username");
-        await AsyncStorage.removeItem("passwd");
-      } catch (error) {
-        console.error("Không xóa được thông tin đăng nhập", error);
-      }
-    }
+    setErrors(newErrors);
 
-    try {
-      const response = await axios.post(
-        "http://beejobs.io.vn:14307/api/login",
-        {
-          username: username,
-          passwd: passwd,
-        }
-      );
-
-      if (response.data.status === 200) {
-        setLoggedInUser(response.data.user_info.email);
-
-        // setUsername("");
-        // setPassword("");
-        // setShowPassword(false);
-        // setRememberMe(false);
-        setMessage("Đăng nhập thành công");
-        setColor("green");
-        setShowAlert(true);
-
+    const noErrors = Object.values(newErrors).every((error) => !error);
+    if (noErrors) {
+      setLoading(true); // Bắt đầu loading
+      if (rememberMe) {
         try {
-          await AsyncStorage.setItem(
-            "userProfile",
-            JSON.stringify(response.data)
-          );
-          await AsyncStorage.setItem(
-            "user_info",
-            JSON.stringify(response.data.user_info)
-          );
-          
-          await AsyncStorage.setItem(
-            "token",
-            JSON.stringify(response.data.token)
-          );
-          console.log(response.data.token);
-          router.push('/Home')
+          await AsyncStorage.setItem("username", username);
+          await AsyncStorage.setItem("passwd", passwd);
         } catch (error) {
-          console.error("Error saving user profile:", error);
+          console.error("Không lưu được thông tin đăng nhập", error);
         }
-        router.push('/Home')
-      } else if (response.data.status === 400) {
-        setMessage("Thông tin đăng nhập không chính xác");
-        setColor("red");
-        setShowAlert(true);
       } else {
-        alert("Đã xảy ra lỗi trong quá trình đăng nhập. Vui lòng thử lại sau.");
+        try {
+          await AsyncStorage.removeItem("username");
+          await AsyncStorage.removeItem("passwd");
+        } catch (error) {
+          console.error("Không xóa được thông tin đăng nhập", error);
+        }
       }
-    } catch (error) {
-      console.error("Lỗi đăng nhập:", error);
+
+      try {
+        const response = await axios.post(
+          "http://beejobs.io.vn:14307/api/login",
+          {
+            username: username,
+            passwd: passwd,
+          }
+        );
+
+        if (response.data.status === 200) {
+          setLoggedInUser(response.data.user_info.email);
+          try {
+            await AsyncStorage.setItem(
+              "userProfile",
+              JSON.stringify(response.data)
+            );
+            await AsyncStorage.setItem(
+              "user_info",
+              JSON.stringify(response.data.user_info)
+            );
+
+            await AsyncStorage.setItem(
+              "token",
+              JSON.stringify(response.data.token)
+            );
+            console.log(response.data.token);
+            //router.push("/Home");
+          } catch (error) {
+            console.error("Error saving user profile:", error);
+          }
+          router.push("/Home");
+        } else if (response.data.status === 400) {
+          setMessage("Thông tin đăng nhập không chính xác!");
+          setColor("#FF0000");
+          setShowAlert(true);
+        } else {
+          setMessage("Email đăng nhập không tồn tại");
+          setColor("#FF0000");
+          setShowAlert(true);
+        }
+      } catch (error) {
+        console.error("Lỗi đăng nhập:", error);
+      } finally {
+        setLoading(false); // Kết thúc loading
+      }
     }
   };
 
@@ -167,6 +166,13 @@ const LoginScreen = () => {
           onChangeText={setUsername}
         />
       </View>
+      {errors.username ? (
+        <View style={styles.errorContainer}>
+          <Ionicons name="alert-circle-outline" size={20} color="red" />
+          <Text style={styles.errorText}>{errors.username}</Text>
+        </View>
+      ) : null}
+
       <View style={styles.inputContainer}>
         <Icon name="lock" size={20} color="#A9A9A9" style={styles.icon} />
         <TextInput
@@ -178,13 +184,19 @@ const LoginScreen = () => {
         />
         <TouchableOpacity onPress={() => setShowPassword(!showPassword)}>
           <Icon
-            name={showPassword ? "eye-slash" : "eye"}
+            name={showPassword ? "eye" : "eye-slash"}
             size={20}
             color="#A9A9A9"
             style={styles.icon}
           />
         </TouchableOpacity>
       </View>
+      {errors.passwd ? (
+        <View style={styles.errorContainer}>
+          <Ionicons name="alert-circle-outline" size={20} color="red" />
+          <Text style={styles.errorText}>{errors.passwd}</Text>
+        </View>
+      ) : null}
       <TouchableOpacity
         style={styles.forgotPassword}
         onPress={() => router.push("/ForgotPasswordScreen")}
@@ -199,15 +211,18 @@ const LoginScreen = () => {
           ]}
           onPress={() => setRememberMe(!rememberMe)}
         >
-          {rememberMe && (
-            <Icon name="check" size={15} color="#fff" />
-          )}
+          {rememberMe && <Icon name="check" size={15} color="#fff" />}
         </TouchableOpacity>
         <Text style={styles.rememberMeText}>Lưu mật khẩu</Text>
       </View>
-      <TouchableOpacity style={styles.button} onPress={handleLogin}>
-        <Text style={styles.buttonText}>Đăng nhập</Text>
-      </TouchableOpacity>
+      {loading ? (
+        <ActivityIndicator size="large" color="#0000ff" />
+      ) : (
+        <TouchableOpacity style={styles.button} onPress={handleLogin}>
+          <Text style={styles.buttonText}>Đăng nhập</Text>
+        </TouchableOpacity>
+      )}
+
       <Text style={styles.continueWithText}>----- continue with -----</Text>
       <View style={styles.socialIconsContainer}>
         <TouchableOpacity onPress={handleFeatureInDevelopment}>
@@ -336,6 +351,16 @@ const styles = StyleSheet.create({
   signupText: {
     color: "#007BFF",
     fontWeight: "bold",
+  },
+  errorText: {
+    color: "red",
+    fontSize: 14,
+    marginBottom: 10,
+    //marginTop: 10,
+  },
+  errorContainer: {
+    flexDirection: "row",
+    alignItems: "center",
   },
 });
 

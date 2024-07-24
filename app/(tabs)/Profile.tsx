@@ -181,6 +181,30 @@ const Profile: React.FC = () => {
               <Text style={styles.utilityText}>Vô hiệu hóa tài khoản</Text>
             </TouchableOpacity>
           </View>
+          
+          <View style={styles.section}>
+          <Text style={styles.accountSettingsTitle}>Thông tin dịch vụ</Text>
+            <TouchableOpacity style={styles.utilityItem}>
+              <Ionicons name="business" size={30} color="#0099CC" />
+              <Text style={styles.utilityText}>Về BeeJobs</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={styles.utilityItem}
+              onPress={goChangepasswd}
+            >
+              <Ionicons name="document-text" size={30} color="#0099CC" />
+              <Text style={styles.utilityText}>Điều khoản dịch vụ</Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity style={styles.utilityItem}>
+              <Ionicons name="document-lock" size={30} color="#0099CC" />
+              <Text style={styles.utilityText}>Chính sách bảo mật</Text>
+            </TouchableOpacity>
+            <TouchableOpacity style={styles.utilityItem}>
+              <Ionicons name="call-outline" size={30} color="#0099CC" />
+              <Text style={styles.utilityText}>Trợ giúp</Text>
+            </TouchableOpacity>
+          </View>
 
           <TouchableOpacity
             style={styles.logoutButton}
@@ -239,6 +263,29 @@ const Profile: React.FC = () => {
                 <Text style={styles.infoNumber}>0</Text>
               </View>
             </View>
+          </View>
+          <View style={styles.section}>
+          <Text style={styles.accountSettingsTitle}>Thông tin dịch vụ</Text>
+            <TouchableOpacity style={styles.utilityItem}>
+              <Ionicons name="business" size={30} color="#0099CC" />
+              <Text style={styles.utilityText}>Về BeeJobs</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={styles.utilityItem}
+              onPress={goChangepasswd}
+            >
+              <Ionicons name="document-text" size={30} color="#0099CC" />
+              <Text style={styles.utilityText}>Điều khoản dịch vụ</Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity style={styles.utilityItem}>
+              <Ionicons name="document-lock" size={30} color="#0099CC" />
+              <Text style={styles.utilityText}>Chính sách bảo mật</Text>
+            </TouchableOpacity>
+            <TouchableOpacity style={styles.utilityItem}>
+              <Ionicons name="call-outline" size={30} color="#0099CC" />
+              <Text style={styles.utilityText}>Trợ giúp</Text>
+            </TouchableOpacity>
           </View>
           <TouchableOpacity
             style={styles.logoutButton}
