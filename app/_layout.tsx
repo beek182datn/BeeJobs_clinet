@@ -17,6 +17,7 @@ export default function RootLayout() {
       <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
       <Stack.Screen name="(insidescreens)/JobDetail" options={{ headerShown: false }} />
       <Stack.Screen name="(insidescreens)/CompanyDetail" options={{ headerShown: false }} />
+      <Stack.Screen name="(insidescreens)/ChatRoom" options={{ headerShown: false }} />
     </Stack>
   );
 }

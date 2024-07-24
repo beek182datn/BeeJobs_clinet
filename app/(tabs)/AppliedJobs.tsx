@@ -117,12 +117,16 @@ const AppliedJobs = () => {
                   </View>
 
                   <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
-                    <TouchableOpacity style={styles.buttonLeft}>
+                    <TouchableOpacity style={styles.buttonLeft} onPress={()=>{
+                      if(user){
+                        router.push({pathname:'(insidescreens)/ChatRoom', params: {...item.job, userId: user.id_user}});
+                      }
+                    }}>
                       <Text style={styles.buttonText}>Gửi Tin Nhắn</Text>
                     </TouchableOpacity>
-                    <TouchableOpacity style={styles.buttonRight} onPress={async ()=> {
+                    <TouchableOpacity style={styles.buttonRight} onPress={async () => {
                       // await WebBrowser.openBrowserAsync(linkVps+item.cv);
-                      Linking.openURL(linkVps+item.cv);
+                      Linking.openURL(linkVps + item.cv);
                     }}>
                       <Text style={styles.buttonText}>Xem Lại CV</Text>
                     </TouchableOpacity>
