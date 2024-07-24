@@ -5,43 +5,89 @@ import {
   TextInput,
   TouchableOpacity,
   StyleSheet,
+  ActivityIndicator,
+  Alert,
 } from "react-native";
 import axios, { AxiosResponse } from "axios";
-import { useRouter } from 'expo-router';
+import { useRouter } from "expo-router";
+import AlertComponent from "@/components/AlertComponent";
 
 const ForgotPasswordScreen = () => {
   const [email, setEmail] = useState("");
   const router = useRouter();
+  const [loading, setLoading] = useState(false);
+  const [showMissingInfoAlert, setShowMissingInfoAlert] = useState(false);
+  const [message, setMessage] = useState("");
+  const [color, setColor] = useState("");
+
+  const isValidEmail = (email: string): boolean => {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(email);
+  };
 
   const handleResetPassword = async () => {
     if (email.trim() === "") {
       alert("Xin vui lòng điền email của bạn.");
       return;
     }
+    if (!isValidEmail(email)) {
+      setMessage("Email không hợp lệ");
+      setColor("red");
+      setShowMissingInfoAlert(true);
+      return;
+    }
 
     try {
-      const response: AxiosResponse = await axios.post('http://beejobs.io.vn:14307/api/forgottpass', {
-        email: email,
-      });
-      console.log('Yêu cầu đặt lại mật khẩu thành công:', response.data);
-      alert("Yêu cầu đặt lại mật khẩu đã được gửi. Vui lòng kiểm tra email của bạn.");
-      setEmail("");
-      router.push({ pathname: 'OtpVerificationScreen', params: {email: email} });
+      setLoading(true);
+      const response: AxiosResponse = await axios.post(
+        "http://beejobs.io.vn:14307/api/forgottpass2",
+        {
+          email: email,
+        }
+      );
+      if (response.data.status === 200) {
+        console.log("Yêu cầu đặt lại mật khẩu thành công:", response.data);
+        Alert.alert(
+          "Thông báo", // Tiêu đề
+          "Yêu cầu đặt lại mật khẩu đã được gửi. Vui lòng kiểm tra email của bạn.", // Nội dung
+          [{ text: "OK" }] // Nút bấm
+        );
+        //setEmail("");
+        router.push({
+          pathname: "OtpVerificationScreen",
+          params: { email: email },
+        });
+      } else if (response.data.status === 404) {
+        setMessage("Email chưa đăng ký!");
+        setColor("red");
+        setShowMissingInfoAlert(true);
+        return;
+      } else {
+        setMessage("Đã xảy ra lỗi!");
+        setColor("red");
+        setShowMissingInfoAlert(true);
+        return;
+      }
     } catch (error) {
-      console.error('Lỗi đặt lại mật khẩu:', error);
-      alert("Đã xảy ra lỗi trong quá trình đặt lại mật khẩu. Vui lòng thử lại sau.");
+      console.error("Lỗi đặt lại mật khẩu:", error);
+      alert(
+        "Đã xảy ra lỗi trong quá trình đặt lại mật khẩu. Vui lòng thử lại sau."
+      );
+    } finally {
+      setLoading(false); // Kết thúc loading
     }
   };
 
   const navigateToLogin = () => {
-    router.push('LoginScreen');
+    router.push("LoginScreen");
   };
 
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Quên mật khẩu</Text>
       <Text style={styles.instruction}>
-        Nhập email hoặc số điện thoại của bạn và chúng tôi sẽ gửi hướng dẫn để đặt lại mật khẩu.
+        Nhập email hoặc số điện thoại của bạn và chúng tôi sẽ gửi hướng dẫn để
+        đặt lại mật khẩu.
       </Text>
       <View style={styles.inputContainer}>
         <TextInput
@@ -52,12 +98,22 @@ const ForgotPasswordScreen = () => {
           keyboardType="email-address"
         />
       </View>
-      <TouchableOpacity style={styles.button} onPress={handleResetPassword}>
-        <Text style={styles.buttonText}>Gửi yêu cầu</Text>
-      </TouchableOpacity>
+      {loading ? (
+        <ActivityIndicator size="large" color="#0000ff" />
+      ) : (
+        <TouchableOpacity style={styles.button} onPress={handleResetPassword}>
+          <Text style={styles.buttonText}>Gửi yêu cầu</Text>
+        </TouchableOpacity>
+      )}
       <TouchableOpacity style={styles.backButton} onPress={navigateToLogin}>
         <Text style={styles.backButtonText}>Quay lại đăng nhập</Text>
       </TouchableOpacity>
+      <AlertComponent
+        color={color}
+        message={message}
+        visible={showMissingInfoAlert}
+        onClose={() => setShowMissingInfoAlert(false)}
+      />
     </View>
   );
 };

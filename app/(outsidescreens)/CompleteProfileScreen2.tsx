@@ -18,6 +18,7 @@ import * as ImagePicker from "expo-image-picker";
 type SetterFunction = (uri: string) => void;
 import { User, Worker } from "../../components/Model/Model";
 import { getUserInfo, findWorkerById } from "@/components/fetch_data/api";
+import { Ionicons } from "@expo/vector-icons";
 
 const pickImage = async (setter: SetterFunction) => {
   const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
@@ -142,12 +143,12 @@ const CompleteProfileScreen2: React.FC = () => {
     <SafeAreaView style={styles.container}>
       <View style={styles.container}>
         <View style={styles.headerContainer}>
-          <Icon
-            name="arrow-left"
-            size={20}
-            color="#000"
-            onPress={router.back}
-          />
+        <TouchableOpacity
+          onPress={router.back}
+          style={{ backgroundColor: "#2196F3", borderRadius: 30, padding: 5 }}
+        >
+          <Ionicons name="arrow-back" size={22} color="black" />
+        </TouchableOpacity>
           <Text style={styles.header}>Thay đổi thông tin của bạn</Text>
         </View>
         <View style={styles.progressBar}>
@@ -237,9 +238,10 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   header: {
-    fontSize: 20,
+    flex: 1,
+    textAlign: "center",
+    fontSize: 18,
     fontWeight: "bold",
-    marginLeft: 10,
   },
   progressBar: {
     height: 10,
