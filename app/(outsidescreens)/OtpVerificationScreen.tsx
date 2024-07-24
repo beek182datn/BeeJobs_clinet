@@ -17,27 +17,6 @@ const OtpVerificationScreen: React.FC = () => {
   const email = params.email;
   const type = "FogotPassword"
 
-  // const handleVerifyOtp = async () => {
-  //   const otpCode = otp.join("");
-  //   if (otpCode.length !== 6) {
-  //     alert("Vui lòng nhập đúng mã OTP gồm 6 ký tự.");
-  //     return;
-  //   }
-
-  //   try {
-  //     const response = await axios.post('http://beejobs.io.vn:14307/api/usersverifyotp', {
-  //       otp: otpCode,
-  //     });
-  //     console.log('Xác minh OTP thành công:', response.data);
-  //     alert("Xác minh OTP thành công.");
-  //     setOtp(["", "", "", "", "", ""]);
-  //     router.push('ResetPasswordScreen'); // Điều hướng đến màn hình đặt lại mật khẩu
-  //   } catch (error) {
-  //     console.error('Lỗi xác minh OTP:', error);
-  //     alert("Đã xảy ra lỗi trong quá trình xác minh OTP. Vui lòng thử lại sau.");
-  //   }
-  // };
-
   const handleSubmit = async () => {
     const otpValue = otp.join('');
     if (otpValue.length === 6) {

@@ -6,6 +6,7 @@ import {
   TouchableOpacity,
   StyleSheet,
   Alert,
+  ActivityIndicator
 } from "react-native";
 import Icon from "react-native-vector-icons/FontAwesome";
 import AlertComponent from "@/components/AlertComponent";
@@ -26,15 +27,24 @@ const RegisterScreen = () => {
   const [showMissingInfoAlert, setShowMissingInfoAlert] = useState(false);
   const [message, setMessage] = useState("");
   const [color, setColor] = useState("");
+  const [loading, setLoading] = useState(false);
   const [backPressedCount, setBackPressedCount] = useState(0);
-
+  const [errors, setErrors] = useState({
+    accout_name: "",
+    email: "",
+    passwd: "",
+    passwd2: "",
+  });
   useEffect(() => {
     const backAction = () => {
       router.replace("LoginScreen");
       return true;
     };
 
-    const backHandler = BackHandler.addEventListener('hardwareBackPress', backAction);
+    const backHandler = BackHandler.addEventListener(
+      "hardwareBackPress",
+      backAction
+    );
 
     return () => backHandler.remove();
   }, []);
@@ -45,54 +55,60 @@ const RegisterScreen = () => {
   };
 
   const handleRegister = async () => {
-    if (
-      accout_name.trim() === "" ||
-      email.trim() === "" ||
-      passwd.trim() === ""
-    ) {
-      setMessage("Vui lòng nhập đầy đủ thông tin");
-      setColor("red");
-      setShowMissingInfoAlert(true);
-      return;
-    }
+    const newErrors = {
+      accout_name: accout_name ? "" : "Cho chúng tôi biết họ và tên của bạn",
+      email: email ? "" : "Cho chúng tôi biết email của bạn",
+      passwd: passwd ? "" : "Mật khẩu không được trống",
+      passwd2: passwd2 ? "" : "Xác nhận mật khẩu không được trống",
+    };
 
-    if (!isValidEmail(email)) {
-      setMessage("Email không hợp lệ");
-      setColor("red");
-      setShowMissingInfoAlert(true);
-      return;
-    }
-    if(passwd != passwd2){
-      setMessage("Mật khẩu không khớp");
-      setColor("red");
-      setShowMissingInfoAlert(true);
-      return;
-    }
+    setErrors(newErrors);
 
-    try {
-      const response: AxiosResponse = await axios.post(
-        "http://beejobs.io.vn:14307/api/signup",
-        {
-          accout_name: accout_name,
-          email: email,
-          passwd: passwd,
-          type_role: "NLD",
-          verify: false,
+    const noErrors = Object.values(newErrors).every((error) => !error);
+    if (noErrors) {
+      setLoading(true);
+      if (!isValidEmail(email)) {
+        setMessage("Email không hợp lệ");
+        setColor("red");
+        setShowMissingInfoAlert(true);
+        return;
+      }
+      if (passwd != passwd2) {
+        setMessage("Mật khẩu không khớp");
+        setColor("red");
+        setShowMissingInfoAlert(true);
+        return;
+      }
+
+      try {
+        const response: AxiosResponse = await axios.post(
+          "http://beejobs.io.vn:14307/api/signup",
+          {
+            accout_name: accout_name,
+            email: email,
+            passwd: passwd,
+            type_role: "NLD",
+            verify: false,
+          }
+        );
+        if (response.data.status === 200){
+          router.push({ pathname: "VerifyAccount", params: { email: email } });
         }
-      );
-      setMessage('Đăng ký thành công');
-      setShowMissingInfoAlert(true);
-      setColor('green');
-      // setName("");
-      // setEmail("");
-      // setPassword("");
-      // setShowPassword(false);
-      router.push({ pathname: 'VerifyAccount', params: {email: email} });
-    } catch (error) {
-      console.error("Lỗi đăng ký:", error);
-      setMessage("Đăng ký thất bại");
-      setShowMissingInfoAlert(true);
-      setColor("red");
+        else if(response.data.status === 400){
+          setMessage("Email đã được đăng ký!");
+          setShowMissingInfoAlert(true);
+          setColor("red");
+          return;
+        }
+        
+      } catch (error) {
+        console.error("Lỗi đăng ký:", error);
+        setMessage("Đăng ký thất bại");
+        setShowMissingInfoAlert(true);
+        setColor("red");
+      }finally {
+        setLoading(false); // Kết thúc loading
+      }
     }
   };
 
@@ -102,16 +118,22 @@ const RegisterScreen = () => {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Đăng ký</Text>
+      <Text style={styles.title}>Đăng ký tài khoản</Text>
       <View style={styles.inputContainer}>
         <Icon name="user" size={20} color="#A9A9A9" style={styles.icon} />
         <TextInput
           style={styles.input}
-          placeholder="Tài khoản"
+          placeholder="Họ và Tên"
           value={accout_name}
           onChangeText={setName}
         />
       </View>
+      {errors.accout_name ? (
+        <View style={styles.errorContainer}>
+          <Ionicons name="alert-circle-outline" size={20} color="red" />
+          <Text style={styles.errorText}>{errors.accout_name}</Text>
+        </View>
+      ) : null}
       <View style={styles.inputContainer}>
         <Icon name="envelope" size={20} color="#A9A9A9" style={styles.icon} />
         <TextInput
@@ -121,6 +143,12 @@ const RegisterScreen = () => {
           onChangeText={setEmail}
         />
       </View>
+      {errors.email ? (
+        <View style={styles.errorContainer}>
+          <Ionicons name="alert-circle-outline" size={20} color="red" />
+          <Text style={styles.errorText}>{errors.email}</Text>
+        </View>
+      ) : null}
       <View style={styles.inputContainer}>
         <Icon name="lock" size={20} color="#A9A9A9" style={styles.icon} />
         <TextInput
@@ -132,13 +160,19 @@ const RegisterScreen = () => {
         />
         <TouchableOpacity onPress={() => setShowPassword(!showPassword)}>
           <Icon
-            name={showPassword ? "eye-slash" : "eye"}
+            name={showPassword ? "eye" : "eye-slash"}
             size={20}
             color="#A9A9A9"
             style={styles.icon}
           />
         </TouchableOpacity>
       </View>
+      {errors.passwd ? (
+        <View style={styles.errorContainer}>
+          <Ionicons name="alert-circle-outline" size={20} color="red" />
+          <Text style={styles.errorText}>{errors.passwd}</Text>
+        </View>
+      ) : null}
       <View style={styles.inputContainer}>
         <Icon name="lock" size={20} color="#A9A9A9" style={styles.icon} />
         <TextInput
@@ -150,16 +184,26 @@ const RegisterScreen = () => {
         />
         <TouchableOpacity onPress={() => setShowPassword2(!showPassword2)}>
           <Icon
-            name={showPassword2 ? "eye-slash" : "eye"}
+            name={showPassword2 ? "eye" : "eye-slash"}
             size={20}
             color="#A9A9A9"
             style={styles.icon}
           />
         </TouchableOpacity>
       </View>
-      <TouchableOpacity style={styles.button} onPress={handleRegister}>
+      {errors.passwd2 ? (
+        <View style={styles.errorContainer}>
+          <Ionicons name="alert-circle-outline" size={20} color="red" />
+          <Text style={styles.errorText}>{errors.passwd2}</Text>
+        </View>
+      ) : null}
+      {loading ? (
+        <ActivityIndicator size="large" color="#0000ff" />
+      ) : (
+        <TouchableOpacity style={styles.button} onPress={handleRegister}>
         <Text style={styles.buttonText}>Đăng ký</Text>
       </TouchableOpacity>
+      )}
       <Text style={styles.continueWithText}>----- continue with -----</Text>
       <View style={styles.socialIconsContainer}>
         <TouchableOpacity onPress={handleFeatureInDevelopment}>
@@ -211,7 +255,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: "#A9A9A9",
     borderRadius: 25,
-    marginBottom: 20,
+    marginBottom: 10,
     paddingHorizontal: 15,
     backgroundColor: "#f9f9f9",
     padding: 10,
@@ -266,6 +310,16 @@ const styles = StyleSheet.create({
   },
   rememberMeCheckboxChecked: {
     backgroundColor: "#007aff",
+  },
+  errorText: {
+    color: "red",
+    fontSize: 14,
+    marginBottom: 10,
+    marginTop: 10,
+  },
+  errorContainer: {
+    flexDirection: "row",
+    alignItems: "center",
   },
 });
 
