@@ -1,5 +1,5 @@
 import axios, { AxiosResponse } from "axios";
-import { Job, Company, Worker, CompanyRespone, JobsResponse, User, ApplyJobData, AppliedJob, JobsResponseSingle, AppliedJobsResponse, CheckApplyJobResponse, WokerRespone, CheckFolow, Message } from "../Model/Model";
+import { Job, Company, Worker, CompanyRespone, JobsResponse, User, ApplyJobData, AppliedJob, JobsResponseSingle, AppliedJobsResponse, CheckApplyJobResponse, WokerRespone, CheckFolow, Message, ChatRoomModel } from "../Model/Model";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { DocumentPickerAsset } from "expo-document-picker";
 import FormData from 'form-data'
@@ -540,12 +540,25 @@ export const sendMessage = async (senderId: string, receiverId: string, content:
 //   }
 // };
 
-export const getChatRoomInfo = async (senderId: string, receiverId: string) => {
+export const getChatRoomInfo = async (senderId: string, receiverId: string): Promise<ChatRoomModel | null> => {
+  // try {
+  //   const response: ChatRoomModel = await axios.get(`http://beejobs.io.vn:14307/api/chat/chatroom/${senderId}/${receiverId}`);
+  //   return response;
+  // } catch (error) {
+  //   console.log(error +' getChatRoomInfo')
+  //   throw new Error(String(error) || 'Error fetching chat room info');
+  // }
+  const url = `http://beejobs.io.vn:14307/api/chat/chatroom/${senderId}/${receiverId}`; // Thay thế bằng URL của bạn
+
   try {
-    const response = await axios.get(`/api/chat/chatroom/${senderId}/${receiverId}`);
-    return response.data;
+      const response = await axios.get<ChatRoomModel>(url);
+      return response.data;
   } catch (error) {
-    console.log(error +' getChatRoomInfo')
-    throw new Error(String(error) || 'Error fetching chat room info');
+      if (axios.isAxiosError(error)) {
+          console.error('Error fetching chatroom info:', error.response?.data);
+      } else {
+          console.error('Unexpected error:', error);
+      }
+      return null; // Hoặc xử lý lỗi theo cách khác
   }
 };

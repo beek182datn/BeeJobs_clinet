@@ -134,10 +134,9 @@ export interface Message {
   chatRoomId: string;    // ID của phòng chat
 }
 
-export interface ChatRoom {
+export interface ChatRoomModel {
   _id: string;                // ID của phòng chat
   userIds: string[];          // Danh sách ID của người dùng tham gia phòng chat
-  typeChat: string;           // Loại chat (ví dụ: "NLD to DN")
 }
 
 
