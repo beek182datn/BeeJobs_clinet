@@ -306,7 +306,7 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   company: {
-    color: "gray",
+    color: "#0099CC",
     fontSize: 20,
   },
   profileImage: {
