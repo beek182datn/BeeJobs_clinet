@@ -20,7 +20,6 @@ import { Picker } from "@react-native-picker/picker";
 import { User, Worker } from "../../components/Model/Model";
 import { getUserInfo, findWorkerById } from "@/components/fetch_data/api";
 import * as ImagePicker from "expo-image-picker";
-import { disconnectSocket } from "@/components/fetch_data/config";
 type SetterFunction = (uri: string) => void;
 
 const pickImage = async (setter: SetterFunction) => {
