@@ -51,11 +51,12 @@ const AppliedJobs = () => {
 
   return (
     <SafeAreaView style={styles.container}>
-      <View style={{ flexDirection: 'row', justifyContent: 'center' }}>
+      <View style={{ flexDirection: 'row', justifyContent: 'center', marginBottom: 50 }}>
         <Text style={{ fontSize: 18, color: 'black', fontWeight: 'bold' }}>Việc đã ứng tuyển</Text>
-        <Pressable style={[styles.refreshButton, { position: 'absolute', right: 0 }]} onPress={refresh}>
+        {/* <Pressable style={[styles.refreshButton, { position: 'absolute', right: 0 }]} onPress={refresh}>
           <FontAwesome name="refresh" size={18} color="#FFFFFF" />
-        </Pressable>
+        </Pressable> */}
+        <View style={styles.separator} />
       </View>
       {appliedJobs.length == 0 &&
         <View style={styles.container}>
@@ -263,5 +264,15 @@ const styles = StyleSheet.create({
     color: 'white',
     fontSize: 13,
     fontWeight: 'bold',
+  },
+  separator: {
+    height: 1,
+    backgroundColor: '#ddd', // Màu của đường line
+    marginVertical: 10, // Khoảng cách từ trên và dưới
+    position: 'absolute', // Đặt đường line nằm dưới các thành phần khác
+    top: 50,
+    bottom: 0, // Đặt nó ở phía dưới
+    left: 0,
+    right: 0,
   },
 });

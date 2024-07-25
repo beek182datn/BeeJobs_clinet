@@ -307,7 +307,13 @@ const JobDetail = () => {
 
 
       <Modal visible={showModal} animationType="slide" style={{ padding: 10 }}>
-        <Text style={{ margin: 10, fontSize: 18, color: 'black', fontWeight: 500 }}>CV ứng tuyển</Text>
+      <View style={{ flexDirection: 'row', justifyContent: 'center', marginBottom: 50, marginTop: 60 }}>
+        <Text style={{ fontSize: 18, color: 'black', fontWeight: 'bold' }}>CV ứng tuyển</Text>
+        {/* <Pressable style={[styles.refreshButton, { position: 'absolute', right: 0 }]} onPress={refresh}>
+          <FontAwesome name="refresh" size={18} color="#FFFFFF" />
+        </Pressable> */}
+        <View style={styles.separator} />
+      </View>
         <View style={styles.modalTopView}>
           {!cv &&
             <TouchableOpacity style={styles.buttonPickCv} onPress={pickFile}>
@@ -592,5 +598,15 @@ const styles = StyleSheet.create({
     backgroundColor: '#f0f8ff',
     flexDirection: 'row',
     alignSelf: 'center'
-  }
+  },
+  separator: {
+    height: 1,
+    backgroundColor: '#ddd', // Màu của đường line
+    marginVertical: 10, // Khoảng cách từ trên và dưới
+    position: 'absolute', // Đặt đường line nằm dưới các thành phần khác
+    top: 50,
+    bottom: 0, // Đặt nó ở phía dưới
+    left: 0,
+    right: 0,
+  },
 });

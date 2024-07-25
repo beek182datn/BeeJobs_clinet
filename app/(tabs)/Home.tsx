@@ -6,9 +6,10 @@ import {
   FlatList,
   TouchableOpacity,
   Image,
-  
+  SafeAreaView,
 } from "react-native";
 import React, { useState, useEffect, useCallback } from "react";
+import { useFocusEffect } from "@react-navigation/native";
 import {
   fetchJobs,
   findJobByTitle,
@@ -19,14 +20,19 @@ import {
 import { Job } from "@/components/Model/Model";
 import JobsList from "@/components/comps/JobsList";
 import { BackHandler, Alert } from "react-native";
-import { useRouter } from "expo-router";
+import { useRouter, useLocalSearchParams } from "expo-router";
 import { useBackHandler } from "../../components/BackHandler";
 import AlertComponent from "@/components/AlertComponent";
-
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import axios, { AxiosResponse } from "axios";
 interface FilterOptionProps {
   label: string;
   value: string;
   onPress: (value: string) => void;
+}
+interface WorkerInfo {
+  worker_avatar?: string;
+  worker_name?: string;
 }
 const Home = () => {
   const [searchText, setSearchText] = useState("");
@@ -45,6 +51,11 @@ const Home = () => {
   const [selectedFilterOption, setSelectedFilterOption] = useState("title");
   const [inputSearch, setInputSearch] = useState("Tiêu đề");
   const router = useRouter();
+  const [refreshing, setRefreshing] = useState(false);
+  //const [userID, setuserID] = useState<string | null>(null);
+  const [userData, setUserData] = useState<WorkerInfo>({});
+  const [error, setError] = useState(null);
+  //const params = useLocalSearchParams();
 
   useEffect(() => {
     const loadJobs = async () => {
@@ -57,9 +68,41 @@ const Home = () => {
     loadJobs();
   }, [ref]);
 
-  const refresh = ()=>{
-    setRef(!ref)
-  }
+  useEffect(() => {
+    fetchData();
+  }, []);
+
+  const fetchData = async () => {
+    try {
+      const userId = await AsyncStorage.getItem("userID");
+      if (userId) {
+        const response = await axios.get(
+          `http://beejobs.io.vn:14307/api/getwokerbyUserID/${userId}`
+        );
+        setUserData(response.data);
+        console.log(response.data);
+      } else {
+        console.warn("No UserID found in AsyncStorage");
+      }
+    } catch (err) {
+      if (axios.isAxiosError(err)) {
+        if (err.response && err.response.status === 404) {
+          //console.warn("User not found");
+          // Xử lý khi không tìm thấy user trong cơ sở dữ liệu
+        } else {
+          console.error("Error fetching user data:", err.message);
+          // Xử lý các lỗi khác
+        }
+      } else {
+        console.error("Unexpected error:", err);
+        // Xử lý các lỗi không phải của Axios
+      }
+    }
+  };
+
+  const refresh = () => {
+    setRef(!ref);
+  };
 
   const handleSearch = async (text: string) => {
     setSearchText(text);
@@ -117,13 +160,29 @@ const Home = () => {
   );
 
   return (
-    <View style={styles.container}>
+    <SafeAreaView style={styles.container}>
+      <View style={styles.header}>
+        <View style={styles.headerText}>
+          <Text style={styles.title}>Good morning</Text>
+          <Text style={styles.company}>{userData.worker_name ? userData.worker_name : "Chào mừng bạn đến với Beejobs!"}</Text>
+        </View>
+        <Image
+          source={{
+            uri: userData.worker_avatar
+              ? `http://beejobs.io.vn:14307/${userData.worker_avatar}`
+              : "http://beejobs.io.vn:14307/uploads/1721866026009-logo.jpg",
+          }}
+          style={styles.profileImage}
+        />
+      </View>
       <View style={styles.searchBar}>
-        <TouchableOpacity onPress={refresh}><Image
-          source={require("../../assets/images/bee_jobs_light_blue.png")}
-          style={styles.logo}
-        /></TouchableOpacity>
-        
+        <TouchableOpacity onPress={refresh}>
+          <Image
+            source={require("../../assets/images/bee_jobs_light_blue.png")}
+            style={styles.logo}
+          />
+        </TouchableOpacity>
+
         <TextInput
           style={styles.searchInput}
           placeholder={inputSearch}
@@ -154,28 +213,41 @@ const Home = () => {
       ) : (
         <FlatList
           data={filteredJobs}
+          style={{zIndex: 1}}
           keyExtractor={(item) => item._id}
           renderItem={({ item }) => <JobsList job={item} />}
         />
       )}
-    </View>
+    </SafeAreaView>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "white",
+    backgroundColor: "#ccc",
   },
   searchBar: {
     flexDirection: "row",
     alignItems: "center",
-    paddingVertical: 12,
-    paddingHorizontal: 16,
-    backgroundColor: "white",
-    zIndex: 10,
-    marginTop: 50,
-    position: "relative",
+    backgroundColor: "#fff",
+    borderRadius: 10,
+    padding: 15,
+    marginTop: 10,
+    shadowColor: "#000",
+    shadowOpacity: 0.1,
+    shadowOffset: { width: 0, height: 5 },
+    shadowRadius: 10,
+    elevation: 5,
+    marginLeft: 10,
+    marginBottom: 10,
+    marginRight: 10,
+    zIndex: 1000,
+  },
+  header: {
+    flexDirection: "row",
+    alignItems: "center",
+    margin: 20,
   },
   searchInput: {
     flex: 1,
@@ -204,7 +276,7 @@ const styles = StyleSheet.create({
     borderColor: "#ccc",
     borderRadius: 4,
     padding: 8,
-    zIndex: 10,
+    zIndex: 1000,
   },
   filterOption: {
     paddingVertical: 4,
@@ -217,6 +289,7 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
+    zIndex: 1
   },
   loadingText: {
     fontSize: 18,
@@ -227,7 +300,24 @@ const styles = StyleSheet.create({
     height: 50,
     zIndex: -1,
   },
-
+  title: {
+    fontWeight: "bold",
+    fontSize: 26,
+    marginBottom: 10,
+  },
+  company: {
+    color: "gray",
+    fontSize: 20,
+  },
+  profileImage: {
+    width: 80,
+    height: 80,
+    borderRadius: 40,
+    backgroundColor: "#E0F7FA",
+  },
+  headerText: {
+    flex: 1,
+  },
 });
 
 export default Home;

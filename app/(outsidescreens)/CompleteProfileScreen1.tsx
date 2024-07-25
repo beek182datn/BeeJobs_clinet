@@ -7,7 +7,7 @@ import {
   StyleSheet,
   ScrollView,
   Image,
-  SafeAreaView
+  SafeAreaView,
 } from "react-native";
 import Icon from "react-native-vector-icons/FontAwesome";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
@@ -19,8 +19,8 @@ type SetterFunction = (uri: string) => void;
 
 const pickImage = async (setter: SetterFunction) => {
   const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
-  if (status !== 'granted') {
-    alert('Permission to access media library is required!');
+  if (status !== "granted") {
+    alert("Permission to access media library is required!");
     return;
   }
 
@@ -85,55 +85,52 @@ const CompleteProfileScreen1: React.FC = () => {
 
     setErrors(newErrors);
     const noErrors = Object.values(newErrors).every((error) => !error);
+    if (!noErrors) {
+      return;
+    }
   };
 
-  
-
-  // const uploadImage = async (uri: string) => {
-  //   const formData = new FormData();
-  //   formData.append('worker_avatar', {
-  //     uri,
-  //     name: 'photo.jpg',
-  //     type: 'image/jpeg'
-  //   } as any);  // Casting to 'any' to avoid TypeScript errors
-    
-  // };
   const handleRegister = async (): Promise<void> => {
     handleContinue();
     try {
       const avatarUrl = worker_avatar;
       if (avatarUrl) {
         const formData = new FormData();
-        formData.append('worker_name', worker_name);
-        formData.append('worker_avatar', avatarUrl);
-        formData.append('email', email);  // Replace with actual email
-        formData.append('phone', phone);
+        formData.append("worker_name", worker_name);
+        formData.append("worker_avatar", avatarUrl);
+        formData.append("email", email); // Replace with actual email
+        formData.append("phone", phone);
         if (worker_avatar) {
-          const response = await fetch(worker_avatar);
-          const blob = await response.blob();
-          formData.append('worker_avatar', {
-            uri: worker_avatar,
-            type: blob.type,
-            name: 'logo.jpg',
-          }as any);
+          try {
+            const response = await fetch(worker_avatar);
+            const blob = await response.blob();
+            formData.append("worker_avatar", {
+              uri: worker_avatar,
+              type: blob.type,
+              name: "logo.jpg",
+            } as any);
+          } catch (err) {
+            console.error("Lỗi khi tải ảnh:");
+            return; // Ngừng thực hiện nếu có lỗi khi tải ảnh
+          }
         }
-  
+
         const response: AxiosResponse = await axios.post(
           `http://beejobs.io.vn:14307/workers/create/${user_id}`,
           formData,
           {
             headers: {
-              'Content-Type': 'multipart/form-data',
+              "Content-Type": "multipart/form-data",
             },
           }
         );
-        
-        router.push('/Profile');
+
+        router.push("/Profile");
       } else {
-        console.error('Failed to upload image, registration aborted.');
+        console.error("Failed to upload image, registration aborted.");
       }
     } catch (error) {
-      console.error('Lỗi đăng ký:', error);
+      console.error("Lỗi đăng ký:", error);
     }
   };
 
@@ -326,8 +323,8 @@ const styles = StyleSheet.create({
     height: 120,
     borderRadius: 50,
     marginBottom: 10,
-    borderColor: 'blue',
-    borderWidth: 2
+    borderColor: "blue",
+    borderWidth: 2,
   },
 });
 

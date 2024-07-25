@@ -2,7 +2,7 @@ import React from 'react';
 import { View, Text, StyleSheet, Image, Pressable } from 'react-native';
 import { Job } from '../Model/Model';
 import { router } from 'expo-router';
-import { Ionicons } from '@expo/vector-icons';
+import { Ionicons,FontAwesome } from '@expo/vector-icons';
 
 interface JobItemProps {
   job: Job;
@@ -44,117 +44,113 @@ const JobsList: React.FC<JobItemProps> = ({ job }) => {
   }
   return (
     <Pressable onPress={handleDetail}>
-      <View style={styles.container}>
-        <View style={styles.containerDetail}>
-          <View style={styles.companyLogo}>
-            <Image source={job.company_logo != '' ? { uri: linkVps + job.company_logo } : require('../../assets/images/profile.png')} style={styles.image} />
+      <View style={styles.card}>
+        <View style={styles.header}>
+          <Image
+            source={job.company_logo != '' ? { uri: linkVps + job.company_logo } : require('../../assets/images/profile.png')}
+            style={styles.logo}
+          />
+          <View style={styles.headerText}>
+            <Text style={styles.title}>{job.title}</Text>
+            <Text style={styles.company}>{job.company_name}</Text>
           </View>
-          <View style={styles.infoContainer}>
-            <Text style={styles.jobTitle}>{job.title}</Text>
-            <Text style={styles.companyName}>{job.company_name}</Text>
-            <View style={styles.detailsContainer}>
-              <Text style={styles.jobLocation}>{job.location.slice(0, 20)}{vv(job.location)}</Text>
-              <Text style={styles.jobLocation}>{job.requirements.slice(0, 20)}{vv(job.location)}</Text>
-            </View>
-            <View style={{ flexDirection: 'row' }}>
-              <Ionicons name='cash' size={18} color={'blue'} />
-              <Text style={[styles.jobSalary, { marginLeft: 4 }]}>{job.salary}</Text>
-            </View>
-
-          </View>
+          <FontAwesome name="bookmark-o" size={24} color="gray" />
         </View>
-        <View style={styles.timeLeftView}>
-          <Ionicons name='time' size={18} color={'gray'} />
-          <Text style={styles.timeLeftText}>{getDaysLeft(job.deadline)}</Text>
+        <View style={styles.separator} />
+        <View style={styles.body}>
+          <View style={styles.location}>
+            <FontAwesome name="map-marker" size={20} color="#4285F4" />
+            <Text style={styles.locationText}>{job.location}</Text>
+          </View>
+          <Text style={styles.salary}>{job.salary}</Text>
+          <View style={styles.footer}>
+            <Text style={styles.experience}>1.5 years</Text>
+            <View style={styles.date}>
+              <Ionicons name="time" size={20} color="gray" />
+              <Text style={styles.dateText}>{getDaysLeft(job.deadline)}</Text>
+            </View>
+          </View>
         </View>
       </View>
-
     </Pressable>
   );
 };
 
+
 const styles = StyleSheet.create({
-  container: {
-    backgroundColor: 'white',
-    borderRadius: 8,
-    padding: 10,
+  card: {
+    backgroundColor: '#ffff',
+    borderRadius: 10,
+    padding: 15,
+    margin: 10,
     shadowColor: '#000',
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.25,
-    shadowRadius: 3.84,
-    elevation: 5,
-    marginVertical: 8,
-    marginHorizontal: 8
+    shadowOpacity: 0.1,
+    shadowOffset: { width: 0, height: 2 },
+    shadowRadius: 10,
+    elevation: 5, // Đảm bảo giá trị này không làm cho card nổi bật hơn
+    zIndex: 1, // Giá trị này thấp hơn optionsContainer
   },
-  containerDetail: {
+  header: {
     flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 10,
   },
-  companyLogo: {
-    width: 50,
-    height: 50,
-    marginRight: 16,
-    borderRadius: 8,
-    elevation: 15,
-    borderColor: 'gray',
-    shadowColor: 'black',
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.25,
-    shadowRadius: 3.84,
-    padding: 2
+  logo: {
+    width: 40,
+    height: 40,
+    marginRight: 10,
   },
-  infoContainer: {
+  headerText: {
     flex: 1,
   },
-  jobTitle: {
-    fontSize: 15,
-    fontWeight: '700',
-    marginBottom: 4,
+  title: {
+    fontWeight: 'bold',
+    fontSize: 16,
   },
-  companyName: {
-    color: 'black',
-    fontSize: 15,
-    fontWeight: '400'
+  company: {
+    color: 'gray',
   },
-  jobDescription: {
-    fontSize: 14,
-    color: '#666',
-    marginBottom: 4,
+  separator: {
+    borderBottomWidth: 1,
+    borderBottomColor: '#E0E0E0',
+    marginVertical: 10,
   },
-  detailsContainer: {
+  body: {
+    paddingHorizontal: 5,
+  },
+  location: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 10,
+  },
+  locationText: {
+    marginLeft: 5,
+    color: 'gray',
+  },
+  salary: {
+    backgroundColor: '#E0F7FA',
+    color: '#00ACC1',
+    padding: 5,
+    borderRadius: 5,
+    alignSelf: 'flex-start',
+    marginBottom: 10,
+  },
+  footer: {
     flexDirection: 'row',
     justifyContent: 'space-between',
+    alignItems: 'center',
   },
-  jobLocation: {
-    fontSize: 14,
-    color: '#666',
-    width: '50%'
-  },
-  jobSalary: {
-    fontSize: 14,
-    color: '#666',
-  },
-  image: {
-    width: 50,
-    height: 50,
-    borderRadius: 8
-  },
-  timeLeftView: {
-    borderTopWidth: 0.25,
-    borderTopColor: 'gray',
-    paddingTop: 5,
-    flexDirection: 'row'
-  },
-  timeLeftText: {
-    fontSize: 14,
+  experience: {
     color: 'gray',
-    marginLeft: 4
-  }
+  },
+  date: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  dateText: {
+    marginLeft: 5,
+    color: 'gray',
+  },
 });
 
 export default JobsList;

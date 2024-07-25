@@ -1,10 +1,14 @@
 import React from 'react';
-import { StyleSheet, Text, View, Image } from 'react-native';
+import { StyleSheet, Text, View, Image,SafeAreaView } from 'react-native';
 
 const Notification = () => {
   return (
-    <View style={styles.container}>
-      <Text style={styles.header}>Thông báo</Text>
+    <SafeAreaView style={styles.container}>
+      <View style={{ flexDirection: 'row', justifyContent: 'center', marginBottom: 50 }}>
+        <Text style={{ fontSize: 18, color: 'black', fontWeight: 'bold' }}>Thông báo</Text>
+        <View style={styles.separator} />
+      </View>
+      
       <View style={styles.content}>
         <Image
           source={require('../../assets/images/notification.png')}
@@ -16,7 +20,7 @@ const Notification = () => {
           Hãy khám phá tính năng khác hoặc kiểm tra lại sau.
         </Text>
       </View>
-    </View>
+    </SafeAreaView>
   );
 };
 
@@ -25,15 +29,12 @@ export default Notification;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'flex-start',
-    paddingTop: 50,
+    backgroundColor: '#f8f9fa',
+    padding: 20,
+    position: 'relative'
   },
   header: {
-    fontSize: 20,
-    fontWeight: 'bold',
-    marginBottom: 20,
+    fontSize: 18, color: 'black', fontWeight: 'bold'
   },
   content: {
     alignItems: 'center',
@@ -55,5 +56,15 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: '#666',
     textAlign: 'center',
+  },
+  separator: {
+    height: 1,
+    backgroundColor: '#ddd', // Màu của đường line
+    marginVertical: 10, // Khoảng cách từ trên và dưới
+    position: 'absolute', // Đặt đường line nằm dưới các thành phần khác
+    top: 50,
+    bottom: 0, // Đặt nó ở phía dưới
+    left: 0,
+    right: 0,
   },
 });
