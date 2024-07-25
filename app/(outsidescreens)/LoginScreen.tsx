@@ -21,6 +21,7 @@ import AlertComponent from "@/components/AlertComponent";
 const LoginScreen = () => {
   const [username, setUsername] = useState("");
   const [passwd, setPassword] = useState("");
+  const [userID, setuserID] = useState<string | null>(null);
   const [showPassword, setShowPassword] = useState(false);
   const [rememberMe, setRememberMe] = useState(false);
   const router = useRouter();
@@ -29,6 +30,7 @@ const LoginScreen = () => {
   const [loading, setLoading] = useState(false);
   const { showAlert, setShowAlert, message, setMessage, color, setColor } =
     useBackHandler(true);
+
   const [errors, setErrors] = useState({
     username: "",
     passwd: "",
@@ -110,6 +112,9 @@ const LoginScreen = () => {
             passwd: passwd,
           }
         );
+        const userId = response.data.user_info.id_user
+        await AsyncStorage.setItem("userID", userId);
+        console.log('log ra id: ' +userId);
 
         if (response.data.status === 200) {
           setLoggedInUser(response.data.user_info.email);
@@ -127,8 +132,6 @@ const LoginScreen = () => {
               "token",
               JSON.stringify(response.data.token)
             );
-            console.log(response.data.token);
-            //router.push("/Home");
           } catch (error) {
             console.error("Error saving user profile:", error);
           }

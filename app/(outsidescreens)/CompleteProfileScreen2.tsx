@@ -31,7 +31,7 @@ const pickImage = async (setter: SetterFunction) => {
     mediaTypes: ImagePicker.MediaTypeOptions.Images,
     allowsEditing: true,
     aspect: [4, 3],
-    quality: 1,
+    quality: 0.2,
   });
 
   if (!result.canceled && result.assets && result.assets.length > 0) {
@@ -42,7 +42,7 @@ const pickImage = async (setter: SetterFunction) => {
 const CompleteProfileScreen2: React.FC = () => {
   const router = useRouter();
   const workerinfo = useLocalSearchParams();
-  console.log(JSON.stringify(String(workerinfo.user_id)))
+  //console.log(JSON.stringify(String(workerinfo.user_id)))
   const [user, setUser] = useState<User | null>();
   const [worker, setWorker] = useState<Worker | null>();
   const [worker_name, setWorker_name] = useState(workerinfo.worker_name);
