@@ -139,6 +139,12 @@ export interface ChatRoomModel {
   userIds: string[];          // Danh sách ID của người dùng tham gia phòng chat
 }
 
+//
+export type AppliedJobRespone = {
+  appliedjobsLastWeek: AppliedJob[];
+  appliedjobsLast30Days: AppliedJob[];
+  allAppliedjobs: AppliedJob[];
+}
 
 
 
