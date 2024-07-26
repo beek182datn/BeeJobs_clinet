@@ -156,9 +156,9 @@ const JobDetail = () => {
   };
 
   const handleDetailCompany = () => {
-    if (user) {
-      router.push({ pathname: 'CompanyDetail', params: { ...job, userId: user.id_user } })
-    }
+    // if (user) {
+      router.push({ pathname: 'CompanyDetail', params: { ...job, userId: user?.id_user } })
+    // }
   }
 
   const getDaysLeft = (dateString: string) => {

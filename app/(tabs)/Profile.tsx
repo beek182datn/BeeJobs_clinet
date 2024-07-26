@@ -102,7 +102,7 @@ const Profile: React.FC = () => {
         setCompanyInfo(response.data);
         console.log(response.data);
       } else {
-        console.warn("No UserID found in AsyncStorage");
+        console.log("No UserID found in AsyncStorage");
       }
     } catch (err) {
       if (axios.isAxiosError(err)) {
@@ -131,8 +131,18 @@ const Profile: React.FC = () => {
         },
         {
           text: "Đăng xuất",
-          onPress: () => {
-            router.push("/LoginScreen");
+          onPress: async () => {
+            try {
+              await AsyncStorage.removeItem('user_info');
+              await AsyncStorage.removeItem('userProfile');
+              await AsyncStorage.removeItem('token');
+              await AsyncStorage.removeItem('userID');
+              console.log(`Removed item with key: userId`);
+              router.push("/LoginScreen");
+            } catch (error) {
+              console.error("Error removing item from AsyncStorage: ", error);
+            }
+
           },
         },
       ],
@@ -157,11 +167,11 @@ const Profile: React.FC = () => {
   };
 
   const goChangepasswd = () => {
-      router.push({
-        pathname: "ChangePassword",
-        params: { id_user: user?.id_user }
-      });
-      
+    router.push({
+      pathname: "ChangePassword",
+      params: { id_user: user?.id_user }
+    });
+
   };
 
   const showActionSheet = () => {
@@ -197,8 +207,8 @@ const Profile: React.FC = () => {
               <Image
                 source={{
                   uri: !worker_avatars
-                  ? `http://beejobs.io.vn:14307${worker.worker_avatar}`
-                  : worker_avatars,
+                    ? `http://beejobs.io.vn:14307${worker.worker_avatar}`
+                    : worker_avatars,
                 }}
                 style={styles.avatar}
               />
@@ -218,7 +228,7 @@ const Profile: React.FC = () => {
           <View style={styles.jobManagement}>
             <Text style={styles.managementTitle}>Quản lý tìm việc</Text>
             <View style={styles.row}>
-              <TouchableOpacity style={styles.managementBox} onPress={()=>{router.push('/AppliedJobs')}}>
+              <TouchableOpacity style={styles.managementBox} onPress={() => { router.push('(insidescreens)/AppliedJobByTime') }}>
                 <Ionicons name="briefcase" size={30} color="#0099CC" />
                 <Text style={styles.managementText}>Việc làm đã ứng tuyển</Text>
                 <Text style={styles.infoNumber}>{appliedJobs.length}</Text>
@@ -238,7 +248,7 @@ const Profile: React.FC = () => {
                 <Text style={styles.infoText}>NTD đã xem hồ sơ</Text>
                 <Text style={styles.infoNumber}>0</Text>
               </View>
-              <TouchableOpacity style={styles.infoBox} onPress={()=> {router.push('/FollowCompany')}}>
+              <TouchableOpacity style={styles.infoBox} onPress={() => { router.push('/FollowCompany') }}>
                 <Ionicons name="business" size={30} color="#0099CC" />
                 <Text style={styles.infoText}>Công ty đang theo dõi</Text>
                 <Text style={styles.infoNumber}>{companyInfo.length}</Text>
@@ -264,16 +274,16 @@ const Profile: React.FC = () => {
               <Text style={styles.utilityText}>Vô hiệu hóa tài khoản</Text>
             </TouchableOpacity>
           </View>
-          
+
           <View style={styles.section}>
-          <Text style={styles.accountSettingsTitle}>Thông tin dịch vụ</Text>
+            <Text style={styles.accountSettingsTitle}>Thông tin dịch vụ</Text>
             <TouchableOpacity style={styles.utilityItem}>
               <Ionicons name="business" size={30} color="#0099CC" />
               <Text style={styles.utilityText}>Về BeeJobs</Text>
             </TouchableOpacity>
             <TouchableOpacity
               style={styles.utilityItem}
-              
+
             >
               <Ionicons name="document-text" size={30} color="#0099CC" />
               <Text style={styles.utilityText}>Điều khoản dịch vụ</Text>
@@ -310,9 +320,9 @@ const Profile: React.FC = () => {
             <View style={styles.infoContainer}>
               <Text style={styles.name}>Bạn chưa cập nhật hồ sơ</Text>
               <View style={styles.buttonContainer}>
-              <TouchableOpacity style={styles.upgradeButton} onPress={goCreate}>
-                <Text style={styles.upgradeText}>Cập nhật</Text>
-              </TouchableOpacity>
+                <TouchableOpacity style={styles.upgradeButton} onPress={goCreate}>
+                  <Text style={styles.upgradeText}>Cập nhật</Text>
+                </TouchableOpacity>
               </View>
             </View>
           </View>
@@ -348,14 +358,14 @@ const Profile: React.FC = () => {
             </View>
           </View>
           <View style={styles.section}>
-          <Text style={styles.accountSettingsTitle}>Thông tin dịch vụ</Text>
+            <Text style={styles.accountSettingsTitle}>Thông tin dịch vụ</Text>
             <TouchableOpacity style={styles.utilityItem}>
               <Ionicons name="business" size={30} color="#0099CC" />
               <Text style={styles.utilityText}>Về BeeJobs</Text>
             </TouchableOpacity>
             <TouchableOpacity
               style={styles.utilityItem}
-              
+
             >
               <Ionicons name="document-text" size={30} color="#0099CC" />
               <Text style={styles.utilityText}>Điều khoản dịch vụ</Text>

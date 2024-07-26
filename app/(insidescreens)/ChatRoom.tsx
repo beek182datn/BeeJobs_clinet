@@ -16,7 +16,7 @@ interface Message {
 
 const ChatRoom: React.FC = () => {
     const info = useLocalSearchParams();
-    console.log('huy check002: ' + JSON.stringify(info))
+
     const [companyInfo, setCompanyInfo] = useState<Company | null>(null);
     const [messages, setMessages] = useState<Message[]>([]);
     const [newMessage, setNewMessage] = useState<string>('');
@@ -32,8 +32,8 @@ const ChatRoom: React.FC = () => {
       };
 
     const fetchData = useCallback(async () => {
-        console.log(JSON.stringify(info))
         // flatListRef.current?.scrollToEnd({ animated: true });
+        console.log('long ', JSON.stringify(info))
         if (!info || !info.company_id || !info.userId) {
             return;
         }
