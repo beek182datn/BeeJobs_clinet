@@ -641,3 +641,18 @@ export const getAppliedJobsLast30days = async (worker_id: string): Promise<Appli
     }
   }
 };
+
+export const checkChatRoom = async (senderId: string, receiverId: string): Promise<ChatRoomModel> => {
+  try {
+    const respone: AxiosResponse<ChatRoomModel> = await axios.get(`http://beejobs.io.vn:14307/api/chat/checkchatroom/${senderId}/${receiverId}`)
+    return respone.data;
+  } catch (error) {
+    if (axios.isAxiosError(error) && error.response) {
+      console.error('Error in checking chatroom:', error.response.data);
+      throw new Error(`Error checking chatroom: ${error.response.data.message}`);
+    } else {
+      console.error('Unexpected error in checking chatroom:', error);
+      throw new Error('An unexpected error occurred while checking chatroom.');
+    }
+  }
+}
