@@ -38,16 +38,14 @@ const ChatRoom: React.FC = () => {
                 setCompanyInfo(companyInfo);
             }
 
-            const chatRoomInfo = await getChatRoomInfo(String(info.userId), String(info.company_id));
-            if (chatRoomInfo) {
-                setChatRoom(chatRoomInfo);
-            }
-
             // Fetch messages for the chat room
             const fetchedMessages = await getMessages(String(info.userId), String(info.company_id));
             setMessages(fetchedMessages);
             // flatListRef.current?.scrollToIndex({index: fetchedMessages.length-1})
-
+            const chatRoomInfo = await getChatRoomInfo(String(info.userId), String(info.company_id));
+            if (chatRoomInfo) {
+                setChatRoom(chatRoomInfo);
+            }
         } catch (error) {
             console.error('Error fetching data:', error);
         }
@@ -139,11 +137,11 @@ const ChatRoom: React.FC = () => {
                     )}
                     style={styles.messageList}
                     contentContainerStyle={{ paddingBottom: 100 }}
-                    // initialScrollIndex={messages.length - 1} // Bắt đầu từ phần tử cuối cùng
-                    // onScrollToIndexFailed={(info) => {
-                    //     // Xử lý trường hợp không thể cuộn đến chỉ số
-                    //     console.log('Scroll failed', info);
-                    // }}
+                // initialScrollIndex={messages.length - 1} // Bắt đầu từ phần tử cuối cùng
+                // onScrollToIndexFailed={(info) => {
+                //     // Xử lý trường hợp không thể cuộn đến chỉ số
+                //     console.log('Scroll failed', info);
+                // }}
                 />
 
                 <View style={styles.inputContainer}>
