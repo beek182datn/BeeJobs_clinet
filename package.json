@@ -39,8 +39,6 @@
     "expo-web-browser": "~13.0.3",
     "form-data": "^4.0.0",
     "jsonwebtoken": "^9.0.2",
-    "react": "18.2.0",
-    "react-dom": "18.2.0",
     "react-native": "0.74.3",
     "react-native-actionsheet": "^2.4.2",
     "react-native-blob-util": "^0.19.9",

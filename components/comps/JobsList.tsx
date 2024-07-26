@@ -16,7 +16,7 @@ const JobsList: React.FC<JobItemProps> = ({ job }) => {
       params: job
     });
   }
-
+  console.log('Huy check: ' + JSON.stringify(job));
   const getDaysLeft = (dateString: string) => {
     const today = new Date();
 

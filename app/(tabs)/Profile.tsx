@@ -17,9 +17,12 @@ import { useRouter } from "expo-router";
 import * as DocumentPicker from "expo-document-picker";
 import Modal from "react-native-modal";
 import { Picker } from "@react-native-picker/picker";
-import { User, Worker } from "../../components/Model/Model";
+import { Company, User, Worker } from "../../components/Model/Model";
 import { getUserInfo, findWorkerById } from "@/components/fetch_data/api";
 import * as ImagePicker from "expo-image-picker";
+import axios, { AxiosResponse } from "axios";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useFocusEffect } from '@react-navigation/native';
 type SetterFunction = (uri: string) => void;
 
 const pickImage = async (setter: SetterFunction) => {
@@ -47,7 +50,7 @@ const Profile: React.FC = () => {
   const [worker, setWorker] = useState<Worker | null>();
   //console.log(worker);
   const [worker_avatars, setWorker_avatars] = useState<string | null>(null);
-
+  const [companyInfo, setCompanyInfo] = useState<Company[]>([]);
   useEffect(() => {
     const fetchUserInfo = async () => {
       try {
@@ -66,7 +69,36 @@ const Profile: React.FC = () => {
     };
 
     fetchUserInfo();
+    fetchData();
   }, []);
+
+  const fetchData = async () => {
+    try {
+      const userId = await AsyncStorage.getItem("userID");
+      if (userId) {
+        const response = await axios.get(
+          `http://beejobs.io.vn:14307/api/findcompanys/${userId}`
+        );
+        setCompanyInfo(response.data);
+        console.log(response.data);
+      } else {
+        console.warn("No UserID found in AsyncStorage");
+      }
+    } catch (err) {
+      if (axios.isAxiosError(err)) {
+        if (err.response && err.response.status === 404) {
+          //console.warn("User not found");
+          // Xử lý khi không tìm thấy user trong cơ sở dữ liệu
+        } else {
+          console.error("Error fetching user data:", err.message);
+          // Xử lý các lỗi khác
+        }
+      } else {
+        console.error("Unexpected error:", err);
+        // Xử lý các lỗi không phải của Axios
+      }
+    }
+  };
 
   const handleLogoutPress = () => {
     Alert.alert(
@@ -115,6 +147,12 @@ const Profile: React.FC = () => {
   const showActionSheet = () => {
     handleActionSheetPress;
   };
+
+  useFocusEffect(
+    React.useCallback(() => {
+      fetchData();
+    }, [])
+  );
 
   const handleActionSheetPress = () => {
     DocumentPicker.getDocumentAsync({
@@ -180,11 +218,11 @@ const Profile: React.FC = () => {
                 <Text style={styles.infoText}>NTD đã xem hồ sơ</Text>
                 <Text style={styles.infoNumber}>0</Text>
               </View>
-              <View style={styles.infoBox}>
+              <TouchableOpacity style={styles.infoBox} onPress={()=> {router.push('/FollowCompany')}}>
                 <Ionicons name="business" size={30} color="#0099CC" />
                 <Text style={styles.infoText}>Công ty đang theo dõi</Text>
-                <Text style={styles.infoNumber}>0</Text>
-              </View>
+                <Text style={styles.infoNumber}>{companyInfo.length}</Text>
+              </TouchableOpacity>
             </View>
           </View>
           <View style={styles.section}>
@@ -282,7 +320,7 @@ const Profile: React.FC = () => {
                 <Text style={styles.infoText}>NTD đã xem hồ sơ</Text>
                 <Text style={styles.infoNumber}>0</Text>
               </View>
-              <View style={styles.infoBox}>
+              <View style={styles.infoBox} >
                 <Ionicons name="business" size={30} color="#0099CC" />
                 <Text style={styles.infoText}>Công ty đang theo dõi</Text>
                 <Text style={styles.infoNumber}>0</Text>
