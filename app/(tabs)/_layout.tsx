@@ -30,7 +30,7 @@ export default () => {
       />
       
       <Tabs.Screen
-        name="AppliedJobs"
+        name="Messenger"
         options={{
           title: "Tin nhắn",
           tabBarIcon: ({ color, focused }) => (

@@ -1,4 +1,4 @@
-import { SafeAreaView, StyleSheet, FlatList, Text, View, Pressable, Image, TouchableOpacity, Linking } from 'react-native';
+import { SafeAreaView, StyleSheet, FlatList, Text, View, Pressable, Image,BackHandler, TouchableOpacity, Linking, ScrollView } from 'react-native';
 import React, { useState, useEffect } from 'react';
 import { getAppliedJobsByWorker, getUserInfo } from '../../components/fetch_data/api';
 import { AppliedJob, User } from '../../components/Model/Model';
@@ -12,8 +12,19 @@ const AppliedJobs = () => {
   const [ref, setRef] = useState(false);
   const linkVps = "http://beejobs.io.vn:14307";
 
+  const backAction = () => {
+    router.back();
+    return true;
+  };
+
   useEffect(() => {
     fetchAppliedJobs();
+    const backHandler = BackHandler.addEventListener(
+      "hardwareBackPress",
+      backAction
+    );
+
+    return () => backHandler.remove();
   }, [ref]);
 
   const fetchAppliedJobs = async () => {

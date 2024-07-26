@@ -5,7 +5,7 @@ const Notification = () => {
   return (
     <SafeAreaView style={styles.container}>
       <View style={{ flexDirection: 'row', justifyContent: 'center', marginBottom: 50 }}>
-        <Text style={{ fontSize: 18, color: 'black', fontWeight: 'bold' }}>Thông báo</Text>
+        <Text style={{ fontSize: 24, color: 'black', fontWeight: 'bold' }}>Thông báo</Text>
         <View style={styles.separator} />
       </View>
       

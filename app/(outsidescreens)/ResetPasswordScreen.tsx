@@ -22,6 +22,7 @@ const ResetPasswordScreen = () => {
   const [newPassword, setNewPassword] = useState("");
   const [confirmNewPassword, setConfirmNewPassword] = useState("");
   const [email, setEmail] = useState("");
+  
   const backAction = () => {
     router.back();
     return true;

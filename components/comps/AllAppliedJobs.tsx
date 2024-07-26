@@ -35,7 +35,7 @@ const AllAppliedJobs = () => {
 
     return `${day}/${month}/${year}`;
   };
-
+  //console.log(job)
   return (
     <SafeAreaView style={styles.container}>
       

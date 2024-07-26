@@ -15,6 +15,7 @@ export default function RootLayout() {
       <Stack.Screen name="(outsidescreens)/ResetPasswordScreen" options={{ headerShown: false }} />
       <Stack.Screen name="(outsidescreens)/ChangePassword" options={{ headerShown: false }} />
       <Stack.Screen name="(outsidescreens)/FollowCompany" options={{ headerShown: false }} />
+      <Stack.Screen name="(outsidescreens)/AppliedJobs" options={{ headerShown: false }} />
       <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
       <Stack.Screen name="(insidescreens)/JobDetail" options={{ headerShown: false }} />
       <Stack.Screen name="(insidescreens)/CompanyDetail" options={{ headerShown: false }} />

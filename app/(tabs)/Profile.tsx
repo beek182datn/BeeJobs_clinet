@@ -18,12 +18,13 @@ import { useRouter } from "expo-router";
 import * as DocumentPicker from "expo-document-picker";
 import Modal from "react-native-modal";
 import { Picker } from "@react-native-picker/picker";
-import { Company, User, Worker } from "../../components/Model/Model";
-import { getUserInfo, findWorkerById } from "@/components/fetch_data/api";
+import { Company, User, Worker, AppliedJob } from "../../components/Model/Model";
+import { getUserInfo, findWorkerById, getAppliedJobsByWorker } from "@/components/fetch_data/api";
 import * as ImagePicker from "expo-image-picker";
 import axios, { AxiosResponse } from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useFocusEffect } from '@react-navigation/native';
+
 type SetterFunction = (uri: string) => void;
 
 const pickImage = async (setter: SetterFunction) => {
@@ -52,6 +53,8 @@ const Profile: React.FC = () => {
   //console.log(worker);
   const [worker_avatars, setWorker_avatars] = useState<string | null>(null);
   const [companyInfo, setCompanyInfo] = useState<Company[]>([]);
+  const [appliedJobs, setAppliedJobs] = useState<AppliedJob[]>([]);
+
   useEffect(() => {
     const fetchUserInfo = async () => {
       try {
@@ -71,7 +74,23 @@ const Profile: React.FC = () => {
 
     fetchUserInfo();
     fetchData();
+    fetchDataApplide();
   }, []);
+
+  const fetchDataApplide = async () => {
+    try {
+      const user: User | null = await getUserInfo();
+      setUser(user);
+
+      if (user) {
+        var jobsLastWeek = await getAppliedJobsByWorker(user.id_user);
+        setAppliedJobs(jobsLastWeek);
+        console.log(JSON.stringify(jobsLastWeek))
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   const fetchData = async () => {
     try {
@@ -199,10 +218,10 @@ const Profile: React.FC = () => {
           <View style={styles.jobManagement}>
             <Text style={styles.managementTitle}>Quản lý tìm việc</Text>
             <View style={styles.row}>
-              <TouchableOpacity style={styles.managementBox} onPress={()=>{router.push('(insidescreens)/AppliedJobByTime')}}>
+              <TouchableOpacity style={styles.managementBox} onPress={()=>{router.push('/AppliedJobs')}}>
                 <Ionicons name="briefcase" size={30} color="#0099CC" />
                 <Text style={styles.managementText}>Việc làm đã ứng tuyển</Text>
-                <Text style={styles.infoNumber}>0</Text>
+                <Text style={styles.infoNumber}>{appliedJobs.length}</Text>
               </TouchableOpacity>
               <View style={styles.managementBox}>
                 <Ionicons name="bookmark" size={30} color="#0099CC" />
