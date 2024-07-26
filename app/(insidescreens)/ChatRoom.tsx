@@ -1,7 +1,7 @@
 import { SafeAreaView, StyleSheet, Text, TouchableOpacity, View, FlatList, TextInput, Button, Image, KeyboardAvoidingView, Platform, Animated } from 'react-native';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { useLocalSearchParams, router } from 'expo-router';
-import { findCompanyById, sendMessage as apiSendMessage, getMessages, getChatRoomInfo } from '@/components/fetch_data/api';
+import { findCompanyById, sendMessage as apiSendMessage, getMessages, getChatRoomInfo, checkChatRoom } from '@/components/fetch_data/api';
 import { ChatRoomModel, Company, User } from '@/components/Model/Model';
 import { Ionicons } from '@expo/vector-icons';
 import socket, { listenForNewMessages } from '@/components/fetch_data/config';
@@ -42,10 +42,13 @@ const ChatRoom: React.FC = () => {
             const fetchedMessages = await getMessages(String(info.userId), String(info.company_id));
             setMessages(fetchedMessages);
             // flatListRef.current?.scrollToIndex({index: fetchedMessages.length-1})
-            const chatRoomInfo = await getChatRoomInfo(String(info.userId), String(info.company_id));
-            if (chatRoomInfo) {
-                setChatRoom(chatRoomInfo);
-            }
+            // if (fetchedMessages === null) {
+            //     const chatRoomInfo = await getChatRoomInfo(String(info.userId), String(info.company_id));
+            //     if (chatRoomInfo) {
+            //         setChatRoom(chatRoomInfo);
+            //     }
+            // }
+
         } catch (error) {
             console.error('Error fetching data:', error);
         }
@@ -83,11 +86,36 @@ const ChatRoom: React.FC = () => {
     }, [chatRoom]);
 
     const handleSendMessage = async () => {
-        if (newMessage.trim()) {
+        if (!chatRoom) {
+            const chatRoomInfo = await checkChatRoom(String(info.userId), String(info.company_id));
+            if (chatRoomInfo) {
+                setChatRoom(chatRoomInfo);
+                if (newMessage.trim()) {
+                    const message: Omit<Message, '_id'> = {
+                        content: newMessage,
+                        senderId: String(info.userId),
+                        chatRoomId: String(chatRoomInfo._id),
+                        createdAt: new Date().toISOString(),
+                    };
+        
+                    try {
+                        const sentMessage = await apiSendMessage(message.senderId, String(info.company_id), message.content);
+                        // Gửi tin nhắn qua Socket.IO
+                        socket.emit('newMessage', sentMessage); // Gửi tin nhắn đến server
+        
+                        // setMessages((prevMessages) => [...prevMessages, sentMessage]);
+                        setNewMessage('');
+                    } catch (error) {
+                        console.error('Error sending message:', error);
+                    }
+                }
+            }
+        }
+        if (newMessage.trim() && chatRoom) {
             const message: Omit<Message, '_id'> = {
                 content: newMessage,
                 senderId: String(info.userId),
-                chatRoomId: String(info.company_id),
+                chatRoomId: String(chatRoom._id),
                 createdAt: new Date().toISOString(),
             };
 
