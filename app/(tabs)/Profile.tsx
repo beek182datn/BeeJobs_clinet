@@ -199,11 +199,11 @@ const Profile: React.FC = () => {
           <View style={styles.jobManagement}>
             <Text style={styles.managementTitle}>Quản lý tìm việc</Text>
             <View style={styles.row}>
-              <View style={styles.managementBox}>
+              <TouchableOpacity style={styles.managementBox} onPress={()=>{router.push('(insidescreens)/AppliedJobByTime')}}>
                 <Ionicons name="briefcase" size={30} color="#0099CC" />
                 <Text style={styles.managementText}>Việc làm đã ứng tuyển</Text>
                 <Text style={styles.infoNumber}>0</Text>
-              </View>
+              </TouchableOpacity>
               <View style={styles.managementBox}>
                 <Ionicons name="bookmark" size={30} color="#0099CC" />
                 <Text style={styles.managementText}>Việc làm đã lưu</Text>

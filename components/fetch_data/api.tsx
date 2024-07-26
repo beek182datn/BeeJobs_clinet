@@ -541,13 +541,6 @@ export const sendMessage = async (senderId: string, receiverId: string, content:
 // };
 
 export const getChatRoomInfo = async (senderId: string, receiverId: string): Promise<ChatRoomModel | null> => {
-  // try {
-  //   const response: ChatRoomModel = await axios.get(`http://beejobs.io.vn:14307/api/chat/chatroom/${senderId}/${receiverId}`);
-  //   return response;
-  // } catch (error) {
-  //   console.log(error +' getChatRoomInfo')
-  //   throw new Error(String(error) || 'Error fetching chat room info');
-  // }
   const url = `http://beejobs.io.vn:14307/api/chat/chatroom/${senderId}/${receiverId}`; // Thay thế bằng URL của bạn
 
   try {
