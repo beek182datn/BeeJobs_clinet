@@ -27,6 +27,7 @@ const ChatRoom: React.FC = () => {
 
 
     const fetchData = useCallback(async () => {
+        console.log(JSON.stringify(info))
         // flatListRef.current?.scrollToEnd({ animated: true });
         if (!info || !info.company_id || !info.userId) {
             return;
