@@ -1,4 +1,4 @@
-import { SafeAreaView, StyleSheet, Text, TouchableOpacity, View, FlatList, TextInput, Button, Image, KeyboardAvoidingView, Platform } from 'react-native';
+import { SafeAreaView, StyleSheet, Text, TouchableOpacity, View, FlatList, TextInput, Button, Image, KeyboardAvoidingView, Platform, Animated } from 'react-native';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { useLocalSearchParams, router } from 'expo-router';
 import { findCompanyById, sendMessage as apiSendMessage, getMessages, getChatRoomInfo } from '@/components/fetch_data/api';
@@ -27,7 +27,7 @@ const ChatRoom: React.FC = () => {
 
 
     const fetchData = useCallback(async () => {
-        flatListRef.current?.scrollToEnd({ animated: true });
+        // flatListRef.current?.scrollToEnd({ animated: true });
         if (!info || !info.company_id || !info.userId) {
             return;
         }
@@ -46,6 +46,7 @@ const ChatRoom: React.FC = () => {
             // Fetch messages for the chat room
             const fetchedMessages = await getMessages(String(info.userId), String(info.company_id));
             setMessages(fetchedMessages);
+            // flatListRef.current?.scrollToIndex({index: fetchedMessages.length-1})
 
         } catch (error) {
             console.error('Error fetching data:', error);
@@ -70,8 +71,9 @@ const ChatRoom: React.FC = () => {
                 setMessages((prevMessages) => [...prevMessages, message]);
                 // Scroll to the end when messages change
                 flatListRef.current?.scrollToEnd({ animated: true });
-                console.log('new message');
+                console.log('new message', message.content);
             });
+
         }
 
         return () => {
@@ -126,17 +128,23 @@ const ChatRoom: React.FC = () => {
                 </View>
 
                 <FlatList
-                ref={flatListRef}
-                data={messages}
-                keyExtractor={(item) => item._id}
-                renderItem={({ item }) => (
-                    <View style={item.senderId === info.userId ? styles.myMessage : styles.otherMessage}>
-                        <Text style={styles.messageContent}>{item.content}</Text>
-                        <Text style={styles.timestamp}>{new Date(item.createdAt).toLocaleTimeString()}</Text>
-                    </View>
-                )}
-                style={styles.messageList}
-                contentContainerStyle={{ paddingBottom: 100 }}/>
+                    ref={flatListRef}
+                    data={messages}
+                    keyExtractor={(item) => item._id}
+                    renderItem={({ item }) => (
+                        <View style={item.senderId === info.userId ? styles.myMessage : styles.otherMessage}>
+                            <Text style={styles.messageContent}>{item.content}</Text>
+                            <Text style={styles.timestamp}>{new Date(item.createdAt).toLocaleTimeString()}</Text>
+                        </View>
+                    )}
+                    style={styles.messageList}
+                    contentContainerStyle={{ paddingBottom: 100 }}
+                    // initialScrollIndex={messages.length - 1} // Bắt đầu từ phần tử cuối cùng
+                    // onScrollToIndexFailed={(info) => {
+                    //     // Xử lý trường hợp không thể cuộn đến chỉ số
+                    //     console.log('Scroll failed', info);
+                    // }}
+                />
 
                 <View style={styles.inputContainer}>
                     <TextInput
@@ -228,6 +236,7 @@ const styles = StyleSheet.create({
         padding: 10,
         marginRight: 10,
         backgroundColor: '#fff', // Nền ô nhập
+        maxHeight: 150
     },
     logo: {
         width: 40,

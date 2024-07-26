@@ -1,5 +1,5 @@
 import axios, { AxiosResponse } from "axios";
-import { Job, Company, Worker, CompanyRespone, JobsResponse, User, ApplyJobData, AppliedJob, JobsResponseSingle, AppliedJobsResponse, CheckApplyJobResponse, WokerRespone, CheckFolow, Message, ChatRoomModel } from "../Model/Model";
+import { Job, Company, Worker, CompanyRespone, JobsResponse, User, ApplyJobData, AppliedJob, JobsResponseSingle, AppliedJobsResponse, CheckApplyJobResponse, WokerRespone, CheckFolow, Message, ChatRoomModel, AppliedJobRespone } from "../Model/Model";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { DocumentPickerAsset } from "expo-document-picker";
 import FormData from 'form-data'
@@ -560,5 +560,91 @@ export const getChatRoomInfo = async (senderId: string, receiverId: string): Pro
           console.error('Unexpected error:', error);
       }
       return null; // Hoặc xử lý lỗi theo cách khác
+  }
+};
+
+export const getAppliedJobsLastWeek = async (worker_id: string): Promise<AppliedJob[]> => {
+  try {
+    const response: AxiosResponse<AppliedJobRespone> = await axios.get(
+      `http://beejobs.io.vn:14307/api/appliedjobs/${worker_id}`
+    );
+
+    // Lấy danh sách các công việc đã ứng tuyển
+    const appliedJobs = response.data.appliedjobsLastWeek;
+
+    // Lấy thông tin job và công ty cho từng đơn ứng tuyển
+    const updatedAppliedJobs = await Promise.all(
+      appliedJobs.map(async (job) => {
+        const jobResponse: AxiosResponse<JobsResponseSingle> = await axios.get(
+          `http://beejobs.io.vn:14307/api/jobs/getJobById/${job.job_id}`
+        );
+        const jobData = jobResponse.data.data;
+
+        const companyResponse: AxiosResponse<CompanyRespone> = await axios.get(
+          `http://beejobs.io.vn:14307/api/companies/getCompanyById/${jobData.company_id}`
+        );
+
+        return {
+          ...job,
+          job: {
+            ...jobData,
+            company_name: companyResponse.data.data.company_name,
+          },
+        };
+      })
+    );
+
+    return updatedAppliedJobs;
+  } catch (error) {
+    if (axios.isAxiosError(error) && error.response) {
+      console.log('Error fetching applied jobs:', error.response.data);
+      throw new Error(`Error fetching applied jobs: ${error.response.data.message}`);
+    } else {
+      console.log('Error fetching applied jobs:', error);
+      throw new Error('An unexpected error occurred while fetching applied jobs.');
+    }
+  }
+};
+
+export const getAppliedJobsLast30days = async (worker_id: string): Promise<AppliedJob[]> => {
+  try {
+    const response: AxiosResponse<AppliedJobRespone> = await axios.get(
+      `http://beejobs.io.vn:14307/api/appliedjobs/${worker_id}`
+    );
+
+    // Lấy danh sách các công việc đã ứng tuyển
+    const appliedJobs = response.data.appliedjobsLast30Days;
+
+    // Lấy thông tin job và công ty cho từng đơn ứng tuyển
+    const updatedAppliedJobs = await Promise.all(
+      appliedJobs.map(async (job) => {
+        const jobResponse: AxiosResponse<JobsResponseSingle> = await axios.get(
+          `http://beejobs.io.vn:14307/api/jobs/getJobById/${job.job_id}`
+        );
+        const jobData = jobResponse.data.data;
+
+        const companyResponse: AxiosResponse<CompanyRespone> = await axios.get(
+          `http://beejobs.io.vn:14307/api/companies/getCompanyById/${jobData.company_id}`
+        );
+
+        return {
+          ...job,
+          job: {
+            ...jobData,
+            company_name: companyResponse.data.data.company_name,
+          },
+        };
+      })
+    );
+
+    return updatedAppliedJobs;
+  } catch (error) {
+    if (axios.isAxiosError(error) && error.response) {
+      console.log('Error fetching applied jobs:', error.response.data);
+      throw new Error(`Error fetching applied jobs: ${error.response.data.message}`);
+    } else {
+      console.log('Error fetching applied jobs:', error);
+      throw new Error('An unexpected error occurred while fetching applied jobs.');
+    }
   }
 };

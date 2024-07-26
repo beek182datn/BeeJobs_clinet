@@ -10,6 +10,7 @@ import {
   Alert,
   Animated,
   SafeAreaView,
+  Pressable,
 } from "react-native";
 import Ionicons from "react-native-vector-icons/Ionicons";
 //import ActionSheet from "react-native-actionsheet";

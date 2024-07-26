@@ -1,24 +1,10 @@
-import {
-  SafeAreaView,
-  StyleSheet,
-  FlatList,
-  Text,
-  View,
-  Pressable,
-  Image,
-  TouchableOpacity,
-  Linking,
-} from "react-native";
-import React, { useState, useEffect } from "react";
-import {
-  getAppliedJobsByWorker,
-  getUserInfo,
-} from "../../components/fetch_data/api";
-import { AppliedJob, User } from "../../components/Model/Model";
-import { router } from "expo-router";
-import { FontAwesome } from "@expo/vector-icons"; // Thêm thư viện icon
-import { Ionicons } from "@expo/vector-icons";
-import * as WebBrowser from "expo-web-browser";
+import { SafeAreaView, StyleSheet, FlatList, Text, View, Pressable, Image, TouchableOpacity, Linking } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { getAppliedJobsByWorker, getUserInfo } from '../../components/fetch_data/api';
+import { AppliedJob, User } from '../../components/Model/Model';
+import { router } from 'expo-router';
+import { FontAwesome } from '@expo/vector-icons'; // Thêm thư viện icon
+import { Ionicons } from '@expo/vector-icons';
 import { useFocusEffect } from "@react-navigation/native";
 const AppliedJobs = () => {
   const [appliedJobs, setAppliedJobs] = useState<AppliedJob[]>([]);
@@ -26,10 +12,6 @@ const AppliedJobs = () => {
   const [ref, setRef] = useState(false);
   const linkVps = "http://beejobs.io.vn:14307";
 
-  const openPDF = async () => {
-    const pdfUrl = "https://www.example.com/sample.pdf";
-    await WebBrowser.openBrowserAsync(pdfUrl);
-  };
   useEffect(() => {
     fetchAppliedJobs();
   }, [ref]);
