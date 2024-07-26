@@ -1,4 +1,4 @@
-import { SafeAreaView, StyleSheet, Text, TouchableOpacity, View, FlatList, TextInput, Button, Image, KeyboardAvoidingView, Platform, Animated } from 'react-native';
+import { SafeAreaView, StyleSheet, Text, TouchableOpacity, View, FlatList,BackHandler, TextInput, Button, Image, KeyboardAvoidingView, Platform, Animated } from 'react-native';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { useLocalSearchParams, router } from 'expo-router';
 import { findCompanyById, sendMessage as apiSendMessage, getMessages, getChatRoomInfo, checkChatRoom } from '@/components/fetch_data/api';
@@ -16,6 +16,7 @@ interface Message {
 
 const ChatRoom: React.FC = () => {
     const info = useLocalSearchParams();
+    console.log('huy check002: ' + JSON.stringify(info))
     const [companyInfo, setCompanyInfo] = useState<Company | null>(null);
     const [messages, setMessages] = useState<Message[]>([]);
     const [newMessage, setNewMessage] = useState<string>('');
@@ -25,6 +26,10 @@ const ChatRoom: React.FC = () => {
     const flatListRef = useRef<FlatList<Message>>(null);
     const [chatRoom, setChatRoom] = useState<ChatRoomModel | null>(null);
 
+    const backAction = () => {
+        router.back();
+        return true;
+      };
 
     const fetchData = useCallback(async () => {
         console.log(JSON.stringify(info))
@@ -57,6 +62,12 @@ const ChatRoom: React.FC = () => {
 
     useEffect(() => {
         fetchData();
+        const backHandler = BackHandler.addEventListener(
+            "hardwareBackPress",
+            backAction
+          );
+      
+          return () => backHandler.remove();
     }, [fetchData]);
 
     useEffect(() => {

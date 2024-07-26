@@ -41,11 +41,13 @@ const JobDetail = () => {
   const [showModal, setShowModal] = useState(false);
   const [isApplied, setIsApplied] = useState(false);
 
+  const backAction = () => {
+    router.back();
+    return true;
+  };
+
   useEffect(() => {
-    const backAction = () => {
-      router.back();
-      return true;
-    };
+    
 
     const backHandler = BackHandler.addEventListener(
       "hardwareBackPress",
@@ -191,7 +193,7 @@ const JobDetail = () => {
 
         <View style={styles.headerContainer}>
           {/* <Icon name="arrow-left" size={20} color="#000" onPress={router.back} /> */}
-          <TouchableOpacity onPress={() => { router.push('/Home') }}
+          <TouchableOpacity onPress={backAction}
             style={{ backgroundColor: '#2196F3', borderRadius: 30, padding: 5 }}>
             <Ionicons name="arrow-back" size={22} color="black" />
           </TouchableOpacity>

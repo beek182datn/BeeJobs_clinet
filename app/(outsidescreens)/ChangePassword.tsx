@@ -26,13 +26,14 @@ const ChangePassword = () => {
   const [confirmNewPassword, setConfirmNewPassword] = useState("");
   const [email, setEmail] = useState("");
   const [saveToken, setsaveToken] = useState("");
+
+  const backAction = () => {
+    router.back();
+    return true;
+  };
+
   useEffect(() => {
     getToken();
-    const backAction = () => {
-      router.replace("Profile");
-      return true;
-    };
-
     const backHandler = BackHandler.addEventListener(
       "hardwareBackPress",
       backAction
@@ -113,7 +114,7 @@ const ChangePassword = () => {
       <View style={styles.header}>
         {/* <Icon name="arrow-left" size={20} color="#000" onPress={router.back} /> */}
         <TouchableOpacity
-          onPress={router.back}
+          onPress={backAction}
           style={{ backgroundColor: "#2196F3", borderRadius: 30, padding: 5 }}
         >
           <Ionicons name="arrow-back" size={22} color="black" />

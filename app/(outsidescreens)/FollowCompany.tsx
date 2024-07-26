@@ -9,6 +9,7 @@ import {
   Image,
   SafeAreaView,
   FlatList,
+  BackHandler,
 } from "react-native";
 import Icon from "react-native-vector-icons/FontAwesome";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
@@ -21,7 +22,7 @@ import { User, Worker } from "../../components/Model/Model";
 import { getUserInfo, findWorkerById } from "@/components/fetch_data/api";
 import { Ionicons, FontAwesome } from "@expo/vector-icons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { useFocusEffect } from '@react-navigation/native';
+import { useFocusEffect } from "@react-navigation/native";
 
 interface CpmpanyInfo {
   _id?: string;
@@ -36,7 +37,18 @@ const FollowCompany: React.FC = () => {
   const [companyInfo, setCompanyInfo] = useState<CpmpanyInfo[]>([]);
   useEffect(() => {
     fetchData();
+    const backHandler = BackHandler.addEventListener(
+      "hardwareBackPress",
+      backAction
+    );
+
+    return () => backHandler.remove();
   }, []);
+
+  const backAction = () => {
+    router.back();
+    return true;
+  };
 
   const fetchData = async () => {
     try {
@@ -69,7 +81,10 @@ const FollowCompany: React.FC = () => {
   const handleDetailCompany = (companyId: string) => {
     //const router = useRouter();
     //router.push(`/CompanyDetail2/${companyId}`);
-    router.push({ pathname: "CompanyDetail2", params: { companyId: companyId } });
+    router.push({
+      pathname: "CompanyDetail2",
+      params: { companyId: companyId },
+    });
   };
   useFocusEffect(
     React.useCallback(() => {
@@ -98,7 +113,10 @@ const FollowCompany: React.FC = () => {
         data={companyInfo}
         keyExtractor={(item) => item.company_name || ""}
         renderItem={({ item }) => (
-          <TouchableOpacity style={styles.item} onPress={() => handleDetailCompany(item._id || '')}>
+          <TouchableOpacity
+            style={styles.item}
+            onPress={() => handleDetailCompany(item._id || "")}
+          >
             <Image
               source={{
                 uri: `http://beejobs.io.vn:14307${item.company_logo}`,
@@ -178,9 +196,9 @@ const styles = StyleSheet.create({
   },
   separator: {
     height: 1,
-    backgroundColor: '#ddd', // Màu của đường line
+    backgroundColor: "#ddd", // Màu của đường line
     marginVertical: 10, // Khoảng cách từ trên và dưới
-    position: 'absolute', // Đặt đường line nằm dưới các thành phần khác
+    position: "absolute", // Đặt đường line nằm dưới các thành phần khác
     top: 50,
     bottom: 0, // Đặt nó ở phía dưới
     left: 0,

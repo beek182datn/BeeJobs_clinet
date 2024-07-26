@@ -8,6 +8,7 @@ import {
   ScrollView,
   Image,
   SafeAreaView,
+  BackHandler
 } from "react-native";
 import Icon from "react-native-vector-icons/FontAwesome";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
@@ -52,6 +53,10 @@ const CompleteProfileScreen1: React.FC = () => {
     email: "",
     phone: "",
   });
+  const backAction = () => {
+    router.back();
+    return true;
+  };
 
   useEffect(() => {
     const fetchUserData = async () => {
@@ -70,7 +75,11 @@ const CompleteProfileScreen1: React.FC = () => {
         console.error("Error fetching user data:", error);
       }
     };
-
+const backHandler = BackHandler.addEventListener(
+      "hardwareBackPress",
+      backAction
+    );
+    return () => backHandler.remove();
     fetchUserData();
   }, [user_id]);
 
@@ -142,7 +151,7 @@ const CompleteProfileScreen1: React.FC = () => {
             name="arrow-left"
             size={20}
             color="#000"
-            onPress={router.back}
+            onPress={backAction}
           />
           <Text style={styles.header}>Thiết lập hồ sơ của bạn</Text>
         </View>

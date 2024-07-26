@@ -7,7 +7,8 @@ import {
   StyleSheet,
   ScrollView,
   Image,
-  SafeAreaView
+  SafeAreaView,
+  BackHandler
 } from "react-native";
 import Icon from "react-native-vector-icons/FontAwesome";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
@@ -59,6 +60,11 @@ const CompleteProfileScreen2: React.FC = () => {
     phone: "",
   });
 
+  const backAction = () => {
+    router.back();
+    return true;
+  };
+
   useEffect(() => {
     const fetchUserInfo = async () => {
       try {
@@ -75,9 +81,13 @@ const CompleteProfileScreen2: React.FC = () => {
         console.error("Error fetching user info:", error);
       }
     };
+    const backHandler = BackHandler.addEventListener(
+      "hardwareBackPress",
+      backAction
+    );
 
     fetchUserInfo();
-    
+    return () => backHandler.remove();
   }, []);
 
   const handleContinue = () => {
@@ -144,7 +154,7 @@ const CompleteProfileScreen2: React.FC = () => {
       <View style={styles.container}>
         <View style={styles.headerContainer}>
         <TouchableOpacity
-          onPress={router.back}
+          onPress={backAction}
           style={{ backgroundColor: "#2196F3", borderRadius: 30, padding: 5 }}
         >
           <Ionicons name="arrow-back" size={22} color="black" />
