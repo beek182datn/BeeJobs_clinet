@@ -36,7 +36,7 @@ const CompanyDetail2 = () => {
   const [isFolowing, setIsFolowing] = useState(false);
   const [user_id, setuser_id] = useState("");
   const backAction = () => {
-    router.replace("/FollowCompany");
+    router.back();
     return true;
   };
   useEffect(() => {

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { SafeAreaView, StyleSheet, Text, View, Image, Pressable, ScrollView, TouchableOpacity } from 'react-native';
+import { SafeAreaView, StyleSheet, Text, View, Image, Pressable, ScrollView, TouchableOpacity, BackHandler } from 'react-native';
 import { FontAwesome, Ionicons } from '@expo/vector-icons';
 import { router, useLocalSearchParams } from 'expo-router';
 import { Company } from '@/components/Model/Model';
@@ -19,8 +19,13 @@ const CompanyDetail = () => {
     const linkVps = 'http://beejobs.io.vn:14307';
     const [isFolowing, setIsFolowing] = useState(false);
 
+    const backAction = () => {
+        router.back();
+        return true;
+      };
 
     useEffect(() => {
+
         const companyId = String(job.company_id);
         const fetchData = async () => {
             const company = await findCompanyById(companyId);
@@ -32,6 +37,11 @@ const CompanyDetail = () => {
             setIsFolowing(folow.isFollowing)
         };
         fetchData();
+        const backHandler = BackHandler.addEventListener(
+            "hardwareBackPress",
+            backAction
+          );
+        return () => backHandler.remove();
     }, [router]);
 
     const handleFolowCompany = async () => {
@@ -57,7 +67,7 @@ const CompanyDetail = () => {
             {/* <View> */}
             <View style={{ position: 'relative' }}>
                 <Image source={require('../../assets/images/company.jpg')} style={{ width: '100%', height: 150 }} />
-                <TouchableOpacity onPress={() => { router.push('/Home') }}
+                <TouchableOpacity onPress={backAction}
                     style={{ position: 'absolute', top: 20, left: 10, backgroundColor: '#2196F3', borderRadius: 30, padding: 5 }}>
                     <Ionicons name="arrow-back" size={22} color="black" />
                 </TouchableOpacity>

@@ -22,12 +22,13 @@ const ResetPasswordScreen = () => {
   const [newPassword, setNewPassword] = useState("");
   const [confirmNewPassword, setConfirmNewPassword] = useState("");
   const [email, setEmail] = useState("");
-  useEffect(() => {
-    const backAction = () => {
-      router.replace("Profile");
-      return true;
-    };
+  const backAction = () => {
+    router.back();
+    return true;
+  };
 
+  useEffect(() => {
+    
     const backHandler = BackHandler.addEventListener(
       "hardwareBackPress",
       backAction
@@ -91,7 +92,7 @@ const ResetPasswordScreen = () => {
       <View style={styles.header}>
         {/* <Icon name="arrow-left" size={20} color="#000" onPress={router.back} /> */}
         <TouchableOpacity
-          onPress={router.back}
+          onPress={backAction}
           style={{ backgroundColor: "#2196F3", borderRadius: 30, padding: 5 }}
         >
           <Ionicons name="arrow-back" size={22} color="black" />

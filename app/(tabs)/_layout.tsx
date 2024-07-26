@@ -32,10 +32,10 @@ export default () => {
       <Tabs.Screen
         name="AppliedJobs"
         options={{
-          title: "Việc đã UT",
+          title: "Tin nhắn",
           tabBarIcon: ({ color, focused }) => (
             <TabBarIcon
-              name={focused ? "file-tray-full" : "file-tray-full-outline"}
+              name={focused ? "chatbox-ellipses" : "chatbox-ellipses-outline"}
               color= "#0099CC"
               size={20}
             />
