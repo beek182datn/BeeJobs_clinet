@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from 'react';
-import { SafeAreaView, StyleSheet, Text, View, Image, Pressable, ScrollView, TouchableOpacity, BackHandler } from 'react-native';
+import { SafeAreaView, StyleSheet, Text, View, Image, Pressable, ScrollView, TouchableOpacity, BackHandler, Alert } from 'react-native';
 import { FontAwesome, Ionicons } from '@expo/vector-icons';
 import { router, useLocalSearchParams } from 'expo-router';
-import { Company } from '@/components/Model/Model';
-import { findCompanyById, folowCompany, checkFolowCompany, unFolowCompany } from '@/components/fetch_data/api';
+import { Company, User } from '@/components/Model/Model';
+import { findCompanyById, folowCompany, checkFolowCompany, unFolowCompany, getUserInfo } from '@/components/fetch_data/api';
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
 import CompanyJob from '@/components/comps/CompanyJob';
 import CompanyInfo from '@/components/comps/CompanyInfo';
@@ -18,11 +18,11 @@ const CompanyDetail = () => {
     const [companyInfo, setCompanyInfo] = useState<Company | null>(null);
     const linkVps = 'http://beejobs.io.vn:14307';
     const [isFolowing, setIsFolowing] = useState(false);
-
+    const [user, setUser] = useState<User | null>();
     const backAction = () => {
         router.back();
         return true;
-      };
+    };
 
     useEffect(() => {
 
@@ -32,6 +32,8 @@ const CompanyDetail = () => {
             if (company) {
                 setCompanyInfo(company);
             }
+            const user: User | null = await getUserInfo();
+            setUser(user);
 
             const folow = await checkFolowCompany(String(job.userId), String(job.company_id))
             setIsFolowing(folow.isFollowing)
@@ -40,17 +42,31 @@ const CompanyDetail = () => {
         const backHandler = BackHandler.addEventListener(
             "hardwareBackPress",
             backAction
-          );
+        );
         return () => backHandler.remove();
     }, [router]);
 
     const handleFolowCompany = async () => {
-        try {
-            await folowCompany(String(job.userId), String(job.company_id))
-            setIsFolowing(true)
-        } catch (error) {
-            console.log(error)
+        if (user) {
+            try {
+                await folowCompany(String(job.userId), String(job.company_id))
+                setIsFolowing(true)
+            } catch (error) {
+                console.log(error)
+            }
+        } else {
+            Alert.alert(
+                "Thông báo",
+                "Bạn cần đăng nhập",
+                [{
+                    text: "OK", onPress: () => {
+                        router.push('/LoginScreen')
+                    }
+                }],
+                { cancelable: true }
+            );
         }
+
     }
 
     const handleUnFolowCompany = async () => {
@@ -83,18 +99,27 @@ const CompanyDetail = () => {
                         <Text style={styles.companyName}>{companyInfo?.company_name}</Text>
                         <Text style={styles.companyInfo}>{companyInfo?.company_scale}</Text>
                     </View>
-                    {!isFolowing &&
-                        <TouchableOpacity style={styles.followButton} onPress={handleFolowCompany}>
-                            <Text style={styles.followButtonText}>Theo dõi công ty</Text>
-                        </TouchableOpacity>}
-                    {isFolowing &&
-                        <TouchableOpacity style={[styles.followButton, {backgroundColor:'gray'}]} onPress={handleUnFolowCompany}>
-                            <Text style={styles.followButtonText}>Hủy theo dõi</Text>
-                        </TouchableOpacity>}
-                    {/* <TouchableOpacity style={styles.shareButton}>
-                        <FontAwesome name="share-alt" size={18} color="#FFFFFF" />
-                    </TouchableOpacity> */}
+                    <View>
+                        {!isFolowing &&
+                            <TouchableOpacity style={styles.followButton} onPress={handleFolowCompany}>
+                                <Text style={styles.followButtonText}>Theo dõi công ty</Text>
+                            </TouchableOpacity>}
+                        {isFolowing &&
+                            <TouchableOpacity style={[styles.followButton, { backgroundColor: 'gray' }]} onPress={handleUnFolowCompany}>
+                                <Text style={styles.followButtonText}>Hủy theo dõi</Text>
+                            </TouchableOpacity>}
+                        <TouchableOpacity style={[styles.followButton, { backgroundColor: '#4CAF50', marginTop: 10 }]}
+                            onPress={() => {
+                                if (user && companyInfo) {
+                                    router.push({ pathname: '(insidescreens)/ChatRoom', params: { company_id: companyInfo._id, userId: user.id_user } });
+                                }
+                            }}>
+                            <Text style={[styles.followButtonText, { alignSelf: 'center' }]}>Nhắn tin</Text>
+                        </TouchableOpacity>
+                    </View>
+
                 </View>
+
                 <TouchableOpacity style={{ flexDirection: 'row', justifyContent: 'center', backgroundColor: '#FFFFFF' }}>
                     <Ionicons name='link' size={18} color={'blue'} />
                     <Text style={{ marginLeft: 4 }}>{companyInfo?.company_website}</Text>

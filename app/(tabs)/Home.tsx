@@ -75,14 +75,16 @@ const Home = () => {
   const fetchData = async () => {
     try {
       const userId = await AsyncStorage.getItem("userID");
+      console.log(userId)
       if (userId) {
         const response = await axios.get(
           `http://beejobs.io.vn:14307/api/getwokerbyUserID/${userId}`
         );
         setUserData(response.data);
         console.log(response.data);
+        console.log(userId);
       } else {
-        console.warn("No UserID found in AsyncStorage");
+        console.log("No UserID found in AsyncStorage");
       }
     } catch (err) {
       if (axios.isAxiosError(err)) {
@@ -165,6 +167,28 @@ const Home = () => {
         <View style={styles.headerText}>
           <Text style={styles.title}>Good morning</Text>
           <Text style={styles.company}>{userData.worker_name ? userData.worker_name : "Chào mừng bạn đến với Beejobs!"}</Text>
+          {!userData.worker_name &&
+            <TouchableOpacity style={{
+              width: '70%',
+              backgroundColor: '#0099FF',
+              paddingVertical: 12,
+              paddingHorizontal: 24,
+              borderRadius: 10,
+              elevation: 5,
+              shadowColor: '#000',
+              shadowOffset: { width: 0, height: 2 },
+              shadowOpacity: 0.3,
+              shadowRadius: 4,
+              marginTop: 10
+            }}
+              onPress={() => { router.push('/LoginScreen') }}>
+              <Text style={{
+                color: '#FFFFFF',
+                fontSize: 16,
+                textAlign: 'center',
+                fontWeight: '500'
+              }}>Đăng nhập</Text>
+            </TouchableOpacity>}
         </View>
         <Image
           source={{
@@ -213,7 +237,7 @@ const Home = () => {
       ) : (
         <FlatList
           data={filteredJobs}
-          style={{zIndex: 1}}
+          style={{ zIndex: 1 }}
           keyExtractor={(item) => item._id}
           renderItem={({ item }) => <JobsList job={item} />}
         />

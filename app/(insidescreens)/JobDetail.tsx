@@ -156,9 +156,9 @@ const JobDetail = () => {
   };
 
   const handleDetailCompany = () => {
-    if (user) {
-      router.push({ pathname: 'CompanyDetail', params: { ...job, userId: user.id_user } })
-    }
+    // if (user) {
+      router.push({ pathname: 'CompanyDetail', params: { ...job, userId: user?.id_user } })
+    // }
   }
 
   const getDaysLeft = (dateString: string) => {
@@ -272,7 +272,11 @@ const JobDetail = () => {
             elevation: 5,
             shadowColor: '#000',
           }}>
-            <TouchableOpacity style={styles.buttonLeft}>
+            <TouchableOpacity style={styles.buttonLeft} onPress={() => {
+              if (user && companyInfo) {
+                router.push({ pathname: '(insidescreens)/ChatRoom', params: { company_id: companyInfo._id , userId: user.id_user } });
+              }
+            }}>
               <Text style={styles.buttonTextN}>Gửi Tin Nhắn</Text>
             </TouchableOpacity>
             <TouchableOpacity style={styles.buttonRight} onPress={handleModalApply}>
@@ -309,13 +313,13 @@ const JobDetail = () => {
 
 
       <Modal visible={showModal} animationType="slide" style={{ padding: 10 }}>
-      <View style={{ flexDirection: 'row', justifyContent: 'center', marginBottom: 50, marginTop: 60 }}>
-        <Text style={{ fontSize: 18, color: 'black', fontWeight: 'bold' }}>CV ứng tuyển</Text>
-        {/* <Pressable style={[styles.refreshButton, { position: 'absolute', right: 0 }]} onPress={refresh}>
+        <View style={{ flexDirection: 'row', justifyContent: 'center', marginBottom: 50, marginTop: 60 }}>
+          <Text style={{ fontSize: 18, color: 'black', fontWeight: 'bold' }}>CV ứng tuyển</Text>
+          {/* <Pressable style={[styles.refreshButton, { position: 'absolute', right: 0 }]} onPress={refresh}>
           <FontAwesome name="refresh" size={18} color="#FFFFFF" />
         </Pressable> */}
-        <View style={styles.separator} />
-      </View>
+          <View style={styles.separator} />
+        </View>
         <View style={styles.modalTopView}>
           {!cv &&
             <TouchableOpacity style={styles.buttonPickCv} onPress={pickFile}>
