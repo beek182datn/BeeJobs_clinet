@@ -248,6 +248,15 @@ const LoginScreen = () => {
           Đăng ký
         </Text>
       </Text>
+      <TouchableOpacity style={styles.footerText}>
+        <Text
+          style={styles.signupText}
+          onPress={() => router.push("/Home")}
+        >
+          {" "}
+          Trải nghiệm không cần đăng nhập!
+        </Text>
+      </TouchableOpacity>
       <AlertComponent
         color={color}
         message={message}
@@ -354,6 +363,7 @@ const styles = StyleSheet.create({
   signupText: {
     color: "#007BFF",
     fontWeight: "bold",
+    alignSelf:'center'
   },
   errorText: {
     color: "red",

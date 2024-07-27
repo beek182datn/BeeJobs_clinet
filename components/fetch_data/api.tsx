@@ -6,23 +6,23 @@ import FormData from 'form-data'
 // import { DocumentPickerAsset } from "expo-document-picker";
 // import File from "react-native";
 
-const getDaysLeft = (dateString: string) => {
-  const today = new Date();
+// const getDaysLeft = (dateString: string) => {
+//   const today = new Date();
 
-  const [day, month, year] = dateString.split('/').map(Number);
-  const applicationDeadlineDate = new Date(year, month - 1, day);
+//   const [day, month, year] = dateString.split('/').map(Number);
+//   const applicationDeadlineDate = new Date(year, month - 1, day);
 
-  const timeDiff = applicationDeadlineDate.getTime() - today.getTime();
-  const daysLeft = Math.ceil(timeDiff / (1000 * 3600 * 24));
+//   const timeDiff = applicationDeadlineDate.getTime() - today.getTime();
+//   const daysLeft = Math.ceil(timeDiff / (1000 * 3600 * 24));
 
-  if (applicationDeadlineDate <= new Date()) {
-    return false
-  }
-  if (isNaN(daysLeft)) {
-    return false
-  }
-  return true;
-}
+//   if (applicationDeadlineDate <= new Date()) {
+//     return false
+//   }
+//   if (isNaN(daysLeft)) {
+//     return false
+//   }
+//   return true;
+// }
 
 // lấy dữ liệu của user từ asyncstorage
 export const getUserInfo = async (): Promise<User | null> => {
@@ -505,7 +505,7 @@ export const unFolowCompany = async (userId: string, companyId: string) => {
 }
 
 
-export const getMessages = async (senderId: string, receiverId: string):Promise<Message[]> => {
+export const getMessages = async (senderId: string, receiverId: string): Promise<Message[]> => {
   try {
     const response = await axios.get(`http://beejobs.io.vn:14307/api/chat/getMessages/${senderId}/${receiverId}`);
     // console.log(JSON.stringify(response.data))
@@ -520,9 +520,9 @@ export const getMessages = async (senderId: string, receiverId: string):Promise<
 export const sendMessage = async (senderId: string, receiverId: string, content: string) => {
   try {
     // console.log(JSON.stringify(`http://beejobs.io.vn:14307/chat/sendmessage/${senderId}/${receiverId}`))
-    const response = await axios.post(`http://beejobs.io.vn:14307/api/chat/sendmessage/${senderId}/${receiverId}`, { 
+    const response = await axios.post(`http://beejobs.io.vn:14307/api/chat/sendmessage/${senderId}/${receiverId}`, {
       content: content
-     });
+    });
     return response.data;
   } catch (error) {
     console.log(error + ' sendMessage')
@@ -544,15 +544,15 @@ export const getChatRoomInfo = async (senderId: string, receiverId: string): Pro
   const url = `http://beejobs.io.vn:14307/api/chat/chatroom/${senderId}/${receiverId}`; // Thay thế bằng URL của bạn
 
   try {
-      const response = await axios.get<ChatRoomModel>(url);
-      return response.data;
+    const response = await axios.get<ChatRoomModel>(url);
+    return response.data;
   } catch (error) {
-      if (axios.isAxiosError(error)) {
-          console.error('Error fetching chatroom info:', error.response?.data);
-      } else {
-          console.error('Unexpected error:', error);
-      }
-      return null; // Hoặc xử lý lỗi theo cách khác
+    if (axios.isAxiosError(error)) {
+      console.error('Error fetching chatroom info:', error.response?.data);
+    } else {
+      console.error('Unexpected error:', error);
+    }
+    return null; // Hoặc xử lý lỗi theo cách khác
   }
 };
 
@@ -656,3 +656,87 @@ export const checkChatRoom = async (senderId: string, receiverId: string): Promi
     }
   }
 }
+
+export const followJob = async (userId: string, jobId: string) => {
+  try {
+    const respone = await axios.get(`http://beejobs.io.vn:14307/followjob/${userId}/${jobId}`)
+    // console.log(respone)
+  } catch (error) {
+    console.log(error);
+  }
+}
+
+export const checkFollowingJob = async (userId: string, jobId: string): Promise<CheckFolow> => {
+  try {
+    const respone: AxiosResponse<CheckFolow> = await axios.get(`http://beejobs.io.vn:14307/checkfollowjob/${userId}/${jobId}`)
+    return respone.data;
+  } catch (error) {
+    if (axios.isAxiosError(error) && error.response) {
+      console.error('Error in checking apply job status:', error.response.data);
+      throw new Error(`Error checking apply job status: ${error.response.data.message}`);
+    } else {
+      console.error('Unexpected error in checking apply job status:', error);
+      throw new Error('An unexpected error occurred while checking apply job status.');
+    }
+  }
+}
+
+export const unFollowJob = async (userId: string, jobId: string) => {
+  try {
+    const respone = await axios.get(`http://beejobs.io.vn:14307/unfollowjob/${userId}/${jobId}`)
+    // console.log(respone)
+  } catch (error) {
+    console.log(error);
+  }
+}
+
+// export const getFollowedJobs = async (userId: string) => {
+//   try {
+//     const response = await axios.get(
+//       `http://beejobs.io.vn:14307/api/findjobs/${userId}`
+//     );
+   
+//   } catch (error) {
+//     console.log(error);
+//   }
+// }
+
+export const getFollowedJobs = async (userId: string): Promise<Job[]> => {
+  try {
+    const response: AxiosResponse<JobsResponse> = await axios.get(
+      `http://beejobs.io.vn:14307/api/findjobs/${userId}`
+    );
+
+    // Lấy danh sách công việc
+    const jobs: Job[] = response.data.data;
+    const jobsable: Job[] = jobs.filter(job => {
+      const [day, month, year] = job.deadline.split('/').map(Number);
+
+      // Tạo ra một đối tượng Date từ các phần tử ngày, tháng, năm
+      const deadlineDate = new Date(year, month - 1, day);
+      return deadlineDate > new Date();
+    })
+
+    // Lấy thông tin công ty cho mỗi công việc
+    const companiesPromises = jobsable.map(async (job) => {
+      const companyResponse = await axios.get(
+        `http://beejobs.io.vn:14307/api/companies/getCompanyById/${job.company_id}`
+      );
+      return companyResponse.data.data as Company;
+    });
+
+    // Đợi tất cả các promise lấy thông tin công ty hoàn thành
+    const companies = await Promise.all(companiesPromises);
+
+    // Gán thông tin công ty vào từng công việc
+    jobsable.forEach((job, index) => {
+      job.company_name = companies[index].company_name;
+      // console.log(JSON.stringify(companies[index].company_name))
+    });
+
+    return jobsable;
+  } catch (error) {
+    console.error('Error fetching jobs:', error);
+    return [];
+  }
+};

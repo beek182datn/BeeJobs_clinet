@@ -1,22 +1,41 @@
-import React from 'react';
-import { View, Text, StyleSheet, Image, Pressable } from 'react-native';
-import { Job } from '../Model/Model';
+import React, { useEffect, useState } from 'react';
+import { View, Text, StyleSheet, Image, Pressable, Alert, TouchableOpacity } from 'react-native';
+import { Job, User } from '../Model/Model';
 import { router } from 'expo-router';
-import { Ionicons,FontAwesome } from '@expo/vector-icons';
+import { Ionicons, FontAwesome } from '@expo/vector-icons';
+import { checkFollowingJob, followJob, getUserInfo, unFollowJob } from '../fetch_data/api';
 
 interface JobItemProps {
   job: Job;
 }
 
 const JobsList: React.FC<JobItemProps> = ({ job }) => {
+  const [isFolowing, setIsFolowing] = useState(false);
+  const [user, setUser] = useState<User | null>();
   const linkVps = 'http://beejobs.io.vn:14307';
+
+  useEffect(() => {
+    const fetchData = async () => {
+      const data: User | null = await getUserInfo();
+      if (data) {
+        const folow = await checkFollowingJob(String(data.id_user), String(job._id))
+        setIsFolowing(folow.isFollowing)
+        console.log(JSON.stringify(isFolowing))
+      }
+
+    }
+    fetchData().catch(error => {
+      console.error("Error fetching data:", error); // Xử lý lỗi nếu cần
+    });
+  }, [job]);
+
   const handleDetail = () => {
     router.push({
       pathname: 'JobDetail',
       params: job
     });
   }
-  console.log('Huy check: ' + JSON.stringify(job));
+  // console.log('Huy check: ' + JSON.stringify(job));
   const getDaysLeft = (dateString: string) => {
     const today = new Date();
 
@@ -27,21 +46,58 @@ const JobsList: React.FC<JobItemProps> = ({ job }) => {
     const daysLeft = Math.ceil(timeDiff / (1000 * 3600 * 24));
 
     // Math.ceil((new Date(job.deadline).getTime() - new Date().getTime()) / (1000 * 3600 * 24))
-    if(daysLeft<=0){
+    if (daysLeft <= 0) {
       return 'Hết hạn ứng tuyển'
     }
-    if(isNaN(daysLeft)){
-      return <Ionicons name='sad' size={18} color={'red'}/>
+    if (isNaN(daysLeft)) {
+      return <Ionicons name='sad' size={18} color={'red'} />
     }
-    return 'Còn '+daysLeft+' ngày để ứng tuyển';
+    return 'Còn ' + daysLeft + ' ngày để ứng tuyển';
   }
 
-  const vv = (value: string)=>{
-    if(value.length >= 20){
+  const vv = (value: string) => {
+    if (value.length >= 20) {
       return ' ...'
     }
-    return''
+    return ''
   }
+
+  const handleFolowJob = async () => {
+  const data: User | null = await getUserInfo();
+    if (data) {
+      try {
+        await followJob(String(data.id_user), String(job._id))
+        setIsFolowing(true)
+      } catch (error) {
+        console.log(error)
+      }
+    }
+    else {
+      Alert.alert(
+        "Thông báo",
+        "Bạn cần đăng nhập",
+        [{
+          text: "OK", onPress: () => {
+            router.push('/LoginScreen')
+          }
+        }],
+        { cancelable: true }
+      );
+    }
+  }
+
+  const handleUnFolowJob = async () => {
+  const data: User | null = await getUserInfo();
+    if (data) {
+      try {
+        await unFollowJob(String(data.id_user), String(job._id))
+        setIsFolowing(false)
+      } catch (error) {
+        console.log(error)
+      }
+    }
+  }
+
   return (
     <Pressable onPress={handleDetail}>
       <View style={styles.card}>
@@ -54,7 +110,14 @@ const JobsList: React.FC<JobItemProps> = ({ job }) => {
             <Text style={styles.title}>{job.title}</Text>
             <Text style={styles.company}>{job.company_name}</Text>
           </View>
-          <FontAwesome name="bookmark-o" size={24} color="gray" />
+          {!isFolowing &&
+            <TouchableOpacity onPress={handleFolowJob}>
+              <FontAwesome name="bookmark-o" size={24} color="gray" />
+            </TouchableOpacity>}
+          {isFolowing &&
+            <TouchableOpacity onPress={handleUnFolowJob}>
+              <FontAwesome name="bookmark" size={24} color="gray" />
+            </TouchableOpacity>}
         </View>
         <View style={styles.separator} />
         <View style={styles.body}>

@@ -16,8 +16,9 @@ import {
   findJobBySalary,
   findJobByLocation,
   findJobByWorkType,
+  getUserInfo,
 } from "@/components/fetch_data/api";
-import { Job } from "@/components/Model/Model";
+import { Job, User } from "@/components/Model/Model";
 import JobsList from "@/components/comps/JobsList";
 import { BackHandler, Alert } from "react-native";
 import { useRouter, useLocalSearchParams } from "expo-router";
@@ -35,6 +36,7 @@ interface WorkerInfo {
   worker_name?: string;
 }
 const Home = () => {
+  const [user, setUser] = useState<User | null>();
   const [searchText, setSearchText] = useState("");
   const [filterText, setFilterText] = useState("");
   const [jobs, setJobs] = useState<Job[]>([]);
@@ -60,6 +62,13 @@ const Home = () => {
   useEffect(() => {
     const loadJobs = async () => {
       setIsLoading(true);
+      try {
+        const user = await getUserInfo();
+        setUser(user);
+      } catch (error) {
+        console.log(error);
+      }
+
       const fetchedJobs = await fetchJobs();
       setJobs(fetchedJobs);
       setFilteredJobs(fetchedJobs);
@@ -166,8 +175,8 @@ const Home = () => {
       <View style={styles.header}>
         <View style={styles.headerText}>
           <Text style={styles.title}>Good morning</Text>
-          <Text style={styles.company}>{userData.worker_name ? userData.worker_name : "Chào mừng bạn đến với Beejobs!"}</Text>
-          {!userData.worker_name &&
+          <Text style={styles.company}>{user && userData.worker_name ? userData.worker_name : "Chào mừng bạn đến với Beejobs!"}</Text>
+          {!user &&
             <TouchableOpacity style={{
               width: '70%',
               backgroundColor: '#0099FF',
@@ -192,7 +201,7 @@ const Home = () => {
         </View>
         <Image
           source={{
-            uri: userData.worker_avatar
+            uri: user && userData.worker_avatar
               ? `http://beejobs.io.vn:14307/${userData.worker_avatar}`
               : "http://beejobs.io.vn:14307/uploads/1721866026009-logo.jpg",
           }}

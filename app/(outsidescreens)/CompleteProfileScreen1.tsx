@@ -75,12 +75,13 @@ const CompleteProfileScreen1: React.FC = () => {
         console.error("Error fetching user data:", error);
       }
     };
-const backHandler = BackHandler.addEventListener(
+    fetchUserData();
+    const backHandler = BackHandler.addEventListener(
       "hardwareBackPress",
       backAction
     );
     return () => backHandler.remove();
-    fetchUserData();
+
   }, [user_id]);
 
   const handleContinue = () => {
@@ -145,7 +146,7 @@ const backHandler = BackHandler.addEventListener(
 
   return (
     <SafeAreaView style={styles.container}>
-      <View style={styles.container}>
+      <ScrollView>
         <View style={styles.headerContainer}>
           <Icon
             name="arrow-left"
@@ -226,7 +227,7 @@ const backHandler = BackHandler.addEventListener(
         <TouchableOpacity style={styles.saveButton} onPress={handleRegister}>
           <Text style={styles.buttonText}>Lưu</Text>
         </TouchableOpacity>
-      </View>
+      </ScrollView>
     </SafeAreaView>
   );
 };
