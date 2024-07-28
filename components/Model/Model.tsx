@@ -51,7 +51,7 @@ export type Company = {
   company_website: string;
   company_certification: string;
   taxcode: string;
-  active: boolean;
+  status: string;
   updated_at: string;
   created_at: string;
   __v: number;
