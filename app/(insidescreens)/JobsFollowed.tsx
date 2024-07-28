@@ -45,7 +45,7 @@ const JobsFollowed = () => {
                 >
                     <Ionicons name="arrow-back" size={22} color="black" />
                 </TouchableOpacity>
-                <Text style={styles.header}>Công việc đang theo dõi</Text>
+                <Text style={styles.header}>Việc làm đã lưu</Text>
                 {/* <View style={styles.separator} /> */}
             </View>
             <FlatList
