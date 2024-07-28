@@ -18,12 +18,13 @@ import { useRouter } from "expo-router";
 import * as DocumentPicker from "expo-document-picker";
 import Modal from "react-native-modal";
 import { Picker } from "@react-native-picker/picker";
-import { Company, User, Worker, AppliedJob } from "../../components/Model/Model";
-import { getUserInfo, findWorkerById, getAppliedJobsByWorker } from "@/components/fetch_data/api";
+import { Company, User, Worker, AppliedJob, Job } from "../../components/Model/Model";
+import { getUserInfo, findWorkerById, getAppliedJobsByWorker, getFollowedJobs } from "@/components/fetch_data/api";
 import * as ImagePicker from "expo-image-picker";
 import axios, { AxiosResponse } from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useFocusEffect } from '@react-navigation/native';
+import JobDetail from "../(insidescreens)/JobDetail";
 
 type SetterFunction = (uri: string) => void;
 
@@ -54,6 +55,11 @@ const Profile: React.FC = () => {
   const [worker_avatars, setWorker_avatars] = useState<string | null>(null);
   const [companyInfo, setCompanyInfo] = useState<Company[]>([]);
   const [appliedJobs, setAppliedJobs] = useState<AppliedJob[]>([]);
+<<<<<<< HEAD
+=======
+  const [jobs, setJobs] = useState<Job[]>([]);
+
+>>>>>>> fd9633aac2f2e2ee0e7b91dacc599b4e367143d1
   useEffect(() => {
     const fetchUserInfo = async () => {
       try {
@@ -65,6 +71,13 @@ const Profile: React.FC = () => {
           const worker = await findWorkerById(user.id_user);
           //console.log(user.id_user);
           setWorker(worker);
+          try {
+            const jobsFollowed = await getFollowedJobs(user.id_user);
+            setJobs(jobsFollowed);
+            console.log('long: ', JSON.stringify(jobsFollowed))
+          } catch (error) {
+            console.log(error);
+          }
         }
       } catch (error) {
         console.error("Error fetching user info:", error);
@@ -74,7 +87,7 @@ const Profile: React.FC = () => {
     fetchUserInfo();
     fetchData();
     fetchDataApplide();
-  }, []);
+  }, [router]);
 
   const fetchDataApplide = async () => {
     try {
@@ -150,10 +163,12 @@ const Profile: React.FC = () => {
   };
 
   const goCreate = () => {
-    router.push({
-      pathname: "CompleteProfileScreen1",
-      params: { id_user: user?.id_user },
-    });
+    if (user) {
+      router.push({
+        pathname: "CompleteProfileScreen1",
+        params: { id_user: user.id_user },
+      });
+    }
   };
 
   const goUpdate = () => {
@@ -314,11 +329,13 @@ const Profile: React.FC = () => {
                 <Text style={styles.managementText}>Việc làm đã ứng tuyển</Text>
                 <Text style={styles.infoNumber}>{appliedJobs.length}</Text>
               </TouchableOpacity>
-              <View style={styles.managementBox}>
+              <TouchableOpacity style={styles.managementBox} onPress={() => {
+                router.push('(insidescreens)/JobsFollowed');
+              }}>
                 <Ionicons name="bookmark" size={30} color="#0099CC" />
                 <Text style={styles.managementText}>Việc làm đã lưu</Text>
-                <Text style={styles.infoNumber}>0</Text>
-              </View>
+                <Text style={styles.infoNumber}>{jobs.length}</Text>
+              </TouchableOpacity>
             </View>
           </View>
 

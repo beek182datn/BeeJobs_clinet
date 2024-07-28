@@ -361,6 +361,7 @@ const styles = StyleSheet.create({
   signupText: {
     color: "#007BFF",
     fontWeight: "bold",
+    alignSelf:'center'
   },
   errorText: {
     color: "red",
