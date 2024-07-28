@@ -6,7 +6,7 @@ export default function Index() {
   const router = useRouter();
   useEffect(() => {
     const timer = setTimeout(() => {
-      router.navigate("/Home");
+      router.navigate("/LoginScreen");
     }, 2000);
     return () => clearTimeout(timer);
   }, [router])
