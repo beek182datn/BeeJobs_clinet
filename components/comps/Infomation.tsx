@@ -20,7 +20,7 @@ const Infomation = () => {
           <Ionicons name='infinite' size={20} color={'#4CAF50'} style={styles.icon} />
           <View style={styles.viewSide}>
             <Text style={styles.textTitle}>Kinh nghiệm</Text>
-            <Text style={styles.textContent}>{job.requirements}</Text>
+            <Text style={styles.textContent}>{job.experience}</Text>
           </View>
         </View>
         <View style={styles.view}>

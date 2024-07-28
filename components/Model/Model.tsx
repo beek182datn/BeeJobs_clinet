@@ -20,6 +20,7 @@ export type Job = {
   title: string;
   desc: string;
   requirements: string;
+  experience: string;
   salary: string;
   benefits: string;
   location: string;

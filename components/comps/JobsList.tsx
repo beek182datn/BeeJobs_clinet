@@ -127,7 +127,7 @@ const JobsList: React.FC<JobItemProps> = ({ job }) => {
           </View>
           <Text style={styles.salary}>{job.salary}</Text>
           <View style={styles.footer}>
-            <Text style={styles.experience}>1.5 years</Text>
+            <Text style={styles.experience}>{job.experience}</Text>
             <View style={styles.date}>
               <Ionicons name="time" size={20} color="gray" />
               <Text style={styles.dateText}>{getDaysLeft(job.deadline)}</Text>

@@ -225,12 +225,12 @@ const JobDetail = () => {
             <View style={[styles.gridView, { borderLeftWidth: 0.5, borderLeftColor: 'gray', borderRightWidth: 0.5, borderRightColor: 'gray' }]}>
               <Ionicons name='location' size={30} color={'#4CAF50'} style={{ marginBottom: 10 }} />
               <Text style={{ fontSize: 14, color: 'gray' }}>Địa điểm</Text>
-              <Text style={styles.textGrid}>{job.location?.slice(0, 10)}</Text>
+              <Text style={styles.textGrid}>{job.location?.slice(0, 20)}</Text>
             </View>
             <View style={styles.gridView}>
               <Ionicons name='star' size={30} color={'#4CAF50'} style={{ marginBottom: 10 }} />
               <Text style={{ fontSize: 14, color: 'gray' }}>Kinh nghiệm</Text>
-              <Text style={styles.textGrid}>{job.requirements?.slice(0, 10)}</Text>
+              <Text style={styles.textGrid}>{job.experience}</Text>
             </View>
 
           </View>
