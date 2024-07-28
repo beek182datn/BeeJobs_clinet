@@ -174,7 +174,7 @@ const Home = () => {
     <SafeAreaView style={styles.container}>
       <View style={styles.header}>
         <View style={styles.headerText}>
-          <Text style={styles.title}>Good morning</Text>
+          <Text style={styles.title}>Welcome Beejobs</Text>
           <Text style={styles.company}>{user && userData.worker_name ? userData.worker_name : "Chào mừng bạn đến với Beejobs!"}</Text>
           {!user &&
             <TouchableOpacity style={{

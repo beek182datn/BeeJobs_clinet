@@ -77,19 +77,11 @@ const CompleteProfileScreen1: React.FC = () => {
       }
     };
     fetchUserData();
-<<<<<<< HEAD
-const backHandler = BackHandler.addEventListener(
-=======
     const backHandler = BackHandler.addEventListener(
->>>>>>> b3145ecf786b7d69f996283c10fd85ff029d9d26
       "hardwareBackPress",
       backAction
     );
     return () => backHandler.remove();
-<<<<<<< HEAD
-    
-=======
->>>>>>> b3145ecf786b7d69f996283c10fd85ff029d9d26
   }, [user_id]);
 
   const handleContinue = () => {
@@ -154,11 +146,7 @@ const backHandler = BackHandler.addEventListener(
 
   return (
     <SafeAreaView style={styles.container}>
-<<<<<<< HEAD
-      <ScrollView >
-=======
       <ScrollView>
->>>>>>> b3145ecf786b7d69f996283c10fd85ff029d9d26
         <View style={styles.headerContainer}>
         <TouchableOpacity
           onPress={backAction}

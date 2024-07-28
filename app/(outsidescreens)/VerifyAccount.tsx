@@ -16,6 +16,16 @@ const VerifyAccount = () => {
   const type = "signUp"
 
   useEffect(() => {
+    const id = setInterval(() => {
+      setCountdown(prevCountdown => prevCountdown - 1);
+    }, 1000);
+    setIntervalId(id); 
+
+    return () => clearInterval(id); 
+  }, []);
+
+  useEffect(() => {
+
     const backAction = () => {
       router.replace("RegisterScreen");
       return true;
