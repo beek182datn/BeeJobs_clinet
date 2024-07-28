@@ -59,6 +59,26 @@ const Home = () => {
   const [error, setError] = useState(null);
   //const params = useLocalSearchParams();
 
+  useFocusEffect(
+    React.useCallback(() => {
+      const loadJobs = async () => {
+        setIsLoading(true);
+        try {
+          const user = await getUserInfo();
+          setUser(user);
+        } catch (error) {
+          console.log(error);
+        }
+
+        const fetchedJobs = await fetchJobs();
+        setJobs(fetchedJobs);
+        setFilteredJobs(fetchedJobs);
+        setIsLoading(false);
+      };
+      loadJobs();
+    }, [])
+  );
+
   useEffect(() => {
     const loadJobs = async () => {
       setIsLoading(true);
@@ -170,6 +190,10 @@ const Home = () => {
     </TouchableOpacity>
   );
 
+  const hanldeReLoad = () => {
+    // setRef(!ref);
+  }
+
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.header}>
@@ -248,7 +272,7 @@ const Home = () => {
           data={filteredJobs}
           style={{ zIndex: 1 }}
           keyExtractor={(item) => item._id}
-          renderItem={({ item }) => <JobsList job={item} />}
+          renderItem={({ item }) => <JobsList job={item} callback={hanldeReLoad} />}
         />
       )}
     </SafeAreaView>

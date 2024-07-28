@@ -57,6 +57,38 @@ const Profile: React.FC = () => {
   const [appliedJobs, setAppliedJobs] = useState<AppliedJob[]>([]);
   const [jobs, setJobs] = useState<Job[]>([]);
 
+
+  useFocusEffect(
+    React.useCallback(() => {
+      const fetchUserInfo = async () => {
+        try {
+          // const emailValue = await AsyncStorage.getItem('userProfile');
+          // console.log(emailValue)
+          const user: User | null = await getUserInfo();
+          setUser(user);
+          if (user) {
+            const worker = await findWorkerById(user.id_user);
+            //console.log(user.id_user);
+            setWorker(worker);
+            try {
+              const jobsFollowed = await getFollowedJobs(user.id_user);
+              setJobs(jobsFollowed);
+              console.log('long: ', JSON.stringify(jobsFollowed.length))
+            } catch (error) {
+              console.log(error);
+            }
+          }
+        } catch (error) {
+          console.error("Error fetching user info:", error);
+        }
+      };
+
+      fetchUserInfo();
+      fetchData();
+      fetchDataApplide();
+    }, [])
+  );
+
   useEffect(() => {
     const fetchUserInfo = async () => {
       try {
@@ -71,7 +103,7 @@ const Profile: React.FC = () => {
           try {
             const jobsFollowed = await getFollowedJobs(user.id_user);
             setJobs(jobsFollowed);
-            // console.log('long: ', JSON.stringify(jobsFollowed))
+            console.log('long: ', JSON.stringify(jobsFollowed.length))
           } catch (error) {
             console.log(error);
           }
@@ -212,9 +244,9 @@ const Profile: React.FC = () => {
 
   return (
     <ScrollView style={styles.container}>
-      {user && !worker &&(
+      {user && !worker && (
         <>
-        <View style={styles.profileHeader}>
+          <View style={styles.profileHeader}>
             <TouchableOpacity>
               <Image
                 source={{ uri: "https://via.placeholder.com/100" }}
@@ -293,7 +325,7 @@ const Profile: React.FC = () => {
           </TouchableOpacity>
         </>
       )}
-      {worker && user &&(
+      {worker && user && (
         <>
           <View style={styles.profileHeader}>
             <TouchableOpacity onPress={() => pickImage(setWorker_avatars)}>
@@ -403,7 +435,7 @@ const Profile: React.FC = () => {
           </TouchableOpacity>
         </>
       )}
-      {!user &&(
+      {!user && (
         <>
           <View style={styles.profileHeader}>
             <TouchableOpacity>
@@ -415,7 +447,7 @@ const Profile: React.FC = () => {
             <View style={styles.infoContainer}>
               <Text style={styles.name}>Vui lòng đăng nhập</Text>
               <View style={styles.buttonContainer}>
-                <TouchableOpacity style={styles.upgradeButton} onPress={()=>{router.push('/LoginScreen')}}>
+                <TouchableOpacity style={styles.upgradeButton} onPress={() => { router.push('/LoginScreen') }}>
                   <Text style={styles.upgradeText}>Đăng nhập</Text>
                 </TouchableOpacity>
               </View>
@@ -484,7 +516,7 @@ const Profile: React.FC = () => {
           </TouchableOpacity> */}
         </>
       )}
-      
+
     </ScrollView>
   );
 };

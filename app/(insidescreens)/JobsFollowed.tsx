@@ -9,6 +9,8 @@ import { Ionicons } from '@expo/vector-icons';
 const JobsFollowed = () => {
     const [jobs, setJobs] = useState<Job[]>([]);
     const [user, setUser] = useState<User | null>();
+    const [refreshing, setRefreshing] = useState(false);
+
     const fetchData = async () => {
         const user: User | null = await getUserInfo();
         setUser(user);
@@ -16,7 +18,7 @@ const JobsFollowed = () => {
             try {
                 const jobsFollowed = await getFollowedJobs(user.id_user);
                 setJobs(jobsFollowed);
-                console.log('long: ', JSON.stringify(jobsFollowed))
+                // console.log('long: ', JSON.stringify(jobsFollowed))
             } catch (error) {
                 console.log(error);
             }
@@ -24,13 +26,8 @@ const JobsFollowed = () => {
     }
     useEffect(() => {
         fetchData();
-    }, []);
+    }, [refreshing]);
 
-    useFocusEffect(
-        React.useCallback(() => {
-            fetchData();
-        }, [])
-    );
     return (
         <SafeAreaView style={styles.container}>
             <View style={styles.headerContainer}>
@@ -41,6 +38,8 @@ const JobsFollowed = () => {
                         borderRadius: 30,
                         padding: 5,
                         marginLeft: 10,
+                        position:'absolute',
+                        zIndex:100
                     }}
                 >
                     <Ionicons name="arrow-back" size={22} color="black" />
@@ -52,7 +51,7 @@ const JobsFollowed = () => {
                 data={jobs}
                 style={{ zIndex: 1 }}
                 keyExtractor={(item) => item._id}
-                renderItem={({ item }) => <JobsList job={item} />}
+                renderItem={({ item }) => <JobsList job={item} callback={()=>{setRefreshing(!refreshing)}}/>}
             />
         </SafeAreaView>
     )
@@ -71,11 +70,12 @@ const styles = StyleSheet.create({
         flexDirection: "row",
         alignItems: "center",
         marginBottom: 20,
-      },
-      header: {
+        position:'relative'
+    },
+    header: {
         flex: 1,
         textAlign: "center",
         fontSize: 18,
         fontWeight: "bold",
-      },
+    },
 })
