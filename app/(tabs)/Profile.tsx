@@ -54,7 +54,6 @@ const Profile: React.FC = () => {
   const [worker_avatars, setWorker_avatars] = useState<string | null>(null);
   const [companyInfo, setCompanyInfo] = useState<Company[]>([]);
   const [appliedJobs, setAppliedJobs] = useState<AppliedJob[]>([]);
-
   useEffect(() => {
     const fetchUserInfo = async () => {
       try {
@@ -181,6 +180,7 @@ const Profile: React.FC = () => {
   useFocusEffect(
     React.useCallback(() => {
       fetchData();
+      fetchDataApplide();
     }, [])
   );
 
@@ -200,7 +200,88 @@ const Profile: React.FC = () => {
 
   return (
     <ScrollView style={styles.container}>
-      {worker && (
+      {user && !worker &&(
+        <>
+        <View style={styles.profileHeader}>
+            <TouchableOpacity>
+              <Image
+                source={{ uri: "https://via.placeholder.com/100" }}
+                style={styles.avatar}
+              />
+            </TouchableOpacity>
+            <View style={styles.infoContainer}>
+              <Text style={styles.name}>Bạn chưa cập nhật hồ sơ</Text>
+              <View style={styles.buttonContainer}>
+                <TouchableOpacity style={styles.upgradeButton} onPress={goCreate}>
+                  <Text style={styles.upgradeText}>Cập nhật</Text>
+                </TouchableOpacity>
+              </View>
+            </View>
+          </View>
+
+          <View style={styles.jobManagement}>
+            <Text style={styles.managementTitle}>Quản lý tìm việc</Text>
+            <View style={styles.row}>
+              <View style={styles.managementBox}>
+                <Ionicons name="briefcase" size={30} color="#0099CC" />
+                <Text style={styles.managementText}>Việc làm đã ứng tuyển</Text>
+                <Text style={styles.infoNumber}>0</Text>
+              </View>
+              <View style={styles.managementBox}>
+                <Ionicons name="bookmark" size={30} color="#0099CC" />
+                <Text style={styles.managementText}>Việc làm đã lưu</Text>
+                <Text style={styles.infoNumber}>0</Text>
+              </View>
+            </View>
+          </View>
+
+          <View style={styles.section}>
+            <View style={styles.row}>
+              <View style={styles.infoBox}>
+                <Ionicons name="eye" size={30} color="#0099CC" />
+                <Text style={styles.infoText}>NTD đã xem hồ sơ</Text>
+                <Text style={styles.infoNumber}>0</Text>
+              </View>
+              <View style={styles.infoBox} >
+                <Ionicons name="business" size={30} color="#0099CC" />
+                <Text style={styles.infoText}>Công ty đang theo dõi</Text>
+                <Text style={styles.infoNumber}>0</Text>
+              </View>
+            </View>
+          </View>
+          <View style={styles.section}>
+            <Text style={styles.accountSettingsTitle}>Thông tin dịch vụ</Text>
+            <TouchableOpacity style={styles.utilityItem}>
+              <Ionicons name="business" size={30} color="#0099CC" />
+              <Text style={styles.utilityText}>Về BeeJobs</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={styles.utilityItem}
+
+            >
+              <Ionicons name="document-text" size={30} color="#0099CC" />
+              <Text style={styles.utilityText}>Điều khoản dịch vụ</Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity style={styles.utilityItem}>
+              <Ionicons name="document-lock" size={30} color="#0099CC" />
+              <Text style={styles.utilityText}>Chính sách bảo mật</Text>
+            </TouchableOpacity>
+            <TouchableOpacity style={styles.utilityItem}>
+              <Ionicons name="call-outline" size={30} color="#0099CC" />
+              <Text style={styles.utilityText}>Trợ giúp</Text>
+            </TouchableOpacity>
+          </View>
+          <TouchableOpacity
+            style={styles.logoutButton}
+            onPress={handleLogoutPress}
+          >
+            <Text style={styles.logoutText}>Đăng xuất</Text>
+            <Ionicons name="log-out-outline" size={20} color="#333" />
+          </TouchableOpacity>
+        </>
+      )}
+      {worker && user &&(
         <>
           <View style={styles.profileHeader}>
             <TouchableOpacity onPress={() => pickImage(setWorker_avatars)}>
@@ -308,7 +389,7 @@ const Profile: React.FC = () => {
           </TouchableOpacity>
         </>
       )}
-      {!worker && (
+      {!user &&(
         <>
           <View style={styles.profileHeader}>
             <TouchableOpacity>
@@ -318,10 +399,10 @@ const Profile: React.FC = () => {
               />
             </TouchableOpacity>
             <View style={styles.infoContainer}>
-              <Text style={styles.name}>Bạn chưa cập nhật hồ sơ</Text>
+              <Text style={styles.name}>Vui lòng đăng nhập</Text>
               <View style={styles.buttonContainer}>
-                <TouchableOpacity style={styles.upgradeButton} onPress={goCreate}>
-                  <Text style={styles.upgradeText}>Cập nhật</Text>
+                <TouchableOpacity style={styles.upgradeButton} onPress={()=>{router.push('/LoginScreen')}}>
+                  <Text style={styles.upgradeText}>Đăng nhập</Text>
                 </TouchableOpacity>
               </View>
             </View>
@@ -380,15 +461,16 @@ const Profile: React.FC = () => {
               <Text style={styles.utilityText}>Trợ giúp</Text>
             </TouchableOpacity>
           </View>
-          <TouchableOpacity
+          {/* <TouchableOpacity
             style={styles.logoutButton}
             onPress={handleLogoutPress}
           >
-            <Text style={styles.logoutText}>Đăng xuất</Text>
+            <Text style={styles.logoutText}>Thoát</Text>
             <Ionicons name="log-out-outline" size={20} color="#333" />
-          </TouchableOpacity>
+          </TouchableOpacity> */}
         </>
       )}
+      
     </ScrollView>
   );
 };

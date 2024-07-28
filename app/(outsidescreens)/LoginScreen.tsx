@@ -248,6 +248,13 @@ const LoginScreen = () => {
           Đăng ký
         </Text>
       </Text>
+      <Text
+          style={{textAlign: 'center', color: "#007BFF", fontWeight:'bold', fontSize: 16}}
+          onPress={() => router.push("/Home")}
+        >
+          {" "}
+          Trải nghiệm không cần đăng nhập
+        </Text>
       <AlertComponent
         color={color}
         message={message}

@@ -151,7 +151,7 @@ const CompleteProfileScreen2: React.FC = () => {
 
   return (
     <SafeAreaView style={styles.container}>
-      <View style={styles.container}>
+      <ScrollView >
         <View style={styles.headerContainer}>
         <TouchableOpacity
           onPress={backAction}
@@ -231,7 +231,7 @@ const CompleteProfileScreen2: React.FC = () => {
         <TouchableOpacity style={styles.saveButton} onPress={handleRegister}>
           <Text style={styles.buttonText}>Lưu</Text>
         </TouchableOpacity>
-      </View>
+      </ScrollView>
     </SafeAreaView>
   );
 };

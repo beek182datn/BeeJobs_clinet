@@ -16,6 +16,7 @@ import { useRouter, useLocalSearchParams } from "expo-router";
 import * as DocumentPicker from "expo-document-picker";
 import axios, { AxiosResponse } from "axios";
 import * as ImagePicker from "expo-image-picker";
+import { Ionicons } from "@expo/vector-icons";
 type SetterFunction = (uri: string) => void;
 
 const pickImage = async (setter: SetterFunction) => {
@@ -75,12 +76,13 @@ const CompleteProfileScreen1: React.FC = () => {
         console.error("Error fetching user data:", error);
       }
     };
+    fetchUserData();
 const backHandler = BackHandler.addEventListener(
       "hardwareBackPress",
       backAction
     );
     return () => backHandler.remove();
-    fetchUserData();
+    
   }, [user_id]);
 
   const handleContinue = () => {
@@ -145,14 +147,14 @@ const backHandler = BackHandler.addEventListener(
 
   return (
     <SafeAreaView style={styles.container}>
-      <View style={styles.container}>
+      <ScrollView >
         <View style={styles.headerContainer}>
-          <Icon
-            name="arrow-left"
-            size={20}
-            color="#000"
-            onPress={backAction}
-          />
+        <TouchableOpacity
+          onPress={backAction}
+          style={{ backgroundColor: "#2196F3", borderRadius: 30, padding: 5 }}
+        >
+          <Ionicons name="arrow-back" size={22} color="black" />
+        </TouchableOpacity>
           <Text style={styles.header}>Thiết lập hồ sơ của bạn</Text>
         </View>
         <View style={styles.progressBar}>
@@ -226,7 +228,7 @@ const backHandler = BackHandler.addEventListener(
         <TouchableOpacity style={styles.saveButton} onPress={handleRegister}>
           <Text style={styles.buttonText}>Lưu</Text>
         </TouchableOpacity>
-      </View>
+      </ScrollView>
     </SafeAreaView>
   );
 };
