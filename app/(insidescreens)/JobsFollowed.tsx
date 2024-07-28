@@ -1,9 +1,10 @@
-import { FlatList, SafeAreaView, StyleSheet, Text, View } from 'react-native'
+import { FlatList, SafeAreaView, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 import React, { useEffect, useState } from 'react'
 import { Job, User } from '@/components/Model/Model';
 import { getFollowedJobs, getUserInfo } from '@/components/fetch_data/api';
 import JobsList from '@/components/comps/JobsList';
-import { useFocusEffect } from 'expo-router';
+import { router, useFocusEffect } from 'expo-router';
+import { Ionicons } from '@expo/vector-icons';
 
 const JobsFollowed = () => {
     const [jobs, setJobs] = useState<Job[]>([]);
@@ -32,8 +33,20 @@ const JobsFollowed = () => {
     );
     return (
         <SafeAreaView style={styles.container}>
-            <View style={{ flexDirection: 'row', justifyContent: 'center', marginBottom: 50 }}>
-                <Text style={{ fontSize: 24, color: 'black', fontWeight: 'bold' }}>Việc làm đã lưu</Text>
+            <View style={styles.headerContainer}>
+                <TouchableOpacity
+                    onPress={router.back}
+                    style={{
+                        backgroundColor: "#2196F3",
+                        borderRadius: 30,
+                        padding: 5,
+                        marginLeft: 10,
+                    }}
+                >
+                    <Ionicons name="arrow-back" size={22} color="black" />
+                </TouchableOpacity>
+                <Text style={styles.header}>Công việc đang theo dõi</Text>
+                {/* <View style={styles.separator} /> */}
             </View>
             <FlatList
                 data={jobs}
@@ -54,4 +67,15 @@ const styles = StyleSheet.create({
         padding: 20,
         position: 'relative'
     },
+    headerContainer: {
+        flexDirection: "row",
+        alignItems: "center",
+        marginBottom: 20,
+      },
+      header: {
+        flex: 1,
+        textAlign: "center",
+        fontSize: 18,
+        fontWeight: "bold",
+      },
 })
