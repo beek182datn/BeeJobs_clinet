@@ -16,6 +16,7 @@ import { useRouter, useLocalSearchParams } from "expo-router";
 import * as DocumentPicker from "expo-document-picker";
 import axios, { AxiosResponse } from "axios";
 import * as ImagePicker from "expo-image-picker";
+import { Ionicons } from "@expo/vector-icons";
 type SetterFunction = (uri: string) => void;
 
 const pickImage = async (setter: SetterFunction) => {
@@ -76,12 +77,20 @@ const CompleteProfileScreen1: React.FC = () => {
       }
     };
     fetchUserData();
+<<<<<<< HEAD
+const backHandler = BackHandler.addEventListener(
+=======
     const backHandler = BackHandler.addEventListener(
+>>>>>>> fd9633aac2f2e2ee0e7b91dacc599b4e367143d1
       "hardwareBackPress",
       backAction
     );
     return () => backHandler.remove();
+<<<<<<< HEAD
+    
+=======
 
+>>>>>>> fd9633aac2f2e2ee0e7b91dacc599b4e367143d1
   }, [user_id]);
 
   const handleContinue = () => {
@@ -146,14 +155,18 @@ const CompleteProfileScreen1: React.FC = () => {
 
   return (
     <SafeAreaView style={styles.container}>
+<<<<<<< HEAD
+      <ScrollView >
+=======
       <ScrollView>
+>>>>>>> fd9633aac2f2e2ee0e7b91dacc599b4e367143d1
         <View style={styles.headerContainer}>
-          <Icon
-            name="arrow-left"
-            size={20}
-            color="#000"
-            onPress={backAction}
-          />
+        <TouchableOpacity
+          onPress={backAction}
+          style={{ backgroundColor: "#2196F3", borderRadius: 30, padding: 5 }}
+        >
+          <Ionicons name="arrow-back" size={22} color="black" />
+        </TouchableOpacity>
           <Text style={styles.header}>Thiết lập hồ sơ của bạn</Text>
         </View>
         <View style={styles.progressBar}>

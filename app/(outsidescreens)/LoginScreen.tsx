@@ -248,15 +248,13 @@ const LoginScreen = () => {
           Đăng ký
         </Text>
       </Text>
-      <TouchableOpacity style={styles.footerText}>
-        <Text
-          style={styles.signupText}
+      <Text
+          style={{textAlign: 'center', color: "#007BFF", fontWeight:'bold', fontSize: 16}}
           onPress={() => router.push("/Home")}
         >
           {" "}
-          Trải nghiệm không cần đăng nhập!
+          Trải nghiệm không cần đăng nhập
         </Text>
-      </TouchableOpacity>
       <AlertComponent
         color={color}
         message={message}

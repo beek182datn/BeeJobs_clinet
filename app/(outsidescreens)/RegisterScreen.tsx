@@ -93,6 +93,7 @@ const RegisterScreen = () => {
             verify: false,
           }
         );
+        console.log('huy check: ' + response.data.status)
         if (response.data.status === 200){
           router.push({ pathname: "VerifyAccount", params: { email: email } });
         }
