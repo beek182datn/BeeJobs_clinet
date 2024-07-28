@@ -347,9 +347,9 @@ export const createApplyJob = async (worker_id: string, job_id: string, data: Ap
   } catch (error) {
     if (axios.isAxiosError(error) && error.response) {
       console.log('Error of aoxis:', error.response.data);
-      throw new Error(`Error fetching applied jobs: ${error.response.data.message}`);
+      throw new Error(`Error create applied jobs: ${error.response.data.message}`);
     } else {
-      console.log('Error fetching applied jobs:', error);
+      console.log('Error create applied jobs:', error);
       throw new Error('An unexpected error occurred while fetching applied jobs.');
     }
   }
@@ -394,7 +394,7 @@ export const createApplyJob = async (worker_id: string, job_id: string, data: Ap
 export const getAppliedJobsByWorker = async (worker_id: string): Promise<AppliedJob[]> => {
   try {
     const response: AxiosResponse<AppliedJobsResponse> = await axios.get(
-      `http://beejobs.io.vn:14307/api/applyJobs/getApylyJobsByIdWorker/${worker_id}`
+      `http://beejobs.io.vn:14307/api/applyJobs/getapylyjobsbyIdworker/${worker_id}`
     );
 
     // Lấy danh sách các công việc đã ứng tuyển
@@ -429,10 +429,10 @@ export const getAppliedJobsByWorker = async (worker_id: string): Promise<Applied
     return updatedAppliedJobs;
   } catch (error) {
     if (axios.isAxiosError(error) && error.response) {
-      console.log('Error fetching applied jobs:', error.response.data);
+      console.log('Error fetching applied jobs by workerid:', error.response.data);
       throw new Error(`Error fetching applied jobs: ${error.response.data.message}`);
     } else {
-      console.log('Error fetching applied jobs:', error);
+      console.log('Error fetching applied jobs by workerid:', error);
       throw new Error('An unexpected error occurred while fetching applied jobs.');
     }
   }
