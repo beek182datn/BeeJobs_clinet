@@ -71,7 +71,7 @@ const Profile: React.FC = () => {
           try {
             const jobsFollowed = await getFollowedJobs(user.id_user);
             setJobs(jobsFollowed);
-            console.log('long: ', JSON.stringify(jobsFollowed))
+            // console.log('long: ', JSON.stringify(jobsFollowed))
           } catch (error) {
             console.log(error);
           }
@@ -94,7 +94,7 @@ const Profile: React.FC = () => {
       if (user) {
         var jobsLastWeek = await getAppliedJobsByWorker(user.id_user);
         setAppliedJobs(jobsLastWeek);
-        console.log(JSON.stringify(jobsLastWeek))
+        // console.log(JSON.stringify(jobsLastWeek))
       }
     } catch (error) {
       console.log(error);
@@ -109,7 +109,7 @@ const Profile: React.FC = () => {
           `http://beejobs.io.vn:14307/api/findcompanys/${userId}`
         );
         setCompanyInfo(response.data);
-        console.log(response.data);
+        // console.log(response.data);
       } else {
         console.log("No UserID found in AsyncStorage");
       }

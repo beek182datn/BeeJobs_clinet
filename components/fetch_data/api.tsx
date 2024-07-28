@@ -394,11 +394,15 @@ export const createApplyJob = async (worker_id: string, job_id: string, data: Ap
 export const getAppliedJobsByWorker = async (worker_id: string): Promise<AppliedJob[]> => {
   try {
     const response: AxiosResponse<AppliedJobsResponse> = await axios.get(
-      `http://beejobs.io.vn:14307/api/applyJobs/getapylyjobsbyIdworker/${worker_id}`
+      `http://beejobs.io.vn:14307/api/getapylyjobsbyIdworker/${worker_id}`
     );
 
     // Lấy danh sách các công việc đã ứng tuyển
     const appliedJobs = response.data.data;
+    if(!appliedJobs){
+      console.log('Không có công việc nào')
+      return [];
+    }
 
     // Lấy thông tin job và công ty cho từng đơn ứng tuyển
     const updatedAppliedJobs = await Promise.all(
