@@ -55,11 +55,8 @@ const Profile: React.FC = () => {
   const [worker_avatars, setWorker_avatars] = useState<string | null>(null);
   const [companyInfo, setCompanyInfo] = useState<Company[]>([]);
   const [appliedJobs, setAppliedJobs] = useState<AppliedJob[]>([]);
-<<<<<<< HEAD
-=======
   const [jobs, setJobs] = useState<Job[]>([]);
 
->>>>>>> fd9633aac2f2e2ee0e7b91dacc599b4e367143d1
   useEffect(() => {
     const fetchUserInfo = async () => {
       try {

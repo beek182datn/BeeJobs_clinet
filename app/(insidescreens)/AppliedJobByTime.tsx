@@ -24,7 +24,7 @@ const AppliedJobByTime = () => {
         >
           <Ionicons name="arrow-back" size={22} color="black" />
         </TouchableOpacity>
-        <Text style={styles.header}>Công ty đang theo dõi</Text>
+        <Text style={styles.header}>Việc làm đã ứng tuyển</Text>
         <View style={styles.separator} />
       </View>
       <Tab.Navigator

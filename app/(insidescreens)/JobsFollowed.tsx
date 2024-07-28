@@ -1,13 +1,20 @@
-import { FlatList, SafeAreaView, StyleSheet, Text, View } from 'react-native'
+import { FlatList, SafeAreaView, StyleSheet,BackHandler, Text, View } from 'react-native'
 import React, { useEffect, useState } from 'react'
 import { Job, User } from '@/components/Model/Model';
 import { getFollowedJobs, getUserInfo } from '@/components/fetch_data/api';
 import JobsList from '@/components/comps/JobsList';
 import { useFocusEffect } from 'expo-router';
+import { router } from "expo-router";
 
 const JobsFollowed = () => {
     const [jobs, setJobs] = useState<Job[]>([]);
     const [user, setUser] = useState<User | null>();
+
+    const backAction = () => {
+        router.back();
+        return true;
+      };
+
     const fetchData = async () => {
         const user: User | null = await getUserInfo();
         setUser(user);
@@ -23,6 +30,11 @@ const JobsFollowed = () => {
     }
     useEffect(() => {
         fetchData();
+        const backHandler = BackHandler.addEventListener(
+            "hardwareBackPress",
+            backAction
+          );
+          return () => backHandler.remove();
     }, []);
 
     useFocusEffect(
