@@ -60,7 +60,7 @@ export default AppliedJobByTime;
 const styles = StyleSheet.create({
   conatiner: {
     flex: 1,
-    padding: 10,
+    // padding: 10,
   },
   separator: {
     height: 1,
@@ -76,6 +76,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     marginBottom: 20,
+    marginTop:10
   },
   header: {
     flex: 1,
