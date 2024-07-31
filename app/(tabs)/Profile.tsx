@@ -73,7 +73,7 @@ const Profile: React.FC = () => {
             try {
               const jobsFollowed = await getFollowedJobs(user.id_user);
               setJobs(jobsFollowed);
-              console.log('long: ', JSON.stringify(jobsFollowed.length))
+              // console.log('long: ', JSON.stringify(jobsFollowed.length))
             } catch (error) {
               console.log(error);
             }
@@ -103,7 +103,7 @@ const Profile: React.FC = () => {
           try {
             const jobsFollowed = await getFollowedJobs(user.id_user);
             setJobs(jobsFollowed);
-            console.log('long: ', JSON.stringify(jobsFollowed.length))
+            // console.log('long: ', JSON.stringify(jobsFollowed.length))
           } catch (error) {
             console.log(error);
           }

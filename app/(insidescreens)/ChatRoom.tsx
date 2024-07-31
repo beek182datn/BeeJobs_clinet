@@ -1,4 +1,4 @@
-import { SafeAreaView, StyleSheet, Text, TouchableOpacity, View, FlatList,BackHandler, TextInput, Button, Image, KeyboardAvoidingView, Platform, Animated } from 'react-native';
+import { SafeAreaView, StyleSheet, Text, TouchableOpacity, View, FlatList, BackHandler, TextInput, Button, Image, KeyboardAvoidingView, Platform, Animated } from 'react-native';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { useLocalSearchParams, router } from 'expo-router';
 import { findCompanyById, sendMessage as apiSendMessage, getMessages, getChatRoomInfo, checkChatRoom } from '@/components/fetch_data/api';
@@ -29,11 +29,11 @@ const ChatRoom: React.FC = () => {
     const backAction = () => {
         router.back();
         return true;
-      };
+    };
 
     const fetchData = useCallback(async () => {
         // flatListRef.current?.scrollToEnd({ animated: true });
-        console.log('long ', JSON.stringify(info))
+        // console.log('long ', JSON.stringify(info))
         if (!info || !info.company_id || !info.userId) {
             return;
         }
@@ -65,9 +65,9 @@ const ChatRoom: React.FC = () => {
         const backHandler = BackHandler.addEventListener(
             "hardwareBackPress",
             backAction
-          );
-      
-          return () => backHandler.remove();
+        );
+
+        return () => backHandler.remove();
     }, [fetchData]);
 
     useEffect(() => {
@@ -109,12 +109,12 @@ const ChatRoom: React.FC = () => {
                         chatRoomId: String(chatRoomInfo._id),
                         createdAt: new Date().toISOString(),
                     };
-        
+
                     try {
                         const sentMessage = await apiSendMessage(message.senderId, String(info.company_id), message.content);
                         // Gửi tin nhắn qua Socket.IO
                         socket.emit('newMessage', sentMessage); // Gửi tin nhắn đến server
-        
+
                         // setMessages((prevMessages) => [...prevMessages, sentMessage]);
                         setNewMessage('');
                     } catch (error) {
@@ -148,7 +148,7 @@ const ChatRoom: React.FC = () => {
         <KeyboardAvoidingView
             style={styles.container}
             behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-            keyboardVerticalOffset={80}
+            keyboardVerticalOffset={70}
         >
             <SafeAreaView style={styles.container}>
                 <View style={styles.headerTitle}>
