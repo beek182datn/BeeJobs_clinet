@@ -47,6 +47,8 @@ const CompleteProfileScreen2: React.FC = () => {
   const [user, setUser] = useState<User | null>();
   const [worker, setWorker] = useState<Worker | null>();
   const [worker_name, setWorker_name] = useState(workerinfo.worker_name);
+  const [major, setMajor] = useState(workerinfo.major);
+  const [experience, setExperience] = useState(workerinfo.experience);
   const [worker_avatar, setWorker_avatar] = useState(workerinfo.worker_avatar);
   const [worker_avatars, setWorker_avatars] = useState<string | null>(null);
   //const user_id = params.id_user;
@@ -58,6 +60,8 @@ const CompleteProfileScreen2: React.FC = () => {
     worker_avatar: "",
     email: "",
     phone: "",
+    major: "",
+    experience: ""
   });
 
   const backAction = () => {
@@ -97,6 +101,8 @@ const CompleteProfileScreen2: React.FC = () => {
       worker_avatar: worker_avatar ? "" : "Ảnh đại diện không được bỏ trống",
       email: email ? "" : "Địa chỉ Gmail không được để trống",
       phone: phone ? "" : "Số điện thoại không được để trống",
+      major: major ? "" : "Ngành không được để trống",
+      experience: experience ? "" : "Kinh nghiệm không được để trống",
     };
 
     setErrors(newErrors);
@@ -116,6 +122,8 @@ const CompleteProfileScreen2: React.FC = () => {
         //formData.append('worker_avatar', worker_avatars as any);
         formData.append('email', String(email));  // Replace with actual email
         formData.append('phone', String(phone));
+        formData.append('major', String(major));
+        formData.append('experience', String(experience));
         if (worker_avatars) {
           const response = await fetch(worker_avatars);
           const blob = await response.blob();
@@ -225,6 +233,38 @@ const CompleteProfileScreen2: React.FC = () => {
           </View>
           {errors.phone ? (
             <Text style={styles.errorText}>{errors.phone}</Text>
+          ) : null}
+        </View>
+
+        <Text style={styles.sectionHeader}>Chuyên ngành</Text>
+        <View style={styles.section}>
+          <View style={styles.inputContainer}>
+            <Icon name="briefcase" size={20} color="#A9A9A9" style={styles.icon} />
+            <TextInput
+              style={styles.input}
+              placeholder="Chuyên ngành"
+              value={String(major)}
+              onChangeText={setMajor}
+            />
+          </View>
+          {errors.major ? (
+            <Text style={styles.errorText}>{errors.major}</Text>
+          ) : null}
+        </View>
+
+        <Text style={styles.sectionHeader}>Kinh nghiệm</Text>
+        <View style={styles.section}>
+          <View style={styles.inputContainer}>
+            <Icon name="star" size={20} color="#A9A9A9" style={styles.icon} />
+            <TextInput
+              style={styles.input}
+              placeholder="Kinh nghiệm"
+              value={String(experience)}
+              onChangeText={setExperience}
+            />
+          </View>
+          {errors.experience ? (
+            <Text style={styles.errorText}>{errors.experience}</Text>
           ) : null}
         </View>
 

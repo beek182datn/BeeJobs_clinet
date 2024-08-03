@@ -117,6 +117,8 @@ export type Worker = {
   worker_avatar: string;
   phone: string;
   email: string;
+  major: string;
+  experience: string;
   __v: number;
 }
 
