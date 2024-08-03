@@ -58,33 +58,36 @@ const Profile: React.FC = () => {
   const [jobs, setJobs] = useState<Job[]>([]);
 
   useEffect(() => {
-    const fetchUserInfo = async () => {
-      try {
-        // const emailValue = await AsyncStorage.getItem('userProfile');
-        // console.log(emailValue)
-        const user: User | null = await getUserInfo();
-        setUser(user);
-        if (user) {
-          const worker = await findWorkerById(user.id_user);
-          //console.log(user.id_user);
-          setWorker(worker);
-          try {
-            const jobsFollowed = await getFollowedJobs(user.id_user);
-            setJobs(jobsFollowed);
-            // console.log('long: ', JSON.stringify(jobsFollowed))
-          } catch (error) {
-            console.log(error);
-          }
-        }
-      } catch (error) {
-        console.error("Error fetching user info:", error);
-      }
-    };
+    
 
     fetchUserInfo();
     fetchData();
     fetchDataApplide();
   }, [router]);
+
+
+  const fetchUserInfo = async () => {
+    try {
+      // const emailValue = await AsyncStorage.getItem('userProfile');
+      // console.log(emailValue)
+      const user: User | null = await getUserInfo();
+      setUser(user);
+      if (user) {
+        const worker = await findWorkerById(user.id_user);
+        //console.log(user.id_user);
+        setWorker(worker);
+        try {
+          const jobsFollowed = await getFollowedJobs(user.id_user);
+          setJobs(jobsFollowed);
+          // console.log('long: ', JSON.stringify(jobsFollowed))
+        } catch (error) {
+          console.log(error);
+        }
+      }
+    } catch (error) {
+      console.error("Error fetching user info:", error);
+    }
+  };
 
   const fetchDataApplide = async () => {
     try {
@@ -193,6 +196,7 @@ const Profile: React.FC = () => {
     React.useCallback(() => {
       fetchData();
       fetchDataApplide();
+      fetchUserInfo();
     }, [])
   );
 
