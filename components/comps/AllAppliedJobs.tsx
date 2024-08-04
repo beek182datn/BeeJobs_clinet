@@ -36,7 +36,7 @@ const AllAppliedJobs = () => {
         if (user) {
           var jobsLastWeek = await getAppliedJobsByWorker(user.id_user);
           setAppliedJobs(jobsLastWeek);
-          console.log(JSON.stringify(jobsLastWeek));
+          // console.log(JSON.stringify(jobsLastWeek));
         }
       } catch (error) {
         console.log(error);
@@ -119,7 +119,7 @@ const AllAppliedJobs = () => {
                       { justifyContent: "space-between" },
                     ]}
                   >
-                    <View>
+                    <View style={{flex: 1}}>
                       <View style={{ flexDirection: "row" }}>
                         <Ionicons
                           name="location"
@@ -146,14 +146,14 @@ const AllAppliedJobs = () => {
                         <Text style={styles.text}>{item.job.salary}</Text>
                       </View>
                     </View>
-                    <View>
+                    <View style={{flex: 1}}>
                       <View style={{ flexDirection: 'row' }}>
                         <Ionicons name='time' size={14} color={'blue'} style={{ marginRight: 3 }} />
                         <Text style={styles.text}>{formatDate(item.job.created_at)}</Text>
                       </View>
                       <View style={{ flexDirection: 'row', backgroundColor: '#0099CC', padding: 5, alignContent: 'center', justifyContent: 'center', borderRadius: 10 }}>
                         <Ionicons name='notifications' size={14} color={'white'} style={{ marginRight: 3, alignSelf: 'center' }} />
-                        <Text style={[styles.text, { color: 'white', fontSize: 14, alignSelf: 'center' }]}>{item.status}</Text>
+                        <Text style={[styles.text, { color: 'white', fontSize: 14, alignSelf: 'center', textAlign: 'center' }]}>{item.status}</Text>
                       </View>
                     </View>
                   </View>

@@ -59,6 +59,26 @@ const Home = () => {
   const [error, setError] = useState(null);
   //const params = useLocalSearchParams();
 
+  useFocusEffect(
+    React.useCallback(() => {
+      const loadJobs = async () => {
+        setIsLoading(true);
+        try {
+          const user = await getUserInfo();
+          setUser(user);
+        } catch (error) {
+          console.log(error);
+        }
+
+        const fetchedJobs = await fetchJobs();
+        setJobs(fetchedJobs);
+        setFilteredJobs(fetchedJobs);
+        setIsLoading(false);
+      };
+      loadJobs();
+    }, [])
+  );
+
   useEffect(() => {
     const loadJobs = async () => {
       setIsLoading(true);
@@ -170,6 +190,10 @@ const Home = () => {
     </TouchableOpacity>
   );
 
+  const hanldeReLoad = () => {
+    // setRef(!ref);
+  }
+
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.header}>
@@ -177,26 +201,9 @@ const Home = () => {
           <Text style={styles.title}>Welcome Beejobs</Text>
           <Text style={styles.company}>{user && userData.worker_name ? userData.worker_name : "Chào mừng bạn đến với Beejobs!"}</Text>
           {!user &&
-            <TouchableOpacity style={{
-              width: '70%',
-              backgroundColor: '#0099FF',
-              paddingVertical: 12,
-              paddingHorizontal: 24,
-              borderRadius: 10,
-              elevation: 5,
-              shadowColor: '#000',
-              shadowOffset: { width: 0, height: 2 },
-              shadowOpacity: 0.3,
-              shadowRadius: 4,
-              marginTop: 10
-            }}
+            <TouchableOpacity
               onPress={() => { router.push('/LoginScreen') }}>
-              <Text style={{
-                color: '#FFFFFF',
-                fontSize: 16,
-                textAlign: 'center',
-                fontWeight: '500'
-              }}>Đăng nhập</Text>
+              <Text style={[styles.company, {fontWeight:'700'}]}>Đăng nhập</Text>
             </TouchableOpacity>}
         </View>
         <Image
@@ -248,7 +255,7 @@ const Home = () => {
           data={filteredJobs}
           style={{ zIndex: 1 }}
           keyExtractor={(item) => item._id}
-          renderItem={({ item }) => <JobsList job={item} />}
+          renderItem={({ item }) => <JobsList job={item} callback={hanldeReLoad} />}
         />
       )}
     </SafeAreaView>

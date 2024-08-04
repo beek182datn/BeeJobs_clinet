@@ -4,8 +4,8 @@ import { createMaterialTopTabNavigator } from "@react-navigation/material-top-ta
 import LastWeek from "@/components/comps/LastWeek";
 import Last30days from "@/components/comps/Last30days";
 import AllAppliedJobs from "@/components/comps/AllAppliedJobs";
-import { Ionicons, FontAwesome } from "@expo/vector-icons";
-import { useRouter, useLocalSearchParams } from "expo-router";
+import { Ionicons } from "@expo/vector-icons";
+import { useRouter } from "expo-router";
 const Tab = createMaterialTopTabNavigator();
 
 const AppliedJobByTime = () => {
@@ -20,6 +20,8 @@ const AppliedJobByTime = () => {
             borderRadius: 30,
             padding: 5,
             marginLeft: 10,
+            position:'absolute',
+            zIndex:100
           }}
         >
           <Ionicons name="arrow-back" size={22} color="black" />
@@ -76,7 +78,8 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     marginBottom: 20,
-    marginTop:10
+    marginTop:10,
+    position:'relative'
   },
   header: {
     flex: 1,

@@ -102,6 +102,8 @@ const FollowCompany: React.FC = () => {
             borderRadius: 30,
             padding: 5,
             marginLeft: 10,
+            position:'absolute',
+            zIndex:100
           }}
         >
           <Ionicons name="arrow-back" size={22} color="black" />
@@ -149,6 +151,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     marginBottom: 20,
+    position:'relative'
   },
   icon: {
     width: 40,

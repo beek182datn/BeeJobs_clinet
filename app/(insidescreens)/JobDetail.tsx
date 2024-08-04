@@ -14,6 +14,9 @@ import Icon from "react-native-vector-icons/FontAwesome";
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
 import CompanyInfo from '@/components/comps/CompanyInfo';
 import Infomation from '@/components/comps/Infomation';
+import * as FileSystem from 'expo-file-system';
+import { WebView } from 'react-native-webview';
+import * as Sharing from 'expo-sharing';
 
 
 const Tab = createMaterialTopTabNavigator();
@@ -40,6 +43,8 @@ const JobDetail = () => {
   // modal của ứng tuyển
   const [showModal, setShowModal] = useState(false);
   const [isApplied, setIsApplied] = useState(false);
+  const [cvUri, setCvUri] = useState('');
+
 
   const backAction = () => {
     router.back();
@@ -47,7 +52,7 @@ const JobDetail = () => {
   };
 
   useEffect(() => {
-    
+
 
     const backHandler = BackHandler.addEventListener(
       "hardwareBackPress",
@@ -148,6 +153,7 @@ const JobDetail = () => {
       });
       if (!result.canceled) {
         setCv(result.assets[0]);
+        setCvUri(result.assets[0].uri);
         console.log(JSON.stringify(result));
       }
     } catch (error) {
@@ -157,7 +163,7 @@ const JobDetail = () => {
 
   const handleDetailCompany = () => {
     // if (user) {
-      router.push({ pathname: 'CompanyDetail', params: { ...job, userId: user?.id_user } })
+    router.push({ pathname: 'CompanyDetail', params: { ...job, userId: user?.id_user } })
     // }
   }
 
@@ -183,8 +189,22 @@ const JobDetail = () => {
     setCv(null);
   }
 
-  const hanldeLoadCv = () => {
-    console.log('Xem cv')
+  const hanldeLoadCv = async () => {
+    if(cvUri){
+      router.push({pathname:'ViewPdf', params: cvUri as any});
+    }
+    // try {
+    //   const fileInfo = await FileSystem.getInfoAsync(cvUri);
+    //   if (!fileInfo.exists) {
+    //     Alert.alert('Lỗi', 'File không tồn tại');
+    //   }
+    //   if (fileInfo.exists) {
+    //     Alert.alert('Ok', 'File tồn tại');
+    //   }
+    //   await Sharing.shareAsync(cvUri);
+    // } catch (error) {
+    //   console.log(error)
+    // }
   }
 
   return (
@@ -274,7 +294,7 @@ const JobDetail = () => {
           }}>
             <TouchableOpacity style={styles.buttonLeft} onPress={() => {
               if (user && companyInfo) {
-                router.push({ pathname: '(insidescreens)/ChatRoom', params: { company_id: companyInfo._id , userId: user.id_user } });
+                router.push({ pathname: '(insidescreens)/ChatRoom', params: { company_id: companyInfo._id, userId: user.id_user } });
               }
             }}>
               <Text style={styles.buttonTextN}>Gửi Tin Nhắn</Text>
@@ -313,6 +333,13 @@ const JobDetail = () => {
 
 
       <Modal visible={showModal} animationType="slide" style={{ padding: 10 }}>
+        {/* {cvUri && (
+        <WebView
+          style={{ flex: 1 }}
+          source={{ uri: cvUri }}
+          allowsInlineMediaPlayback
+        />
+      )} */}
         <View style={{ flexDirection: 'row', justifyContent: 'center', marginBottom: 50, marginTop: 60 }}>
           <Text style={{ fontSize: 18, color: 'black', fontWeight: 'bold' }}>CV ứng tuyển</Text>
           {/* <Pressable style={[styles.refreshButton, { position: 'absolute', right: 0 }]} onPress={refresh}>

@@ -1,4 +1,4 @@
-import { Tabs } from "expo-router";
+import { router, Tabs, useFocusEffect } from "expo-router";
 import React, { useEffect, useState } from "react";
 import { TabBarIcon } from "@/components/navigation/TabBarIcon";
 import { Colors } from "@/constants/Colors";
@@ -66,6 +66,7 @@ export default () => {
               size={20}
             />
           ),
+          
         }}
       />
     </Tabs>

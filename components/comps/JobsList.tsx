@@ -7,9 +7,10 @@ import { checkFollowingJob, followJob, getUserInfo, unFollowJob } from '../fetch
 
 interface JobItemProps {
   job: Job;
+  callback: () => void;
 }
 
-const JobsList: React.FC<JobItemProps> = ({ job }) => {
+const JobsList: React.FC<JobItemProps> = ({ job, callback }) => {
   const [isFolowing, setIsFolowing] = useState(false);
   const [user, setUser] = useState<User | null>();
   const linkVps = 'http://beejobs.io.vn:14307';
@@ -20,7 +21,7 @@ const JobsList: React.FC<JobItemProps> = ({ job }) => {
       if (data) {
         const folow = await checkFollowingJob(String(data.id_user), String(job._id))
         setIsFolowing(folow.isFollowing)
-        console.log(JSON.stringify(isFolowing))
+        // console.log(JSON.stringify(isFolowing))
       }
 
     }
@@ -63,7 +64,7 @@ const JobsList: React.FC<JobItemProps> = ({ job }) => {
   }
 
   const handleFolowJob = async () => {
-  const data: User | null = await getUserInfo();
+    const data: User | null = await getUserInfo();
     if (data) {
       try {
         await followJob(String(data.id_user), String(job._id))
@@ -87,11 +88,12 @@ const JobsList: React.FC<JobItemProps> = ({ job }) => {
   }
 
   const handleUnFolowJob = async () => {
-  const data: User | null = await getUserInfo();
+    const data: User | null = await getUserInfo();
     if (data) {
       try {
         await unFollowJob(String(data.id_user), String(job._id))
         setIsFolowing(false)
+        callback();
       } catch (error) {
         console.log(error)
       }
@@ -205,10 +207,12 @@ const styles = StyleSheet.create({
   },
   experience: {
     color: 'gray',
+    flex: 1
   },
   date: {
     flexDirection: 'row',
     alignItems: 'center',
+    flex: 1
   },
   dateText: {
     marginLeft: 5,
