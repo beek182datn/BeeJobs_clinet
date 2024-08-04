@@ -46,6 +46,8 @@ const CompleteProfileScreen1: React.FC = () => {
   const user_id = params.id_user;
   const [phone, setPhone] = useState("");
   const [email, setEmail] = useState("");
+  const [major, setMajor] = useState("");
+  const [experience, setExperience] = useState("");
   const [address, setAddress] = useState("");
   //console.log(user_id);
   const [errors, setErrors] = useState({
@@ -53,6 +55,8 @@ const CompleteProfileScreen1: React.FC = () => {
     worker_avatar: "",
     email: "",
     phone: "",
+    major: "",
+    experience: ""
   });
   const backAction = () => {
     router.back();
@@ -91,6 +95,8 @@ const CompleteProfileScreen1: React.FC = () => {
       worker_avatar: worker_avatar ? "" : "Ảnh đại diện không được bỏ trống",
       email: email ? "" : "Địa chỉ Gmail không được để trống",
       phone: phone ? "" : "Số điện thoại không được để trống",
+      major: major ? "" : "Ngành không được để trống",
+      experience: experience ? "" : "Kinh nghiệm không được để trống",
     };
 
     setErrors(newErrors);
@@ -110,6 +116,8 @@ const CompleteProfileScreen1: React.FC = () => {
         formData.append("worker_avatar", avatarUrl);
         formData.append("email", email); // Replace with actual email
         formData.append("phone", phone);
+        formData.append("major", major);
+        formData.append("experience", experience);
         if (worker_avatar) {
           try {
             const response = await fetch(worker_avatar);
@@ -221,6 +229,40 @@ const CompleteProfileScreen1: React.FC = () => {
           </View>
           {errors.phone ? (
             <Text style={styles.errorText}>{errors.phone}</Text>
+          ) : null}
+        </View>
+
+        <Text style={styles.sectionHeader}>Chuyên ngành</Text>
+        <View style={styles.section}>
+          <View style={styles.inputContainer}>
+            <Icon name="briefcase" size={20} color="#A9A9A9" style={styles.icon} />
+            <TextInput
+              style={styles.input}
+              placeholder="Chuyên ngành"
+              // keyboardType="numeric"
+              value={major}
+              onChangeText={setMajor}
+            />
+          </View>
+          {errors.major ? (
+            <Text style={styles.errorText}>{errors.major}</Text>
+          ) : null}
+        </View>
+
+        <Text style={styles.sectionHeader}>Kinh nghiệm</Text>
+        <View style={styles.section}>
+          <View style={styles.inputContainer}>
+            <Icon name="star" size={20} color="#A9A9A9" style={styles.icon} />
+            <TextInput
+              style={styles.input}
+              placeholder="Kinh nghiệm"
+              // keyboardType="numeric"
+              value={experience}
+              onChangeText={setExperience}
+            />
+          </View>
+          {errors.experience ? (
+            <Text style={styles.errorText}>{errors.experience}</Text>
           ) : null}
         </View>
 
