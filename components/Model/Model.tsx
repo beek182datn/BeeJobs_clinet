@@ -150,4 +150,20 @@ export type AppliedJobRespone = {
 }
 
 
+//==============Notice =================
+export interface Notification {
+  _id: string;
+  userId: string;
+  formUser: string;
+  message: string;
+  type: string;
+  isRead: boolean;
+  createdAt: string;
+}
 
+export interface NotificationResponse {
+  notifications: Notification[];
+  total: number;
+  page: number;
+  totalPages: number;
+}
