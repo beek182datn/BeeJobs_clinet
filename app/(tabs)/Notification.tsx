@@ -1,18 +1,18 @@
 import React, { useState, useEffect } from 'react';
 import { StyleSheet, Text, View, Image, SafeAreaView, FlatList, ActivityIndicator } from 'react-native';
 import { getUnreadNotifications } from '@/components/fetch_data/notifi';
-import { Notification ,User} from '@/components/Model/Model';
-
-import { getUserInfo, findWorkerById, getAppliedJobsByWorker, getFollowedJobs } from "@/components/fetch_data/api";
+import { NotificationModel, User } from '@/components/Model/Model';
+import { getUserInfo } from "@/components/fetch_data/api";
 
 interface NotificationScreenProps {
   userId: string;
 }
 
 const NotificationScreen: React.FC<NotificationScreenProps> = ({ userId }) => {
-  const [notifications, setNotifications] = useState<Notification[]>([]);
+  const [notifications, setNotifications] = useState<NotificationModel[]>([]);
   const [loading, setLoading] = useState(true);
   const [storedUserId, setStoredUserId] = useState<string | null>(userId ?? null);
+
   useEffect(() => {
     if (!userId) {
       fetchUserId();
@@ -20,6 +20,7 @@ const NotificationScreen: React.FC<NotificationScreenProps> = ({ userId }) => {
       fetchNotifications(userId);
     }
   }, [userId]);
+
   const fetchUserId = async () => {
     try {
       const user: User | null = await getUserInfo();
@@ -27,10 +28,12 @@ const NotificationScreen: React.FC<NotificationScreenProps> = ({ userId }) => {
         setStoredUserId(user.id_user);
         fetchNotifications(user.id_user);
       } else {
-        console.error('No userId found in local storage');
+        console.log('Chua dang nhaps');
+        setLoading(false);
       }
     } catch (error) {
       console.error('Error fetching userId from local storage:', error);
+      setLoading(false);
     }
   };
 
@@ -46,27 +49,40 @@ const NotificationScreen: React.FC<NotificationScreenProps> = ({ userId }) => {
     }
   };
 
-  const renderNotification = ({ item }: { item: Notification }) => (
+  const renderNotification = ({ item }: { item: NotificationModel }) => (
     <View style={styles.notificationItem}>
       <Text style={styles.notificationMessage}>{item.message}</Text>
       <Text style={styles.notificationTime}>{new Date(item.createdAt).toLocaleString()}</Text>
     </View>
   );
 
-  return (
-    <SafeAreaView style={styles.container}>
-      <Text style={styles.header}>Thông báo</Text>
-      <View style={styles.separator} />
-      
-      {loading ? (
-        <ActivityIndicator size="large" color="#0000ff" />
-      ) : notifications.length > 0 ? (
+  const renderContent = () => {
+    if (loading) {
+      return <ActivityIndicator size="large" color="#0000ff" />;
+    } else if (!storedUserId) {
+      return (
+        <View style={styles.content}>
+          <Image
+            source={require('../../assets/images/notification.png')}
+            style={styles.image}
+          />
+          <Text style={styles.title}>Bạn phải đăng nhập để dùng tính năng này</Text>
+          <Text style={styles.description}>
+            Đừng lo, chúng tôi sẽ thông báo ngay khi có tin mới cho bạn.
+            Hãy khám phá tính năng khác hoặc kiểm tra lại sau.
+          </Text>
+        </View>
+      );
+    } else if (notifications.length > 0) {
+      return (
         <FlatList
           data={notifications}
           renderItem={renderNotification}
           keyExtractor={(item) => item._id}
         />
-      ) : (
+      );
+    } else {
+      return (
         <View style={styles.content}>
           <Image
             source={require('../../assets/images/notification.png')}
@@ -78,7 +94,15 @@ const NotificationScreen: React.FC<NotificationScreenProps> = ({ userId }) => {
             Hãy khám phá tính năng khác hoặc kiểm tra lại sau.
           </Text>
         </View>
-      )}
+      );
+    }
+  };
+
+  return (
+    <SafeAreaView style={styles.container}>
+      <Text style={styles.header}>Thông báo</Text>
+      <View style={styles.separator} />
+      {renderContent()}
     </SafeAreaView>
   );
 };

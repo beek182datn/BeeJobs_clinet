@@ -151,7 +151,7 @@ export type AppliedJobRespone = {
 
 
 //==============Notice =================
-export interface Notification {
+export interface NotificationModel {
   _id: string;
   userId: string;
   formUser: string;

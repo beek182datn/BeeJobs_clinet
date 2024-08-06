@@ -1,8 +1,8 @@
 import axios from 'axios';
-import { NotificationResponse,Notification} from "../Model/Model";
+import { NotificationResponse,NotificationModel} from "../Model/Model";
 
 // const API_URL = 'http://beejobs.io.vn:14307/api/notifications';
-const API_URL = 'http://localhost:14307/api';
+const API_URL = 'http://beejobs.io.vn:14307/api';
 
 
 export const createNotification = async (
@@ -20,9 +20,9 @@ export const createNotification = async (
   }
 };
 
-export const getUnreadNotifications = async (userId: string): Promise<Notification[]> => {
+export const getUnreadNotifications = async (userId: string): Promise<NotificationModel[]> => {
   try {
-    const response = await axios.get<Notification[]>(`${API_URL}/unread/${userId}`);
+    const response = await axios.get<NotificationModel[]>(`${API_URL}/unread/${userId}`);
     return response.data;
   } catch (error) {
     console.error('Error fetching unread notifications:', error);
