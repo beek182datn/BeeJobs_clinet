@@ -242,6 +242,10 @@ const Profile: React.FC = () => {
     });
   };
 
+  const handleFeatureInDevelopment = () => {
+    Alert.alert("Thông báo", "Tính năng đang phát triển");
+  };
+
   return (
     <ScrollView style={styles.container}>
       {user && !worker && (
@@ -266,16 +270,18 @@ const Profile: React.FC = () => {
           <View style={styles.jobManagement}>
             <Text style={styles.managementTitle}>Quản lý tìm việc</Text>
             <View style={styles.row}>
-              <View style={styles.managementBox}>
+              <TouchableOpacity style={styles.managementBox} onPress={() => { router.push('(insidescreens)/AppliedJobByTime') }}>
                 <Ionicons name="briefcase" size={30} color="#0099CC" />
                 <Text style={styles.managementText}>Việc làm đã ứng tuyển</Text>
-                <Text style={styles.infoNumber}>0</Text>
-              </View>
-              <View style={styles.managementBox}>
+                <Text style={styles.infoNumber}>{appliedJobs.length}</Text>
+              </TouchableOpacity>
+              <TouchableOpacity style={styles.managementBox} onPress={() => {
+                router.push('(insidescreens)/JobsFollowed');
+              }}>
                 <Ionicons name="bookmark" size={30} color="#0099CC" />
                 <Text style={styles.managementText}>Việc làm đã lưu</Text>
-                <Text style={styles.infoNumber}>0</Text>
-              </View>
+                <Text style={styles.infoNumber}>{jobs.length}</Text>
+              </TouchableOpacity>
             </View>
           </View>
 
@@ -286,11 +292,11 @@ const Profile: React.FC = () => {
                 <Text style={styles.infoText}>NTD đã xem hồ sơ</Text>
                 <Text style={styles.infoNumber}>0</Text>
               </View>
-              <View style={styles.infoBox} >
+              <TouchableOpacity style={styles.infoBox} onPress={() => { router.push('/FollowCompany') }}>
                 <Ionicons name="business" size={30} color="#0099CC" />
                 <Text style={styles.infoText}>Công ty đang theo dõi</Text>
-                <Text style={styles.infoNumber}>0</Text>
-              </View>
+                <Text style={styles.infoNumber}>{companyInfo.length}</Text>
+              </TouchableOpacity>
             </View>
           </View>
           <View style={styles.section}>
@@ -343,7 +349,7 @@ const Profile: React.FC = () => {
               <Text style={styles.candidateId}>{worker?.email}</Text>
 
               <View style={styles.buttonContainer}>
-                <TouchableOpacity style={styles.upgradeButton}>
+                <TouchableOpacity style={styles.upgradeButton} onPress={handleFeatureInDevelopment}>
                   <Text style={styles.upgradeText}>Nâng cấp tài khoản</Text>
                 </TouchableOpacity>
               </View>
@@ -396,7 +402,7 @@ const Profile: React.FC = () => {
               <Text style={styles.utilityText}>Đổi mật khẩu</Text>
             </TouchableOpacity>
 
-            <TouchableOpacity style={styles.utilityItem}>
+            <TouchableOpacity style={styles.utilityItem} onPress={handleFeatureInDevelopment}>
               <Ionicons name="lock-closed" size={30} color="#0099CC" />
               <Text style={styles.utilityText}>Vô hiệu hóa tài khoản</Text>
             </TouchableOpacity>

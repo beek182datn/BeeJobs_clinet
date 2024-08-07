@@ -119,6 +119,7 @@ export type Worker = {
   email: string;
   major: string;
   experience: string;
+  address: string;
   __v: number;
 }
 

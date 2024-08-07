@@ -20,6 +20,7 @@ type SetterFunction = (uri: string) => void;
 import { User, Worker } from "../../components/Model/Model";
 import { getUserInfo, findWorkerById } from "@/components/fetch_data/api";
 import { Ionicons } from "@expo/vector-icons";
+import { Picker } from "@react-native-picker/picker";
 
 const pickImage = async (setter: SetterFunction) => {
   const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
@@ -54,6 +55,9 @@ const CompleteProfileScreen2: React.FC = () => {
   //const user_id = params.id_user;
   const [phone, setPhone] = useState(workerinfo.phone);
   const [email, setEmail] = useState(workerinfo.email);
+  const [address, setAddress] = useState(workerinfo.address);
+  const [pickerVisible, setPickerVisible] = useState(false);
+
   //console.log(user_id);
   const [errors, setErrors] = useState({
     worker_name: "",
@@ -61,7 +65,8 @@ const CompleteProfileScreen2: React.FC = () => {
     email: "",
     phone: "",
     major: "",
-    experience: ""
+    experience: "",
+    address: ""
   });
 
   const backAction = () => {
@@ -103,17 +108,18 @@ const CompleteProfileScreen2: React.FC = () => {
       phone: phone ? "" : "Số điện thoại không được để trống",
       major: major ? "" : "Ngành không được để trống",
       experience: experience ? "" : "Kinh nghiệm không được để trống",
+      address: address ? "" : "Địa chỉ không được để trống",
     };
 
     setErrors(newErrors);
-    
+
     const noErrors = Object.values(newErrors).every((error) => !error);
-    if(noErrors){
+    if (noErrors) {
       router.push('/Profile');
     }
   };
   const handleRegister = async (): Promise<void> => {
-    
+
     try {
       const avatarUrl = worker_avatar;
       if (avatarUrl) {
@@ -124,6 +130,7 @@ const CompleteProfileScreen2: React.FC = () => {
         formData.append('phone', String(phone));
         formData.append('major', String(major));
         formData.append('experience', String(experience));
+        formData.append('address', String(address));
         if (worker_avatars) {
           const response = await fetch(worker_avatars);
           const blob = await response.blob();
@@ -131,10 +138,10 @@ const CompleteProfileScreen2: React.FC = () => {
             uri: worker_avatars,
             type: blob.type,
             name: 'logo.jpg',
-          }as any);
+          } as any);
         }
         //console.log(JSON.stringify(`http://beejobs.io.vn:14307/workers/update/${String(worker?.user_id)}`));
-        if(worker){
+        if (worker) {
           const response: AxiosResponse = await axios.post(
             `http://beejobs.io.vn:14307/workers/update/${workerinfo.user_id}`,
             formData,
@@ -144,10 +151,10 @@ const CompleteProfileScreen2: React.FC = () => {
               },
             }
           );
-          
-          
+
+
         }
-        
+
       } else {
         console.error('Failed to upload image, registration aborted.');
       }
@@ -161,12 +168,12 @@ const CompleteProfileScreen2: React.FC = () => {
     <SafeAreaView style={styles.container}>
       <ScrollView >
         <View style={styles.headerContainer}>
-        <TouchableOpacity
-          onPress={backAction}
-          style={{ backgroundColor: "#2196F3", borderRadius: 30, padding: 5 }}
-        >
-          <Ionicons name="arrow-back" size={22} color="black" />
-        </TouchableOpacity>
+          <TouchableOpacity
+            onPress={backAction}
+            style={{ backgroundColor: "#2196F3", borderRadius: 30, padding: 5 }}
+          >
+            <Ionicons name="arrow-back" size={22} color="black" />
+          </TouchableOpacity>
           <Text style={styles.header}>Thay đổi thông tin của bạn</Text>
         </View>
         <View style={styles.progressBar}>
@@ -220,6 +227,19 @@ const CompleteProfileScreen2: React.FC = () => {
           ) : null}
         </View>
 
+        <Text style={styles.sectionHeader}>Địa chỉ</Text>
+        <View style={styles.section}>
+          <View style={styles.inputContainer}>
+            <Icon name="home" size={20} color="#A9A9A9" style={styles.icon} />
+            <TextInput
+              style={styles.input}
+              placeholder="Địa chỉ"
+              value={String(address)}
+              onChangeText={setAddress}
+            />
+          </View>
+        </View>
+
         <Text style={styles.sectionHeader}>Số điện thoại</Text>
         <View style={styles.section}>
           <View style={styles.inputContainer}>
@@ -256,12 +276,23 @@ const CompleteProfileScreen2: React.FC = () => {
         <View style={styles.section}>
           <View style={styles.inputContainer}>
             <Icon name="star" size={20} color="#A9A9A9" style={styles.icon} />
-            <TextInput
+            <Picker
+              selectedValue={experience}
+              onValueChange={(itemValue) => {
+                setExperience(itemValue);
+                setPickerVisible(false); // Đóng picker sau khi chọn
+              }}
               style={styles.input}
-              placeholder="Kinh nghiệm"
-              value={String(experience)}
-              onChangeText={setExperience}
-            />
+            >
+              <Picker.Item label="Sắp đi làm" value="Sắp đi làm" />
+              <Picker.Item label="Dưới 1 năm" value="Dưới 1 năm" />
+              <Picker.Item label="1 năm" value="1 năm" />
+              <Picker.Item label="2 năm" value="2 năm" />
+              <Picker.Item label="3 năm" value="3 năm" />
+              <Picker.Item label="4 năm" value="4 năm" />
+              <Picker.Item label="5 năm" value="5 năm" />
+              <Picker.Item label="Trên 5 năm" value="Trên 5 năm" />
+            </Picker>
           </View>
           {errors.experience ? (
             <Text style={styles.errorText}>{errors.experience}</Text>
