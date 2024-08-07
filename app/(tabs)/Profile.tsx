@@ -320,23 +320,23 @@ const Profile: React.FC = () => {
           </View>
           <View style={styles.section}>
             <Text style={styles.accountSettingsTitle}>Thông tin dịch vụ</Text>
-            <TouchableOpacity style={styles.utilityItem}>
+            <TouchableOpacity style={styles.utilityItem} onPress={() => { router.push('/CompanyIntroduction') }}>
               <Ionicons name="business" size={30} color="#0099CC" />
               <Text style={styles.utilityText}>Về BeeJobs</Text>
             </TouchableOpacity>
             <TouchableOpacity
               style={styles.utilityItem}
-
+              onPress={() => { router.push('/TermsOfService') }}
             >
               <Ionicons name="document-text" size={30} color="#0099CC" />
               <Text style={styles.utilityText}>Điều khoản dịch vụ</Text>
             </TouchableOpacity>
 
-            <TouchableOpacity style={styles.utilityItem}>
+            <TouchableOpacity style={styles.utilityItem} onPress={() => { router.push('/PrivacyPolicy') }}>
               <Ionicons name="document-lock" size={30} color="#0099CC" />
               <Text style={styles.utilityText}>Chính sách bảo mật</Text>
             </TouchableOpacity>
-            <TouchableOpacity style={styles.utilityItem}>
+            <TouchableOpacity style={styles.utilityItem} onPress={() => { router.push('/HelpCenter') }}>
               <Ionicons name="call-outline" size={30} color="#0099CC" />
               <Text style={styles.utilityText}>Trợ giúp</Text>
             </TouchableOpacity>
@@ -429,23 +429,23 @@ const Profile: React.FC = () => {
 
           <View style={styles.section}>
             <Text style={styles.accountSettingsTitle}>Thông tin dịch vụ</Text>
-            <TouchableOpacity style={styles.utilityItem}>
+            <TouchableOpacity style={styles.utilityItem} onPress={() => { router.push('/CompanyIntroduction') }}>
               <Ionicons name="business" size={30} color="#0099CC" />
               <Text style={styles.utilityText}>Về BeeJobs</Text>
             </TouchableOpacity>
             <TouchableOpacity
               style={styles.utilityItem}
-
+              onPress={() => { router.push('/TermsOfService') }}
             >
               <Ionicons name="document-text" size={30} color="#0099CC" />
               <Text style={styles.utilityText}>Điều khoản dịch vụ</Text>
             </TouchableOpacity>
 
-            <TouchableOpacity style={styles.utilityItem}>
+            <TouchableOpacity style={styles.utilityItem} onPress={() => { router.push('/PrivacyPolicy') }}>
               <Ionicons name="document-lock" size={30} color="#0099CC" />
               <Text style={styles.utilityText}>Chính sách bảo mật</Text>
             </TouchableOpacity>
-            <TouchableOpacity style={styles.utilityItem}>
+            <TouchableOpacity style={styles.utilityItem} onPress={() => { router.push('/HelpCenter') }}>
               <Ionicons name="call-outline" size={30} color="#0099CC" />
               <Text style={styles.utilityText}>Trợ giúp</Text>
             </TouchableOpacity>
@@ -511,23 +511,23 @@ const Profile: React.FC = () => {
           </View>
           <View style={styles.section}>
             <Text style={styles.accountSettingsTitle}>Thông tin dịch vụ</Text>
-            <TouchableOpacity style={styles.utilityItem}>
+            <TouchableOpacity style={styles.utilityItem} onPress={() => { router.push('/CompanyIntroduction') }}>
               <Ionicons name="business" size={30} color="#0099CC" />
               <Text style={styles.utilityText}>Về BeeJobs</Text>
             </TouchableOpacity>
             <TouchableOpacity
               style={styles.utilityItem}
-
+              onPress={() => { router.push('/TermsOfService') }}
             >
               <Ionicons name="document-text" size={30} color="#0099CC" />
               <Text style={styles.utilityText}>Điều khoản dịch vụ</Text>
             </TouchableOpacity>
 
-            <TouchableOpacity style={styles.utilityItem}>
+            <TouchableOpacity style={styles.utilityItem} onPress={() => { router.push('/PrivacyPolicy') }}>
               <Ionicons name="document-lock" size={30} color="#0099CC" />
               <Text style={styles.utilityText}>Chính sách bảo mật</Text>
             </TouchableOpacity>
-            <TouchableOpacity style={styles.utilityItem}>
+            <TouchableOpacity style={styles.utilityItem} onPress={() => { router.push('/HelpCenter') }}>
               <Ionicons name="call-outline" size={30} color="#0099CC" />
               <Text style={styles.utilityText}>Trợ giúp</Text>
             </TouchableOpacity>

@@ -219,8 +219,6 @@ const CompleteProfileScreen2: React.FC = () => {
             <Text style={styles.errorText}>{errors.email}</Text>
           ) : null}
         </View>
-
-        <Text style={styles.sectionHeader}>Số điện thoại</Text>
         <View style={styles.section}>
           <View style={styles.inputContainer}>
             <Icon name="phone" size={20} color="#A9A9A9" style={styles.icon} />
@@ -312,7 +310,7 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   section: {
-    marginBottom: 20,
+    marginBottom: 0,
   },
   inputContainer: {
     flexDirection: "row",
