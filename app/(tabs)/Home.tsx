@@ -7,6 +7,7 @@ import {
   TouchableOpacity,
   Image,
   SafeAreaView,
+  ToastAndroid
 } from "react-native";
 import React, { useState, useEffect, useCallback } from "react";
 import { useFocusEffect } from "@react-navigation/native";
@@ -44,6 +45,7 @@ const Home = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [showOptions, setShowOptions] = useState(false);
   const [ref, setRef] = useState(false);
+  const [backPressCount, setBackPressCount] = useState(0);
   const [filterOptions, setFilterOptions] = useState([
     { label: "Tiêu đề", value: "title" },
     { label: "Mức lương", value: "salary" },
@@ -100,6 +102,30 @@ const Home = () => {
   useEffect(() => {
     fetchData();
   }, []);
+
+  useEffect(() => {
+    const backAction = () => {
+      if (backPressCount === 0) {
+        setBackPressCount(1);
+        ToastAndroid.show("Chạm lần nữa để thoát", ToastAndroid.SHORT);
+        setTimeout(() => {
+          setBackPressCount(0);
+        }, 2000);
+
+        return true;
+      } else {
+        BackHandler.exitApp();
+        return true;
+      }
+    };
+
+    const backHandler = BackHandler.addEventListener(
+      "hardwareBackPress",
+      backAction
+    );
+
+    return () => backHandler.remove();
+  }, [backPressCount]);
 
   const fetchData = async () => {
     try {
@@ -198,7 +224,7 @@ const Home = () => {
     <SafeAreaView style={styles.container}>
       <View style={styles.header}>
         <View style={styles.headerText}>
-          <Text style={styles.title}>Good morning</Text>
+          <Text style={styles.title}>Welcome Beejobs</Text>
           <Text style={styles.company}>{user && userData.worker_name ? userData.worker_name : "Chào mừng bạn đến với Beejobs!"}</Text>
           {!user &&
             <TouchableOpacity

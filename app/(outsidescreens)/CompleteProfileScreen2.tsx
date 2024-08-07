@@ -343,7 +343,7 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   section: {
-    marginBottom: 20,
+    marginBottom: 0,
   },
   inputContainer: {
     flexDirection: "row",

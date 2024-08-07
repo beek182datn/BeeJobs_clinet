@@ -8,7 +8,8 @@ import {
   ScrollView,
   Image,
   SafeAreaView,
-  BackHandler
+  BackHandler,
+  ToastAndroid
 } from "react-native";
 import Icon from "react-native-vector-icons/FontAwesome";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
@@ -55,7 +56,7 @@ const CompleteProfileScreen1: React.FC = () => {
   //console.log(user_id);
   const [errors, setErrors] = useState({
     worker_name: "",
-    worker_avatar: "",
+    
     email: "",
     phone: "",
     major: "",
@@ -96,7 +97,7 @@ const CompleteProfileScreen1: React.FC = () => {
     // sau khi hoàn thành thì cho vào màn Home
     const newErrors = {
       worker_name: worker_name ? "" : "Tên không được để trống",
-      worker_avatar: worker_avatar ? "" : "Ảnh đại diện không được bỏ trống",
+      //worker_avatar: worker_avatar ? "" : "Ảnh đại diện không được bỏ trống",
       email: email ? "" : "Địa chỉ Gmail không được để trống",
       phone: phone ? "" : "Số điện thoại không được để trống",
       major: major ? "" : "Ngành không được để trống",
@@ -152,7 +153,8 @@ const CompleteProfileScreen1: React.FC = () => {
 
         router.push("/Profile");
       } else {
-        console.error("Failed to upload image, registration aborted.");
+        ToastAndroid.show("Ảnh chưa được chọn", ToastAndroid.SHORT);
+        console.log("Ảnh chưa được chọn.");
       }
     } catch (error) {
       console.error("Lỗi đăng ký:", error);
@@ -236,6 +238,7 @@ const CompleteProfileScreen1: React.FC = () => {
         </View>
 
         <Text style={styles.sectionHeader}>Số điện thoại</Text>
+        
         <View style={styles.section}>
           <View style={styles.inputContainer}>
             <Icon name="phone" size={20} color="#A9A9A9" style={styles.icon} />
@@ -339,7 +342,7 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   section: {
-    marginBottom: 20,
+    marginBottom: 0,
   },
   inputContainer: {
     flexDirection: "row",

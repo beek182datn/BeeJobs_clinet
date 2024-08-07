@@ -118,6 +118,30 @@ const Profile: React.FC = () => {
     fetchDataApplide();
   }, [router]);
 
+
+  const fetchUserInfo = async () => {
+    try {
+      // const emailValue = await AsyncStorage.getItem('userProfile');
+      // console.log(emailValue)
+      const user: User | null = await getUserInfo();
+      setUser(user);
+      if (user) {
+        const worker = await findWorkerById(user.id_user);
+        //console.log(user.id_user);
+        setWorker(worker);
+        try {
+          const jobsFollowed = await getFollowedJobs(user.id_user);
+          setJobs(jobsFollowed);
+          // console.log('long: ', JSON.stringify(jobsFollowed))
+        } catch (error) {
+          console.log(error);
+        }
+      }
+    } catch (error) {
+      console.error("Error fetching user info:", error);
+    }
+  };
+
   const fetchDataApplide = async () => {
     try {
       const user: User | null = await getUserInfo();
@@ -225,6 +249,7 @@ const Profile: React.FC = () => {
     React.useCallback(() => {
       fetchData();
       fetchDataApplide();
+      fetchUserInfo();
     }, [])
   );
 
@@ -301,23 +326,23 @@ const Profile: React.FC = () => {
           </View>
           <View style={styles.section}>
             <Text style={styles.accountSettingsTitle}>Thông tin dịch vụ</Text>
-            <TouchableOpacity style={styles.utilityItem}>
+            <TouchableOpacity style={styles.utilityItem} onPress={() => { router.push('/CompanyIntroduction') }}>
               <Ionicons name="business" size={30} color="#0099CC" />
               <Text style={styles.utilityText}>Về BeeJobs</Text>
             </TouchableOpacity>
             <TouchableOpacity
               style={styles.utilityItem}
-
+              onPress={() => { router.push('/TermsOfService') }}
             >
               <Ionicons name="document-text" size={30} color="#0099CC" />
               <Text style={styles.utilityText}>Điều khoản dịch vụ</Text>
             </TouchableOpacity>
 
-            <TouchableOpacity style={styles.utilityItem}>
+            <TouchableOpacity style={styles.utilityItem} onPress={() => { router.push('/PrivacyPolicy') }}>
               <Ionicons name="document-lock" size={30} color="#0099CC" />
               <Text style={styles.utilityText}>Chính sách bảo mật</Text>
             </TouchableOpacity>
-            <TouchableOpacity style={styles.utilityItem}>
+            <TouchableOpacity style={styles.utilityItem} onPress={() => { router.push('/HelpCenter') }}>
               <Ionicons name="call-outline" size={30} color="#0099CC" />
               <Text style={styles.utilityText}>Trợ giúp</Text>
             </TouchableOpacity>
@@ -410,23 +435,23 @@ const Profile: React.FC = () => {
 
           <View style={styles.section}>
             <Text style={styles.accountSettingsTitle}>Thông tin dịch vụ</Text>
-            <TouchableOpacity style={styles.utilityItem}>
+            <TouchableOpacity style={styles.utilityItem} onPress={() => { router.push('/CompanyIntroduction') }}>
               <Ionicons name="business" size={30} color="#0099CC" />
               <Text style={styles.utilityText}>Về BeeJobs</Text>
             </TouchableOpacity>
             <TouchableOpacity
               style={styles.utilityItem}
-
+              onPress={() => { router.push('/TermsOfService') }}
             >
               <Ionicons name="document-text" size={30} color="#0099CC" />
               <Text style={styles.utilityText}>Điều khoản dịch vụ</Text>
             </TouchableOpacity>
 
-            <TouchableOpacity style={styles.utilityItem}>
+            <TouchableOpacity style={styles.utilityItem} onPress={() => { router.push('/PrivacyPolicy') }}>
               <Ionicons name="document-lock" size={30} color="#0099CC" />
               <Text style={styles.utilityText}>Chính sách bảo mật</Text>
             </TouchableOpacity>
-            <TouchableOpacity style={styles.utilityItem}>
+            <TouchableOpacity style={styles.utilityItem} onPress={() => { router.push('/HelpCenter') }}>
               <Ionicons name="call-outline" size={30} color="#0099CC" />
               <Text style={styles.utilityText}>Trợ giúp</Text>
             </TouchableOpacity>
@@ -492,23 +517,23 @@ const Profile: React.FC = () => {
           </View>
           <View style={styles.section}>
             <Text style={styles.accountSettingsTitle}>Thông tin dịch vụ</Text>
-            <TouchableOpacity style={styles.utilityItem}>
+            <TouchableOpacity style={styles.utilityItem} onPress={() => { router.push('/CompanyIntroduction') }}>
               <Ionicons name="business" size={30} color="#0099CC" />
               <Text style={styles.utilityText}>Về BeeJobs</Text>
             </TouchableOpacity>
             <TouchableOpacity
               style={styles.utilityItem}
-
+              onPress={() => { router.push('/TermsOfService') }}
             >
               <Ionicons name="document-text" size={30} color="#0099CC" />
               <Text style={styles.utilityText}>Điều khoản dịch vụ</Text>
             </TouchableOpacity>
 
-            <TouchableOpacity style={styles.utilityItem}>
+            <TouchableOpacity style={styles.utilityItem} onPress={() => { router.push('/PrivacyPolicy') }}>
               <Ionicons name="document-lock" size={30} color="#0099CC" />
               <Text style={styles.utilityText}>Chính sách bảo mật</Text>
             </TouchableOpacity>
-            <TouchableOpacity style={styles.utilityItem}>
+            <TouchableOpacity style={styles.utilityItem} onPress={() => { router.push('/HelpCenter') }}>
               <Ionicons name="call-outline" size={30} color="#0099CC" />
               <Text style={styles.utilityText}>Trợ giúp</Text>
             </TouchableOpacity>
