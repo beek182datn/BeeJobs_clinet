@@ -1,7 +1,12 @@
 import React from 'react';
-import { StyleSheet, Text, View, ScrollView } from 'react-native';
+import { StyleSheet, Text, View, ScrollView, Linking } from 'react-native';
 
 export default function HelpCenter() {
+  // Hàm mở liên kết web
+  const openLink = (url) => {
+    Linking.openURL(url).catch((err) => console.error('Không thể mở liên kết:', err));
+  };
+
   return (
     <ScrollView contentContainerStyle={styles.container}>
       <Text style={styles.title}>Trung tâm Trợ giúp BeeJobs</Text>
@@ -26,7 +31,7 @@ export default function HelpCenter() {
         <Text style={styles.sectionTitle}>Liên hệ hỗ trợ</Text>
         <Text style={styles.sectionContent}>
           Nếu bạn có thắc mắc hoặc cần hỗ trợ từ chúng tôi, vui lòng liên hệ qua email: {' '}
-          <Text style={styles.link} onPress={() => Linking.openURL('beek182.datn@gmail.com')}>beek182.datn@gmail.com</Text>
+          <Text style={styles.link} onPress={() => openLink('beek182.datn@gmail.com')}>beek182.datn@gmail.com</Text>
         </Text>
       </View>
     </ScrollView>
