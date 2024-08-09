@@ -204,7 +204,7 @@ const JobDetail = () => {
 
   const hanldeLoadCv = async () => {
     if (cvUri) {
-      router.push({ pathname: 'ViewPdf', params: cvUri as any });
+      router.push({ pathname: "ViewCV", params: { cvUrl: cvUri } });
     }
     // try {
     //   const fileInfo = await FileSystem.getInfoAsync(cvUri);
