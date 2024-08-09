@@ -85,16 +85,29 @@ const JobDetail = () => {
 
   // xử lý ứng tuyển
   const handleModalApply = () => {
-    if (!worker) {
+    if (!worker && user) {
       Alert.alert(
         "Thông báo",
-        "Bạn cần hoàn thiện hồ sơ cá nhân!",
-        [{ text: "OK" }],
+        "Bạn cần cập nhật thông tin cá nhân!",
+        [{
+          text: "OK"
+        }],
         { cancelable: true }
       );
       return
     }
+    if (!worker && !user) {
+      Alert.alert(
+        "Thông báo",
+        "Bạn cần đang nhập!",
+        [{
+          text: "OK", onPress: () => { router.push('/LoginScreen') }
 
+        }],
+        { cancelable: true }
+      );
+      return
+    }
 
     setShowModal(true);
   };
@@ -190,8 +203,8 @@ const JobDetail = () => {
   }
 
   const hanldeLoadCv = async () => {
-    if(cvUri){
-      router.push({pathname:'ViewPdf', params: cvUri as any});
+    if (cvUri) {
+      router.push({ pathname: 'ViewPdf', params: cvUri as any });
     }
     // try {
     //   const fileInfo = await FileSystem.getInfoAsync(cvUri);
