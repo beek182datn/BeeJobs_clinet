@@ -235,7 +235,7 @@ const JobDetail = () => {
 
         <View style={styles.topView}>
           <TouchableOpacity onPress={handleDetailCompany}>
-            <Image source={job.company_logo != '' ? { uri: linkVps + job.company_logo } : require('../../assets/images/profile.png')} style={styles.companyLogo} />
+            <Image source={companyInfo?.company_logo != '' ? { uri: linkVps + companyInfo?.company_logo } : require('../../assets/images/profile.png')} style={styles.companyLogo} />
           </TouchableOpacity>
 
           <TouchableOpacity onPress={() => { console.log(JSON.stringify(companyInfo)) }}>
