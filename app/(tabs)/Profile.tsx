@@ -19,7 +19,7 @@ import * as DocumentPicker from "expo-document-picker";
 import Modal from "react-native-modal";
 import { Picker } from "@react-native-picker/picker";
 import { Company, User, Worker, AppliedJob, Job } from "../../components/Model/Model";
-import { getUserInfo, findWorkerById, getAppliedJobsByWorker, getFollowedJobs } from "@/components/fetch_data/api";
+import { getUserInfo, findWorkerById, getAllAppliedJobs, getFollowedJobs } from "@/components/fetch_data/api";
 import * as ImagePicker from "expo-image-picker";
 import axios, { AxiosResponse } from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -148,7 +148,7 @@ const Profile: React.FC = () => {
       setUser(user);
 
       if (user) {
-        var jobsLastWeek = await getAppliedJobsByWorker(user.id_user);
+        var jobsLastWeek = await getAllAppliedJobs(user.id_user);
         setAppliedJobs(jobsLastWeek);
         // console.log(JSON.stringify(jobsLastWeek))
       }

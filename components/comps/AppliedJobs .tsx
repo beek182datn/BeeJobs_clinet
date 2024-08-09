@@ -36,11 +36,11 @@ const AppliedJobs = () => {
           <Pressable onPress={() => {
             router.push({
               pathname: 'JobDetail',
-              params: item.job
+              params: item.job_id
             })
           }}>
             <View style={styles.jobItem}>
-              <Text>Job name: {item.job.title}</Text>
+              <Text>Job name: {item.job_id.title}</Text>
               <Text>Trạng thái: {item.status}</Text>
               <Text>Ứng tuyển vào: {JSON.stringify(item.applied_at)}</Text>
               <Text>CV: {JSON.stringify(item.cv)}</Text>
