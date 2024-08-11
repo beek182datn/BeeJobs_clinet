@@ -8,7 +8,8 @@ import {
   ScrollView,
   Image,
   SafeAreaView,
-  BackHandler
+  BackHandler,
+  ToastAndroid
 } from "react-native";
 import Icon from "react-native-vector-icons/FontAwesome";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
@@ -17,6 +18,7 @@ import * as DocumentPicker from "expo-document-picker";
 import axios, { AxiosResponse } from "axios";
 import * as ImagePicker from "expo-image-picker";
 import { Ionicons } from "@expo/vector-icons";
+import { Picker } from "@react-native-picker/picker";
 type SetterFunction = (uri: string) => void;
 
 const pickImage = async (setter: SetterFunction) => {
@@ -49,14 +51,17 @@ const CompleteProfileScreen1: React.FC = () => {
   const [major, setMajor] = useState("");
   const [experience, setExperience] = useState("");
   const [address, setAddress] = useState("");
+  const [pickerVisible, setPickerVisible] = useState(false);
+
   //console.log(user_id);
   const [errors, setErrors] = useState({
     worker_name: "",
-    worker_avatar: "",
+    
     email: "",
     phone: "",
     major: "",
-    experience: ""
+    experience: "",
+    address: ""
   });
   const backAction = () => {
     router.back();
@@ -92,11 +97,12 @@ const CompleteProfileScreen1: React.FC = () => {
     // sau khi hoàn thành thì cho vào màn Home
     const newErrors = {
       worker_name: worker_name ? "" : "Tên không được để trống",
-      worker_avatar: worker_avatar ? "" : "Ảnh đại diện không được bỏ trống",
+      //worker_avatar: worker_avatar ? "" : "Ảnh đại diện không được bỏ trống",
       email: email ? "" : "Địa chỉ Gmail không được để trống",
       phone: phone ? "" : "Số điện thoại không được để trống",
       major: major ? "" : "Ngành không được để trống",
       experience: experience ? "" : "Kinh nghiệm không được để trống",
+      address: address ? "" : "Địa chỉ không được để trống",
     };
 
     setErrors(newErrors);
@@ -108,6 +114,7 @@ const CompleteProfileScreen1: React.FC = () => {
 
   const handleRegister = async (): Promise<void> => {
     handleContinue();
+
     try {
       const avatarUrl = worker_avatar;
       if (avatarUrl) {
@@ -118,6 +125,7 @@ const CompleteProfileScreen1: React.FC = () => {
         formData.append("phone", phone);
         formData.append("major", major);
         formData.append("experience", experience);
+        formData.append("address", address);
         if (worker_avatar) {
           try {
             const response = await fetch(worker_avatar);
@@ -145,7 +153,8 @@ const CompleteProfileScreen1: React.FC = () => {
 
         router.push("/Profile");
       } else {
-        console.error("Failed to upload image, registration aborted.");
+        ToastAndroid.show("Ảnh chưa được chọn", ToastAndroid.SHORT);
+        console.log("Ảnh chưa được chọn.");
       }
     } catch (error) {
       console.error("Lỗi đăng ký:", error);
@@ -153,15 +162,15 @@ const CompleteProfileScreen1: React.FC = () => {
   };
 
   return (
-    <SafeAreaView style={styles.container}>
-      <ScrollView>
+    <SafeAreaView style={styles.safeArea}>
+      <ScrollView contentContainerStyle={styles.container}>
         <View style={styles.headerContainer}>
-        <TouchableOpacity
-          onPress={backAction}
-          style={{ backgroundColor: "#2196F3", borderRadius: 30, padding: 5 }}
-        >
-          <Ionicons name="arrow-back" size={22} color="black" />
-        </TouchableOpacity>
+          <TouchableOpacity
+            onPress={backAction}
+            style={{ backgroundColor: "#2196F3", borderRadius: 30, padding: 5 }}
+          >
+            <Ionicons name="arrow-back" size={22} color="black" />
+          </TouchableOpacity>
           <Text style={styles.header}>Thiết lập hồ sơ của bạn</Text>
         </View>
         <View style={styles.progressBar}>
@@ -215,7 +224,21 @@ const CompleteProfileScreen1: React.FC = () => {
           ) : null}
         </View>
 
+        <Text style={styles.sectionHeader}>Địa chỉ</Text>
+        <View style={styles.section}>
+          <View style={styles.inputContainer}>
+            <Icon name="home" size={20} color="#A9A9A9" style={styles.icon} />
+            <TextInput
+              style={styles.input}
+              placeholder="Địa chỉ"
+              value={String(address)}
+              onChangeText={setAddress}
+            />
+          </View>
+        </View>
+
         <Text style={styles.sectionHeader}>Số điện thoại</Text>
+        
         <View style={styles.section}>
           <View style={styles.inputContainer}>
             <Icon name="phone" size={20} color="#A9A9A9" style={styles.icon} />
@@ -253,13 +276,23 @@ const CompleteProfileScreen1: React.FC = () => {
         <View style={styles.section}>
           <View style={styles.inputContainer}>
             <Icon name="star" size={20} color="#A9A9A9" style={styles.icon} />
-            <TextInput
+            <Picker
+              selectedValue={experience}
+              onValueChange={(itemValue) => {
+                setExperience(itemValue);
+                setPickerVisible(false); // Đóng picker sau khi chọn
+              }}
               style={styles.input}
-              placeholder="Kinh nghiệm"
-              // keyboardType="numeric"
-              value={experience}
-              onChangeText={setExperience}
-            />
+            >
+              <Picker.Item label="Sắp đi làm" value="Sắp đi làm" />
+              <Picker.Item label="Dưới 1 năm" value="Dưới 1 năm" />
+              <Picker.Item label="1 năm" value="1 năm" />
+              <Picker.Item label="2 năm" value="2 năm" />
+              <Picker.Item label="3 năm" value="3 năm" />
+              <Picker.Item label="4 năm" value="4 năm" />
+              <Picker.Item label="5 năm" value="5 năm" />
+              <Picker.Item label="Trên 5 năm" value="Trên 5 năm" />
+            </Picker>
           </View>
           {errors.experience ? (
             <Text style={styles.errorText}>{errors.experience}</Text>
@@ -275,10 +308,13 @@ const CompleteProfileScreen1: React.FC = () => {
 };
 
 const styles = StyleSheet.create({
-  container: {
+  safeArea: {
     flex: 1,
-    backgroundColor: "#fff",
+    backgroundColor: '#f5f5f5',
+  },
+  container: {
     padding: 20,
+    backgroundColor: '#f5f5f5',
   },
   headerContainer: {
     flexDirection: "row",
@@ -309,7 +345,7 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   section: {
-    marginBottom: 20,
+    marginBottom: 0,
   },
   inputContainer: {
     flexDirection: "row",

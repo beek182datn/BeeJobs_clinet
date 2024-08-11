@@ -32,6 +32,7 @@ export type Job = {
   form: string;
   number_of_recruitments: string;
   deadline: string;
+  working_time: string;
   __v: number;
 };
 
@@ -86,16 +87,18 @@ export interface AppliedJobsResponse {
 }
 export interface AppliedJob {
   _id: string;
-  job_id: string;
-  worker_id: string;
+  job_id: Job;
+  worker_id: Worker;
   cv: string;
   status: string;
-  fullname: string;
+  // fullname: string;
   phone_number: string;
   intro_letter: string;
   applied_at: Date;
+  // company_name: string;
+  company: Company;
   __v: number;
-  job: Job
+  // job: Job
 }
 
 // check applied
@@ -119,6 +122,7 @@ export type Worker = {
   email: string;
   major: string;
   experience: string;
+  address: string;
   __v: number;
 }
 

@@ -1,4 +1,4 @@
-import { FlatList, SafeAreaView, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
+import { FlatList, SafeAreaView, StyleSheet, Text, TouchableOpacity,BackHandler, View } from 'react-native'
 import React, { useEffect, useState } from 'react'
 import { Job, User } from '@/components/Model/Model';
 import { getFollowedJobs, getUserInfo } from '@/components/fetch_data/api';

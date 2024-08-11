@@ -14,7 +14,7 @@ import React, { useEffect, useState } from "react";
 import { AppliedJob, User } from "../Model/Model";
 import { router } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
-import { getAppliedJobsByWorker, getUserInfo } from "../fetch_data/api";
+import { getAllAppliedJobs, getUserInfo } from "../fetch_data/api";
 
 const AllAppliedJobs = () => {
   const [ref, setRef] = useState(false);
@@ -34,7 +34,7 @@ const AllAppliedJobs = () => {
         setUser(user);
 
         if (user) {
-          var jobsLastWeek = await getAppliedJobsByWorker(user.id_user);
+          var jobsLastWeek = await getAllAppliedJobs(user.id_user);
           setAppliedJobs(jobsLastWeek);
           // console.log(JSON.stringify(jobsLastWeek));
         }
@@ -91,7 +91,7 @@ const AllAppliedJobs = () => {
                 onPress={() => {
                   router.push({
                     pathname: "JobDetail",
-                    params: item.job,
+                    params: item.job_id,
                   });
                 }}
               >
@@ -99,16 +99,16 @@ const AllAppliedJobs = () => {
                   <View style={styles.topView}>
                     <Image
                       source={
-                        item.job.company_logo != ""
-                          ? { uri: linkVps + item.job.company_logo }
+                        item.company.company_logo != ""
+                          ? { uri: linkVps + item.company.company_logo }
                           : require("../../assets/images/profile.png")
                       }
                       style={styles.companyLogo}
                     />
                     <View>
-                      <Text style={styles.jobTitle}>{item.job.title}</Text>
+                      <Text style={styles.jobTitle}>{item.job_id.title}</Text>
                       <Text style={styles.companyName}>
-                        {item.job.company_name}
+                        {item.company.company_name}
                       </Text>
                     </View>
                   </View>
@@ -133,7 +133,7 @@ const AllAppliedJobs = () => {
                             { width: "70%", flexWrap: "wrap" },
                           ]}
                         >
-                          {item.job.location}
+                          {item.job_id.location}
                         </Text>
                       </View>
                       <View style={{ flexDirection: "row" }}>
@@ -143,13 +143,13 @@ const AllAppliedJobs = () => {
                           color={"blue"}
                           style={{ marginRight: 3 }}
                         />
-                        <Text style={styles.text}>{item.job.salary}</Text>
+                        <Text style={styles.text}>{item.job_id.salary}</Text>
                       </View>
                     </View>
                     <View style={{flex: 1}}>
                       <View style={{ flexDirection: 'row' }}>
                         <Ionicons name='time' size={14} color={'blue'} style={{ marginRight: 3 }} />
-                        <Text style={styles.text}>{formatDate(item.job.created_at)}</Text>
+                        <Text style={styles.text}>{formatDate(item.job_id.created_at)}</Text>
                       </View>
                       <View style={{ flexDirection: 'row', backgroundColor: '#0099CC', padding: 5, alignContent: 'center', justifyContent: 'center', borderRadius: 10 }}>
                         <Ionicons name='notifications' size={14} color={'white'} style={{ marginRight: 3, alignSelf: 'center' }} />
@@ -170,7 +170,7 @@ const AllAppliedJobs = () => {
                         if (user) {
                           router.push({
                             pathname: "(insidescreens)/ChatRoom",
-                            params: { ...item.job, userId: user.id_user },
+                            params: { ...item.job_id, userId: user.id_user },
                           });
                         }
                       }}
@@ -181,7 +181,7 @@ const AllAppliedJobs = () => {
                       style={styles.buttonRight}
                       onPress={async () => {
                         // await WebBrowser.openBrowserAsync(linkVps+item.cv);
-                        Linking.openURL(linkVps + item.cv);
+                        router.push({ pathname: "ViewCV", params: { cvUrl: linkVps + item.cv } });
                       }}
                     >
                       <Text style={styles.buttonText}>Xem Lại CV</Text>

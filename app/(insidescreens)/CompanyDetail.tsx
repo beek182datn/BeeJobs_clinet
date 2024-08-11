@@ -112,6 +112,17 @@ const CompanyDetail = () => {
                             onPress={() => {
                                 if (user && companyInfo) {
                                     router.push({ pathname: '(insidescreens)/ChatRoom', params: { company_id: companyInfo._id, userId: user.id_user } });
+                                } else {
+                                    Alert.alert(
+                                        "Thông báo",
+                                        "Bạn cần đăng nhập",
+                                        [{
+                                            text: "OK", onPress: () => {
+                                                router.push('/LoginScreen')
+                                            }
+                                        }],
+                                        { cancelable: true }
+                                    );
                                 }
                             }}>
                             <Text style={[styles.followButtonText, { alignSelf: 'center' }]}>Nhắn tin</Text>

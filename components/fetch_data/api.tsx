@@ -399,7 +399,7 @@ export const getAppliedJobsByWorker = async (worker_id: string): Promise<Applied
 
     // Lấy danh sách các công việc đã ứng tuyển
     const appliedJobs = response.data.data;
-    if(!appliedJobs){
+    if (!appliedJobs) {
       console.log('Không có công việc nào')
       return [];
     }
@@ -407,13 +407,8 @@ export const getAppliedJobsByWorker = async (worker_id: string): Promise<Applied
     // Lấy thông tin job và công ty cho từng đơn ứng tuyển
     const updatedAppliedJobs = await Promise.all(
       appliedJobs.map(async (job) => {
-        const jobResponse: AxiosResponse<JobsResponseSingle> = await axios.get(
-          `http://beejobs.io.vn:14307/api/jobs/getJobById/${job.job_id}`
-        );
-        const jobData = jobResponse.data.data;
-
         const companyResponse: AxiosResponse<CompanyRespone> = await axios.get(
-          `http://beejobs.io.vn:14307/api/companies/getCompanyById/${jobData.company_id}`
+          `http://beejobs.io.vn:14307/api/companies/getCompanyById/${job.job_id.company_id}`
         );
         // const response: AxiosResponse<CompanyRespone> = await axios.get(
         //   `http://beejobs.io.vn:14307/api/companies/getCompanyById/${keyword}`
@@ -422,11 +417,10 @@ export const getAppliedJobsByWorker = async (worker_id: string): Promise<Applied
 
         return {
           ...job,
-          job: {
-            ...jobData,
-            company_name: companyResponse.data.data.company_name,
-          },
+          // company_name: companyResponse.data.data.company_name,
+          company: companyResponse.data.data
         };
+
       })
     );
 
@@ -572,21 +566,14 @@ export const getAppliedJobsLastWeek = async (worker_id: string): Promise<Applied
     // Lấy thông tin job và công ty cho từng đơn ứng tuyển
     const updatedAppliedJobs = await Promise.all(
       appliedJobs.map(async (job) => {
-        const jobResponse: AxiosResponse<JobsResponseSingle> = await axios.get(
-          `http://beejobs.io.vn:14307/api/jobs/getJobById/${job.job_id}`
-        );
-        const jobData = jobResponse.data.data;
-
         const companyResponse: AxiosResponse<CompanyRespone> = await axios.get(
-          `http://beejobs.io.vn:14307/api/companies/getCompanyById/${jobData.company_id}`
+          `http://beejobs.io.vn:14307/api/companies/getCompanyById/${String(job.job_id.company_id)}`
         );
 
         return {
           ...job,
-          job: {
-            ...jobData,
-            company_name: companyResponse.data.data.company_name,
-          },
+          // company_name: companyResponse.data.data.company_name,
+          company: companyResponse.data.data
         };
       })
     );
@@ -615,21 +602,52 @@ export const getAppliedJobsLast30days = async (worker_id: string): Promise<Appli
     // Lấy thông tin job và công ty cho từng đơn ứng tuyển
     const updatedAppliedJobs = await Promise.all(
       appliedJobs.map(async (job) => {
-        const jobResponse: AxiosResponse<JobsResponseSingle> = await axios.get(
-          `http://beejobs.io.vn:14307/api/jobs/getJobById/${job.job_id}`
-        );
-        const jobData = jobResponse.data.data;
-
         const companyResponse: AxiosResponse<CompanyRespone> = await axios.get(
-          `http://beejobs.io.vn:14307/api/companies/getCompanyById/${jobData.company_id}`
+          `http://beejobs.io.vn:14307/api/companies/getCompanyById/${String(job.job_id.company_id)}`
         );
 
         return {
           ...job,
-          job: {
-            ...jobData,
-            company_name: companyResponse.data.data.company_name,
-          },
+          // company_name: companyResponse.data.data.company_name,
+          company: companyResponse.data.data
+        };
+      })
+    );
+
+    return updatedAppliedJobs;
+  } catch (error) {
+    if (axios.isAxiosError(error) && error.response) {
+      console.log('Error fetching applied jobs:', error.response.data);
+      throw new Error(`Error fetching applied jobs: ${error.response.data.message}`);
+    } else {
+      console.log('Error fetching applied jobs:', error);
+      throw new Error('An unexpected error occurred while fetching applied jobs.');
+    }
+  }
+};
+
+export const getAllAppliedJobs = async (worker_id: string): Promise<AppliedJob[]> => {
+  try {
+    const response: AxiosResponse<AppliedJobRespone> = await axios.get(
+      `http://beejobs.io.vn:14307/api/appliedjobs/${worker_id}`
+    );
+
+    // Lấy danh sách các công việc đã ứng tuyển
+    const appliedJobs = response.data.allAppliedjobs;
+
+    // Lấy thông tin job và công ty cho từng đơn ứng tuyển
+    const updatedAppliedJobs = await Promise.all(
+      appliedJobs.map(async (job) => {
+        console.log(JSON.stringify(job.job_id.company_id))
+
+        const companyResponse: AxiosResponse<CompanyRespone> = await axios.get(
+          `http://beejobs.io.vn:14307/api/companies/getCompanyById/${String(job.job_id.company_id)}`
+        );
+
+        return {
+          ...job,
+          // company_name: companyResponse.data.data.company_name,
+          company: companyResponse.data.data
         };
       })
     );
@@ -699,7 +717,7 @@ export const unFollowJob = async (userId: string, jobId: string) => {
 //     const response = await axios.get(
 //       `http://beejobs.io.vn:14307/api/findjobs/${userId}`
 //     );
-   
+
 //   } catch (error) {
 //     console.log(error);
 //   }

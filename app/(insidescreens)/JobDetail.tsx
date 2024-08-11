@@ -85,16 +85,29 @@ const JobDetail = () => {
 
   // xử lý ứng tuyển
   const handleModalApply = () => {
-    if (!worker) {
+    if (!worker && user) {
       Alert.alert(
         "Thông báo",
-        "Bạn cần hoàn thiện hồ sơ cá nhân!",
-        [{ text: "OK" }],
+        "Bạn cần cập nhật thông tin cá nhân!",
+        [{
+          text: "OK"
+        }],
         { cancelable: true }
       );
       return
     }
+    if (!worker && !user) {
+      Alert.alert(
+        "Thông báo",
+        "Bạn cần đang nhập!",
+        [{
+          text: "OK", onPress: () => { router.push('/LoginScreen') }
 
+        }],
+        { cancelable: true }
+      );
+      return
+    }
 
     setShowModal(true);
   };
@@ -190,8 +203,8 @@ const JobDetail = () => {
   }
 
   const hanldeLoadCv = async () => {
-    if(cvUri){
-      router.push({pathname:'ViewPdf', params: cvUri as any});
+    if (cvUri) {
+      router.push({ pathname: "ViewCV", params: { cvUrl: cvUri } });
     }
     // try {
     //   const fileInfo = await FileSystem.getInfoAsync(cvUri);
@@ -222,7 +235,7 @@ const JobDetail = () => {
 
         <View style={styles.topView}>
           <TouchableOpacity onPress={handleDetailCompany}>
-            <Image source={job.company_logo != '' ? { uri: linkVps + job.company_logo } : require('../../assets/images/profile.png')} style={styles.companyLogo} />
+            <Image source={companyInfo?.company_logo != '' ? { uri: linkVps + companyInfo?.company_logo } : require('../../assets/images/profile.png')} style={styles.companyLogo} />
           </TouchableOpacity>
 
           <TouchableOpacity onPress={() => { console.log(JSON.stringify(companyInfo)) }}>
