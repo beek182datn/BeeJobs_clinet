@@ -3,7 +3,7 @@ import React, { useEffect, useState } from "react";
 import { TabBarIcon } from "@/components/navigation/TabBarIcon";
 import { Colors } from "@/constants/Colors";
 import { useColorScheme } from "@/hooks/useColorScheme";
-
+import {registerForPushNotificationsAsync} from "@/scripts/notificationService"
 export default () => {
   const colorScheme = useColorScheme();
   return (
