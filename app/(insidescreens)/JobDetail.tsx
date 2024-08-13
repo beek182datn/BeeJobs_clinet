@@ -440,8 +440,9 @@ const styles = StyleSheet.create({
   },
   topView: {
     width: '100%',
+    marginTop: 10,
     backgroundColor: 'white',
-    borderRadius: 10,
+    borderRadius: 5,
     shadowColor: '#000',
     shadowOffset: {
       width: 0,
@@ -450,7 +451,7 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.25,
     shadowRadius: 3.84,
     elevation: 5,
-    padding: 10,
+    padding: 5,
   },
   headerContainer: {
     flexDirection: 'row',
@@ -606,6 +607,7 @@ const styles = StyleSheet.create({
     fontSize: 16
   },
   body: {
+    marginTop: 10,
     flex: 1,
     width: '100%',
     height: 800,
@@ -614,12 +616,11 @@ const styles = StyleSheet.create({
     margin: 10,
     width: 'auto',
     padding: 10,
-    // backgroundColor: 'yellow',
+   // backgroundColor: 'yellow',
     borderRadius: 10,
     borderColor: 'blue',
     borderWidth: 1,
     shadowColor: '#000',
-
     shadowOpacity: 0.25,
     shadowRadius: 3.84,
     elevation: 5,
