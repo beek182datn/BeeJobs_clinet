@@ -122,10 +122,12 @@ const CompleteProfileScreen2: React.FC = () => {
 
     try {
       const avatarUrl = worker_avatar;
-      if (avatarUrl) {
+      if (avatarUrl && worker_name && phone && major && experience !== "" && address) {
         const formData = new FormData();
         formData.append('worker_name', String(worker_name));
-        //formData.append('worker_avatar', worker_avatars as any);
+        // if (worker_avatar !== workerinfo.worker_avatar) {
+        //   formData.append('worker_avatar', avatarUrl);
+        // }
         formData.append('email', String(email));  // Replace with actual email
         formData.append('phone', String(phone));
         formData.append('major', String(major));
@@ -155,8 +157,6 @@ const CompleteProfileScreen2: React.FC = () => {
 
         }
 
-      } else {
-        console.error('Failed to upload image, registration aborted.');
       }
     } catch (error) {
       console.error('Lỗi đăng ký:', error);
@@ -192,6 +192,9 @@ const CompleteProfileScreen2: React.FC = () => {
               style={styles.avatar}
             />
           </TouchableOpacity>
+          {errors.worker_avatar ? (
+            <Text style={styles.errorText}>{errors.worker_avatar}</Text>
+          ) : null}
         </View>
         <View style={styles.section}>
           <View style={styles.inputContainer}>
@@ -238,6 +241,9 @@ const CompleteProfileScreen2: React.FC = () => {
               onChangeText={setAddress}
             />
           </View>
+          {errors.address ? (
+            <Text style={styles.errorText}>{errors.address}</Text>
+          ) : null}
         </View>
 
         <Text style={styles.sectionHeader}>Số điện thoại</Text>
@@ -284,6 +290,7 @@ const CompleteProfileScreen2: React.FC = () => {
               }}
               style={styles.input}
             >
+              <Picker.Item label="-Kinh nghiệm-" value="" />
               <Picker.Item label="Sắp đi làm" value="Sắp đi làm" />
               <Picker.Item label="Dưới 1 năm" value="Dưới 1 năm" />
               <Picker.Item label="1 năm" value="1 năm" />
