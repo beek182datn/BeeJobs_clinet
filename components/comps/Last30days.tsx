@@ -114,7 +114,8 @@ const Last30days = () => {
                     </TouchableOpacity>
                     <TouchableOpacity style={styles.buttonRight} onPress={async () => {
                       // await WebBrowser.openBrowserAsync(linkVps+item.cv);
-                      Linking.openURL(linkVps + item.cv);
+                      router.push({ pathname: "ViewCV", params: { cvUrl: linkVps + item.cv } });
+                      //Linking.openURL(linkVps + item.cv);
                     }}>
                       <Text style={styles.buttonText}>Xem Lại CV</Text>
                     </TouchableOpacity>

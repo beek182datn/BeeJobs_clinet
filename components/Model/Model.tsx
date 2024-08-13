@@ -171,3 +171,8 @@ export interface NotificationResponse {
   page: number;
   totalPages: number;
 }
+
+export interface NotificationPushModel {
+  title: string;
+  message: string;
+}

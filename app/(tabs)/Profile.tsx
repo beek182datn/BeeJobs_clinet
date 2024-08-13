@@ -18,20 +18,23 @@ import { useRouter } from "expo-router";
 import * as DocumentPicker from "expo-document-picker";
 import Modal from "react-native-modal";
 import { Picker } from "@react-native-picker/picker";
+
+
 import { Company, User, Worker, AppliedJob, Job } from "../../components/Model/Model";
 import { getUserInfo, findWorkerById, getAllAppliedJobs, getFollowedJobs } from "@/components/fetch_data/api";
+
 import * as ImagePicker from "expo-image-picker";
 import axios, { AxiosResponse } from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { useFocusEffect } from '@react-navigation/native';
+import { useFocusEffect } from "@react-navigation/native";
 import JobDetail from "../(insidescreens)/JobDetail";
 
 type SetterFunction = (uri: string) => void;
 
 const pickImage = async (setter: SetterFunction) => {
   const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
-  if (status !== 'granted') {
-    alert('Permission to access media library is required!');
+  if (status !== "granted") {
+    alert("Permission to access media library is required!");
     return;
   }
 
@@ -57,67 +60,13 @@ const Profile: React.FC = () => {
   const [appliedJobs, setAppliedJobs] = useState<AppliedJob[]>([]);
   const [jobs, setJobs] = useState<Job[]>([]);
 
-
-  useFocusEffect(
-    React.useCallback(() => {
-      const fetchUserInfo = async () => {
-        try {
-          // const emailValue = await AsyncStorage.getItem('userProfile');
-          // console.log(emailValue)
-          const user: User | null = await getUserInfo();
-          setUser(user);
-          if (user) {
-            const worker = await findWorkerById(user.id_user);
-            //console.log(user.id_user);
-            setWorker(worker);
-            try {
-              const jobsFollowed = await getFollowedJobs(user.id_user);
-              setJobs(jobsFollowed);
-              // console.log('long: ', JSON.stringify(jobsFollowed.length))
-            } catch (error) {
-              console.log(error);
-            }
-          }
-        } catch (error) {
-          console.error("Error fetching user info:", error);
-        }
-      };
-
-      fetchUserInfo();
-      fetchData();
-      fetchDataApplide();
-    }, [])
-  );
-
   useEffect(() => {
-    const fetchUserInfo = async () => {
-      try {
-        // const emailValue = await AsyncStorage.getItem('userProfile');
-        // console.log(emailValue)
-        const user: User | null = await getUserInfo();
-        setUser(user);
-        if (user) {
-          const worker = await findWorkerById(user.id_user);
-          //console.log(user.id_user);
-          setWorker(worker);
-          try {
-            const jobsFollowed = await getFollowedJobs(user.id_user);
-            setJobs(jobsFollowed);
-            // console.log('long: ', JSON.stringify(jobsFollowed.length))
-          } catch (error) {
-            console.log(error);
-          }
-        }
-      } catch (error) {
-        console.error("Error fetching user info:", error);
-      }
-    };
-
     fetchUserInfo();
     fetchData();
     fetchDataApplide();
   }, [router]);
 
+  
 
   const fetchUserInfo = async () => {
     try {
@@ -132,7 +81,7 @@ const Profile: React.FC = () => {
         try {
           const jobsFollowed = await getFollowedJobs(user.id_user);
           setJobs(jobsFollowed);
-          // console.log('long: ', JSON.stringify(jobsFollowed))
+          // console.log('long: ', JSON.stringify(jobsFollowed.length))
         } catch (error) {
           console.log(error);
         }
@@ -142,13 +91,38 @@ const Profile: React.FC = () => {
     }
   };
 
+  // const fetchUserInfo = async () => {
+  //   try {
+  //     // const emailValue = await AsyncStorage.getItem('userProfile');
+  //     // console.log(emailValue)
+  //     const user: User | null = await getUserInfo();
+  //     setUser(user);
+  //     if (user) {
+  //       const worker = await findWorkerById(user.id_user);
+  //       //console.log(user.id_user);
+  //       setWorker(worker);
+  //       try {
+  //         const jobsFollowed = await getFollowedJobs(user.id_user);
+  //         setJobs(jobsFollowed);
+  //         // console.log('long: ', JSON.stringify(jobsFollowed))
+  //       } catch (error) {
+  //         console.log(error);
+  //       }
+  //     }
+  //   } catch (error) {
+  //     console.error("Error fetching user info:", error);
+  //   }
+  // };
+
   const fetchDataApplide = async () => {
     try {
       const user: User | null = await getUserInfo();
       setUser(user);
 
       if (user) {
+
         var jobsLastWeek = await getAllAppliedJobs(user.id_user);
+
         setAppliedJobs(jobsLastWeek);
         // console.log(JSON.stringify(jobsLastWeek))
       }
@@ -198,16 +172,15 @@ const Profile: React.FC = () => {
           text: "Đăng xuất",
           onPress: async () => {
             try {
-              await AsyncStorage.removeItem('user_info');
-              await AsyncStorage.removeItem('userProfile');
-              await AsyncStorage.removeItem('token');
-              await AsyncStorage.removeItem('userID');
+              await AsyncStorage.removeItem("user_info");
+              await AsyncStorage.removeItem("userProfile");
+              await AsyncStorage.removeItem("token");
+              await AsyncStorage.removeItem("userID");
               console.log(`Removed item with key: userId`);
               router.push("/LoginScreen");
             } catch (error) {
               console.error("Error removing item from AsyncStorage: ", error);
             }
-
           },
         },
       ],
@@ -236,9 +209,8 @@ const Profile: React.FC = () => {
   const goChangepasswd = () => {
     router.push({
       pathname: "ChangePassword",
-      params: { id_user: user?.id_user }
+      params: { id_user: user?.id_user },
     });
-
   };
 
   const showActionSheet = () => {
@@ -247,11 +219,42 @@ const Profile: React.FC = () => {
 
   useFocusEffect(
     React.useCallback(() => {
+      const fetchUserInfo = async () => {
+        try {
+          // const emailValue = await AsyncStorage.getItem('userProfile');
+          // console.log(emailValue)
+          const user: User | null = await getUserInfo();
+          setUser(user);
+          if (user) {
+            const worker = await findWorkerById(user.id_user);
+            //console.log(user.id_user);
+            setWorker(worker);
+            try {
+              const jobsFollowed = await getFollowedJobs(user.id_user);
+              setJobs(jobsFollowed);
+              // console.log('long: ', JSON.stringify(jobsFollowed.length))
+            } catch (error) {
+              console.log(error);
+            }
+          }
+        } catch (error) {
+          console.error("Error fetching user info:", error);
+        }
+      };
+
+      fetchUserInfo();
       fetchData();
       fetchDataApplide();
-      fetchUserInfo();
     }, [])
   );
+
+  // useFocusEffect(
+  //   React.useCallback(() => {
+  //     fetchData();
+  //     fetchDataApplide();
+  //     fetchUserInfo();
+  //   }, [])
+  // );
 
   const handleActionSheetPress = () => {
     DocumentPicker.getDocumentAsync({
@@ -285,7 +288,10 @@ const Profile: React.FC = () => {
             <View style={styles.infoContainer}>
               <Text style={styles.name}>Bạn chưa cập nhật hồ sơ</Text>
               <View style={styles.buttonContainer}>
-                <TouchableOpacity style={styles.upgradeButton} onPress={goCreate}>
+                <TouchableOpacity
+                  style={styles.upgradeButton}
+                  onPress={goCreate}
+                >
                   <Text style={styles.upgradeText}>Cập nhật</Text>
                 </TouchableOpacity>
               </View>
@@ -295,14 +301,22 @@ const Profile: React.FC = () => {
           <View style={styles.jobManagement}>
             <Text style={styles.managementTitle}>Quản lý tìm việc</Text>
             <View style={styles.row}>
-              <TouchableOpacity style={styles.managementBox} onPress={() => { router.push('(insidescreens)/AppliedJobByTime') }}>
+              <TouchableOpacity
+                style={styles.managementBox}
+                onPress={() => {
+                  router.push("(insidescreens)/AppliedJobByTime");
+                }}
+              >
                 <Ionicons name="briefcase" size={30} color="#0099CC" />
                 <Text style={styles.managementText}>Việc làm đã ứng tuyển</Text>
                 <Text style={styles.infoNumber}>{appliedJobs.length}</Text>
               </TouchableOpacity>
-              <TouchableOpacity style={styles.managementBox} onPress={() => {
-                router.push('(insidescreens)/JobsFollowed');
-              }}>
+              <TouchableOpacity
+                style={styles.managementBox}
+                onPress={() => {
+                  router.push("(insidescreens)/JobsFollowed");
+                }}
+              >
                 <Ionicons name="bookmark" size={30} color="#0099CC" />
                 <Text style={styles.managementText}>Việc làm đã lưu</Text>
                 <Text style={styles.infoNumber}>{jobs.length}</Text>
@@ -317,7 +331,12 @@ const Profile: React.FC = () => {
                 <Text style={styles.infoText}>NTD đã xem hồ sơ</Text>
                 <Text style={styles.infoNumber}>0</Text>
               </View>
-              <TouchableOpacity style={styles.infoBox} onPress={() => { router.push('/FollowCompany') }}>
+              <TouchableOpacity
+                style={styles.infoBox}
+                onPress={() => {
+                  router.push("/FollowCompany");
+                }}
+              >
                 <Ionicons name="business" size={30} color="#0099CC" />
                 <Text style={styles.infoText}>Công ty đang theo dõi</Text>
                 <Text style={styles.infoNumber}>{companyInfo.length}</Text>
@@ -326,23 +345,40 @@ const Profile: React.FC = () => {
           </View>
           <View style={styles.section}>
             <Text style={styles.accountSettingsTitle}>Thông tin dịch vụ</Text>
-            <TouchableOpacity style={styles.utilityItem} onPress={() => { router.push('/CompanyIntroduction') }}>
+            <TouchableOpacity
+              style={styles.utilityItem}
+              onPress={() => {
+                router.push("/CompanyIntroduction");
+              }}
+            >
               <Ionicons name="business" size={30} color="#0099CC" />
               <Text style={styles.utilityText}>Về BeeJobs</Text>
             </TouchableOpacity>
             <TouchableOpacity
               style={styles.utilityItem}
-              onPress={() => { router.push('/TermsOfService') }}
+              onPress={() => {
+                router.push("/TermsOfService");
+              }}
             >
               <Ionicons name="document-text" size={30} color="#0099CC" />
               <Text style={styles.utilityText}>Điều khoản dịch vụ</Text>
             </TouchableOpacity>
 
-            <TouchableOpacity style={styles.utilityItem} onPress={() => { router.push('/PrivacyPolicy') }}>
+            <TouchableOpacity
+              style={styles.utilityItem}
+              onPress={() => {
+                router.push("/PrivacyPolicy");
+              }}
+            >
               <Ionicons name="document-lock" size={30} color="#0099CC" />
               <Text style={styles.utilityText}>Chính sách bảo mật</Text>
             </TouchableOpacity>
-            <TouchableOpacity style={styles.utilityItem} onPress={() => { router.push('/HelpCenter') }}>
+            <TouchableOpacity
+              style={styles.utilityItem}
+              onPress={() => {
+                router.push("/HelpCenter");
+              }}
+            >
               <Ionicons name="call-outline" size={30} color="#0099CC" />
               <Text style={styles.utilityText}>Trợ giúp</Text>
             </TouchableOpacity>
@@ -374,7 +410,10 @@ const Profile: React.FC = () => {
               <Text style={styles.candidateId}>{worker?.email}</Text>
 
               <View style={styles.buttonContainer}>
-                <TouchableOpacity style={styles.upgradeButton} onPress={handleFeatureInDevelopment}>
+                <TouchableOpacity
+                  style={styles.upgradeButton}
+                  onPress={handleFeatureInDevelopment}
+                >
                   <Text style={styles.upgradeText}>Nâng cấp tài khoản</Text>
                 </TouchableOpacity>
               </View>
@@ -384,14 +423,22 @@ const Profile: React.FC = () => {
           <View style={styles.jobManagement}>
             <Text style={styles.managementTitle}>Quản lý tìm việc</Text>
             <View style={styles.row}>
-              <TouchableOpacity style={styles.managementBox} onPress={() => { router.push('(insidescreens)/AppliedJobByTime') }}>
+              <TouchableOpacity
+                style={styles.managementBox}
+                onPress={() => {
+                  router.push("(insidescreens)/AppliedJobByTime");
+                }}
+              >
                 <Ionicons name="briefcase" size={30} color="#0099CC" />
                 <Text style={styles.managementText}>Việc làm đã ứng tuyển</Text>
                 <Text style={styles.infoNumber}>{appliedJobs.length}</Text>
               </TouchableOpacity>
-              <TouchableOpacity style={styles.managementBox} onPress={() => {
-                router.push('(insidescreens)/JobsFollowed');
-              }}>
+              <TouchableOpacity
+                style={styles.managementBox}
+                onPress={() => {
+                  router.push("(insidescreens)/JobsFollowed");
+                }}
+              >
                 <Ionicons name="bookmark" size={30} color="#0099CC" />
                 <Text style={styles.managementText}>Việc làm đã lưu</Text>
                 <Text style={styles.infoNumber}>{jobs.length}</Text>
@@ -406,7 +453,12 @@ const Profile: React.FC = () => {
                 <Text style={styles.infoText}>NTD đã xem hồ sơ</Text>
                 <Text style={styles.infoNumber}>0</Text>
               </View>
-              <TouchableOpacity style={styles.infoBox} onPress={() => { router.push('/FollowCompany') }}>
+              <TouchableOpacity
+                style={styles.infoBox}
+                onPress={() => {
+                  router.push("/FollowCompany");
+                }}
+              >
                 <Ionicons name="business" size={30} color="#0099CC" />
                 <Text style={styles.infoText}>Công ty đang theo dõi</Text>
                 <Text style={styles.infoNumber}>{companyInfo.length}</Text>
@@ -427,7 +479,10 @@ const Profile: React.FC = () => {
               <Text style={styles.utilityText}>Đổi mật khẩu</Text>
             </TouchableOpacity>
 
-            <TouchableOpacity style={styles.utilityItem} onPress={handleFeatureInDevelopment}>
+            <TouchableOpacity
+              style={styles.utilityItem}
+              onPress={handleFeatureInDevelopment}
+            >
               <Ionicons name="lock-closed" size={30} color="#0099CC" />
               <Text style={styles.utilityText}>Vô hiệu hóa tài khoản</Text>
             </TouchableOpacity>
@@ -435,23 +490,40 @@ const Profile: React.FC = () => {
 
           <View style={styles.section}>
             <Text style={styles.accountSettingsTitle}>Thông tin dịch vụ</Text>
-            <TouchableOpacity style={styles.utilityItem} onPress={() => { router.push('/CompanyIntroduction') }}>
+            <TouchableOpacity
+              style={styles.utilityItem}
+              onPress={() => {
+                router.push("/CompanyIntroduction");
+              }}
+            >
               <Ionicons name="business" size={30} color="#0099CC" />
               <Text style={styles.utilityText}>Về BeeJobs</Text>
             </TouchableOpacity>
             <TouchableOpacity
               style={styles.utilityItem}
-              onPress={() => { router.push('/TermsOfService') }}
+              onPress={() => {
+                router.push("/TermsOfService");
+              }}
             >
               <Ionicons name="document-text" size={30} color="#0099CC" />
               <Text style={styles.utilityText}>Điều khoản dịch vụ</Text>
             </TouchableOpacity>
 
-            <TouchableOpacity style={styles.utilityItem} onPress={() => { router.push('/PrivacyPolicy') }}>
+            <TouchableOpacity
+              style={styles.utilityItem}
+              onPress={() => {
+                router.push("/PrivacyPolicy");
+              }}
+            >
               <Ionicons name="document-lock" size={30} color="#0099CC" />
               <Text style={styles.utilityText}>Chính sách bảo mật</Text>
             </TouchableOpacity>
-            <TouchableOpacity style={styles.utilityItem} onPress={() => { router.push('/HelpCenter') }}>
+            <TouchableOpacity
+              style={styles.utilityItem}
+              onPress={() => {
+                router.push("/HelpCenter");
+              }}
+            >
               <Ionicons name="call-outline" size={30} color="#0099CC" />
               <Text style={styles.utilityText}>Trợ giúp</Text>
             </TouchableOpacity>
@@ -478,7 +550,12 @@ const Profile: React.FC = () => {
             <View style={styles.infoContainer}>
               <Text style={styles.name}>Vui lòng đăng nhập</Text>
               <View style={styles.buttonContainer}>
-                <TouchableOpacity style={styles.upgradeButton} onPress={() => { router.push('/LoginScreen') }}>
+                <TouchableOpacity
+                  style={styles.upgradeButton}
+                  onPress={() => {
+                    router.push("/LoginScreen");
+                  }}
+                >
                   <Text style={styles.upgradeText}>Đăng nhập</Text>
                 </TouchableOpacity>
               </View>
@@ -508,7 +585,7 @@ const Profile: React.FC = () => {
                 <Text style={styles.infoText}>NTD đã xem hồ sơ</Text>
                 <Text style={styles.infoNumber}>0</Text>
               </View>
-              <View style={styles.infoBox} >
+              <View style={styles.infoBox}>
                 <Ionicons name="business" size={30} color="#0099CC" />
                 <Text style={styles.infoText}>Công ty đang theo dõi</Text>
                 <Text style={styles.infoNumber}>0</Text>
@@ -517,23 +594,40 @@ const Profile: React.FC = () => {
           </View>
           <View style={styles.section}>
             <Text style={styles.accountSettingsTitle}>Thông tin dịch vụ</Text>
-            <TouchableOpacity style={styles.utilityItem} onPress={() => { router.push('/CompanyIntroduction') }}>
+            <TouchableOpacity
+              style={styles.utilityItem}
+              onPress={() => {
+                router.push("/CompanyIntroduction");
+              }}
+            >
               <Ionicons name="business" size={30} color="#0099CC" />
               <Text style={styles.utilityText}>Về BeeJobs</Text>
             </TouchableOpacity>
             <TouchableOpacity
               style={styles.utilityItem}
-              onPress={() => { router.push('/TermsOfService') }}
+              onPress={() => {
+                router.push("/TermsOfService");
+              }}
             >
               <Ionicons name="document-text" size={30} color="#0099CC" />
               <Text style={styles.utilityText}>Điều khoản dịch vụ</Text>
             </TouchableOpacity>
 
-            <TouchableOpacity style={styles.utilityItem} onPress={() => { router.push('/PrivacyPolicy') }}>
+            <TouchableOpacity
+              style={styles.utilityItem}
+              onPress={() => {
+                router.push("/PrivacyPolicy");
+              }}
+            >
               <Ionicons name="document-lock" size={30} color="#0099CC" />
               <Text style={styles.utilityText}>Chính sách bảo mật</Text>
             </TouchableOpacity>
-            <TouchableOpacity style={styles.utilityItem} onPress={() => { router.push('/HelpCenter') }}>
+            <TouchableOpacity
+              style={styles.utilityItem}
+              onPress={() => {
+                router.push("/HelpCenter");
+              }}
+            >
               <Ionicons name="call-outline" size={30} color="#0099CC" />
               <Text style={styles.utilityText}>Trợ giúp</Text>
             </TouchableOpacity>
@@ -547,7 +641,6 @@ const Profile: React.FC = () => {
           </TouchableOpacity> */}
         </>
       )}
-
     </ScrollView>
   );
 };

@@ -50,10 +50,10 @@ const Home = () => {
     { label: "Tiêu đề", value: "title" },
     { label: "Mức lương", value: "salary" },
     { label: "Địa điểm", value: "location" },
-    { label: "Ngành nghê", value: "type" },
+    { label: "Ngành nghề", value: "type" },
   ]);
   const [selectedFilterOption, setSelectedFilterOption] = useState("title");
-  const [inputSearch, setInputSearch] = useState("Tiêu đề");
+  const [inputSearch, setInputSearch] = useState("Tìm kiếm");
   const router = useRouter();
   const [refreshing, setRefreshing] = useState(false);
   //const [userID, setuserID] = useState<string | null>(null);

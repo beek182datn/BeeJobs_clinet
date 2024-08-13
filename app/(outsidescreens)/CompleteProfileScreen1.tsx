@@ -162,8 +162,8 @@ const CompleteProfileScreen1: React.FC = () => {
   };
 
   return (
-    <SafeAreaView style={styles.container}>
-      <ScrollView>
+    <SafeAreaView style={styles.safeArea}>
+      <ScrollView contentContainerStyle={styles.container}>
         <View style={styles.headerContainer}>
           <TouchableOpacity
             onPress={backAction}
@@ -315,10 +315,13 @@ const CompleteProfileScreen1: React.FC = () => {
 };
 
 const styles = StyleSheet.create({
-  container: {
+  safeArea: {
     flex: 1,
-    backgroundColor: "#fff",
+    backgroundColor: '#f5f5f5',
+  },
+  container: {
     padding: 20,
+    backgroundColor: '#f5f5f5',
   },
   headerContainer: {
     flexDirection: "row",

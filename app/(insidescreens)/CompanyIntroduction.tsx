@@ -1,5 +1,5 @@
 import React, {useEffect} from 'react';
-import { StyleSheet, Text, View, ScrollView, TouchableOpacity, BackHandler } from 'react-native';
+import { StyleSheet, Text, View, ScrollView, TouchableOpacity, BackHandler, SafeAreaView } from 'react-native';
 import { useRouter, useLocalSearchParams } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
 export default function CompanyIntroduction() {
@@ -20,6 +20,7 @@ export default function CompanyIntroduction() {
       };
 
   return (
+    <SafeAreaView style={styles.safeArea}>
     <ScrollView contentContainerStyle={styles.container}>
         <View style={styles.headerContainer}>
         <TouchableOpacity
@@ -64,10 +65,15 @@ export default function CompanyIntroduction() {
         </Text>
       </View>
     </ScrollView>
+    </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
+  safeArea: {
+    flex: 1,
+    backgroundColor: '#f5f5f5',
+  },
   container: {
     padding: 20,
     backgroundColor: '#f5f5f5',
