@@ -52,12 +52,14 @@ const styles = StyleSheet.create({
   container: {
     backgroundColor: '#f5f5f5',
     flex: 1,
+    padding: 20
   },
   headerContainer: {
     flexDirection: "row",
     alignItems: "center",
     marginBottom: 20,
-    position:'relative',
+    marginTop:10,
+    position:'relative'
   },
   icon: {
     width: 40,

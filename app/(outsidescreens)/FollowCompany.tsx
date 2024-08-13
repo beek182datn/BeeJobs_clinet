@@ -145,7 +145,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "#fff",
-    padding: 10,
+    padding: 20,
   },
   headerContainer: {
     flexDirection: "row",
@@ -164,6 +164,7 @@ const styles = StyleSheet.create({
     textAlign: "center",
     fontSize: 18,
     fontWeight: "bold",
+    marginBottom: 20
   },
   item: {
     flexDirection: "row",
@@ -177,6 +178,7 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.1,
     shadowRadius: 10,
     elevation: 5,
+    margin: 10
   },
   itemTextContainer: {
     flex: 1,

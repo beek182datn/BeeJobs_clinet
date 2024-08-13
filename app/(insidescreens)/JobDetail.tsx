@@ -89,13 +89,26 @@ const JobDetail = () => {
       Alert.alert(
         "Thông báo",
         "Bạn cần cập nhật thông tin cá nhân!",
-        [{
-          text: "OK"
-        }],
+        [
+          {
+            text: "Hủy",
+            style: "cancel", // Dùng để tạo nút hủy và đóng cảnh báo mà không làm gì thêm
+          },
+          {
+            text: "Cập nhật",
+            onPress: () => {
+              router.push({
+                pathname: "/CompleteProfileScreen1",
+                params: { id_user: user.id_user },
+              });
+            },
+          },
+        ],
         { cancelable: true }
       );
-      return
+      return;
     }
+    
     if (!worker && !user) {
       Alert.alert(
         "Thông báo",

@@ -359,7 +359,7 @@ const styles = StyleSheet.create({
   },
   loadingText: {
     fontSize: 18,
-    color: "#666",
+    color: "#0099FF",
   },
   logo: {
     width: 50,

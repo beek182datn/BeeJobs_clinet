@@ -45,7 +45,7 @@ const JobsFollowed = () => {
                     <Ionicons name="arrow-back" size={22} color="black" />
                 </TouchableOpacity>
                 <Text style={styles.header}>Việc làm đã lưu</Text>
-                {/* <View style={styles.separator} /> */}
+                <View style={styles.separator} />
             </View>
             <FlatList
                 data={jobs}
@@ -77,5 +77,16 @@ const styles = StyleSheet.create({
         textAlign: "center",
         fontSize: 18,
         fontWeight: "bold",
+        marginBottom: 20
     },
+    separator: {
+        height: 1,
+        backgroundColor: "#ddd", // Màu của đường line
+        marginVertical: 10, // Khoảng cách từ trên và dưới
+        position: "absolute", // Đặt đường line nằm dưới các thành phần khác
+        top: 50,
+        bottom: 0, // Đặt nó ở phía dưới
+        left: 0,
+        right: 0,
+      },
 })

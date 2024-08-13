@@ -18,24 +18,8 @@ import { useRouter } from "expo-router";
 import * as DocumentPicker from "expo-document-picker";
 import Modal from "react-native-modal";
 import { Picker } from "@react-native-picker/picker";
-<<<<<<< HEAD
-import {
-  Company,
-  User,
-  Worker,
-  AppliedJob,
-  Job,
-} from "../../components/Model/Model";
-import {
-  getUserInfo,
-  findWorkerById,
-  getAppliedJobsByWorker,
-  getFollowedJobs,
-} from "@/components/fetch_data/api";
-=======
 import { Company, User, Worker, AppliedJob, Job } from "../../components/Model/Model";
 import { getUserInfo, findWorkerById, getAllAppliedJobs, getFollowedJobs } from "@/components/fetch_data/api";
->>>>>>> 1805f13bf6f94b8281467f056ead23815aa45e72
 import * as ImagePicker from "expo-image-picker";
 import axios, { AxiosResponse } from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -72,7 +56,7 @@ const Profile: React.FC = () => {
   const [companyInfo, setCompanyInfo] = useState<Company[]>([]);
   const [appliedJobs, setAppliedJobs] = useState<AppliedJob[]>([]);
   const [jobs, setJobs] = useState<Job[]>([]);
-
+  const [loading, setLoading] = useState(false);
   useEffect(() => {
     fetchUserInfo();
     fetchData();
@@ -133,12 +117,7 @@ const Profile: React.FC = () => {
       setUser(user);
 
       if (user) {
-<<<<<<< HEAD
-        var jobsLastWeek = await getAppliedJobsByWorker(user.id_user);
-        console.log("Huy check app: " + user.id_user);
-=======
         var jobsLastWeek = await getAllAppliedJobs(user.id_user);
->>>>>>> 1805f13bf6f94b8281467f056ead23815aa45e72
         setAppliedJobs(jobsLastWeek);
         // console.log(JSON.stringify(jobsLastWeek))
       }
@@ -291,7 +270,7 @@ const Profile: React.FC = () => {
   };
 
   return (
-    <ScrollView style={styles.container}>
+    <ScrollView style={styles.container} >
       {user && !worker && (
         <>
           <View style={styles.profileHeader}>
@@ -410,7 +389,7 @@ const Profile: React.FC = () => {
       )}
       {worker && user && (
         <>
-          <View style={styles.profileHeader}>
+          <View style={styles.profileHeader} >
             <TouchableOpacity onPress={() => pickImage(setWorker_avatars)}>
               <Image
                 source={{
