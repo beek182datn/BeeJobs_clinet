@@ -85,7 +85,7 @@ const Last30days = () => {
                     <View style={{flex: 1}}>
                       <View style={{ flexDirection: 'row' }}>
                         <Ionicons name='location' size={14} color={'blue'} style={{ marginRight: 3 }} />
-                        <Text style={[styles.text, { width: '70%', flexWrap: 'wrap' }]}>{item.job_id.location}</Text>
+                        <Text style={[styles.text, { width: '70%', flexWrap: 'wrap' }]}>{item.job_id.location.slice(0, 15)}</Text>
                       </View>
                       <View style={{ flexDirection: 'row' }}>
                         <Ionicons name='cash' size={14} color={'blue'} style={{ marginRight: 3 }} />

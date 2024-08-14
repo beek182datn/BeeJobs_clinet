@@ -133,7 +133,7 @@ const AllAppliedJobs = () => {
                             { width: "70%", flexWrap: "wrap" },
                           ]}
                         >
-                          {item.job_id.location}
+                          {item.job_id.location.slice(0, 15)}
                         </Text>
                       </View>
                       <View style={{ flexDirection: "row" }}>
