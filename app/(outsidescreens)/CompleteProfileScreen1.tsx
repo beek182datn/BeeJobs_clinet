@@ -56,12 +56,12 @@ const CompleteProfileScreen1: React.FC = () => {
   //console.log(user_id);
   const [errors, setErrors] = useState({
     worker_name: "",
-    
+    worker_avatar: "",
     email: "",
     phone: "",
     major: "",
     experience: "",
-    address: ""
+    address: "",
   });
   const backAction = () => {
     router.back();
@@ -97,7 +97,7 @@ const CompleteProfileScreen1: React.FC = () => {
     // sau khi hoàn thành thì cho vào màn Home
     const newErrors = {
       worker_name: worker_name ? "" : "Tên không được để trống",
-      //worker_avatar: worker_avatar ? "" : "Ảnh đại diện không được bỏ trống",
+      worker_avatar: worker_avatar ? "" : "Ảnh đại diện không được bỏ trống",
       email: email ? "" : "Địa chỉ Gmail không được để trống",
       phone: phone ? "" : "Số điện thoại không được để trống",
       major: major ? "" : "Ngành không được để trống",
@@ -117,10 +117,10 @@ const CompleteProfileScreen1: React.FC = () => {
 
     try {
       const avatarUrl = worker_avatar;
-      if (avatarUrl) {
+      if (avatarUrl && worker_name && phone && major && experience !== "" && address) {
         const formData = new FormData();
         formData.append("worker_name", worker_name);
-        formData.append("worker_avatar", avatarUrl);
+        // formData.append("worker_avatar", avatarUrl);
         formData.append("email", email); // Replace with actual email
         formData.append("phone", phone);
         formData.append("major", major);
@@ -153,8 +153,8 @@ const CompleteProfileScreen1: React.FC = () => {
 
         router.push("/Profile");
       } else {
-        ToastAndroid.show("Ảnh chưa được chọn", ToastAndroid.SHORT);
-        console.log("Ảnh chưa được chọn.");
+        // ToastAndroid.show("Ảnh chưa được chọn", ToastAndroid.SHORT);
+        // console.log("Ảnh chưa được chọn.");
       }
     } catch (error) {
       console.error("Lỗi đăng ký:", error);
@@ -189,6 +189,9 @@ const CompleteProfileScreen1: React.FC = () => {
               style={styles.avatar}
             />
           </TouchableOpacity>
+          {errors.worker_avatar ? (
+            <Text style={styles.errorText}>{errors.worker_avatar}</Text>
+          ) : null}
         </View>
         <View style={styles.section}>
           <View style={styles.inputContainer}>
@@ -235,10 +238,13 @@ const CompleteProfileScreen1: React.FC = () => {
               onChangeText={setAddress}
             />
           </View>
+          {errors.address ? (
+            <Text style={styles.errorText}>{errors.address}</Text>
+          ) : null}
         </View>
 
         <Text style={styles.sectionHeader}>Số điện thoại</Text>
-        
+
         <View style={styles.section}>
           <View style={styles.inputContainer}>
             <Icon name="phone" size={20} color="#A9A9A9" style={styles.icon} />
@@ -284,6 +290,7 @@ const CompleteProfileScreen1: React.FC = () => {
               }}
               style={styles.input}
             >
+              <Picker.Item label="-Kinh nghiệm-" value=""/>
               <Picker.Item label="Sắp đi làm" value="Sắp đi làm" />
               <Picker.Item label="Dưới 1 năm" value="Dưới 1 năm" />
               <Picker.Item label="1 năm" value="1 năm" />

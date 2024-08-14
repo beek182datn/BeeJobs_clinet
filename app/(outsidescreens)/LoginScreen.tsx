@@ -18,6 +18,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useBackHandler } from "../../components/BackHandler";
 import AlertComponent from "@/components/AlertComponent";
 
+
 const LoginScreen = () => {
   const [username, setUsername] = useState("");
   const [passwd, setPassword] = useState("");
@@ -105,11 +106,15 @@ const LoginScreen = () => {
       }
 
       try {
+        let tokenfcm = await AsyncStorage.getItem('fcm_token');
+        console.log("Tokenfmc",tokenfcm);
+        
         const response = await axios.post(
           "http://beejobs.io.vn:14307/api/login",
           {
             username: username,
             passwd: passwd,
+            fcmtoken:tokenfcm
           }
         );
         const userId = response.data.user_info.id_user

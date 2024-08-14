@@ -86,6 +86,7 @@ export interface AppliedJobsResponse {
   createdBy: string;
 }
 export interface AppliedJob {
+  [x: string]: any;
   _id: string;
   job_id: Job;
   worker_id: Worker;

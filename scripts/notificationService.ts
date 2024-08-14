@@ -4,8 +4,10 @@ import * as Notifications from 'expo-notifications';
 import { NotificationPushModel } from '../components/Model/Model';
 import Constants from 'expo-constants';
 import * as Device from 'expo-device';
-import { Platform } from 'react-native';
-
+import { PermissionsAndroid, Platform } from 'react-native';
+import firebase from '@react-native-firebase/app';
+import messaging from '@react-native-firebase/messaging';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 export const registerForPushNotificationsAsync = async () => {
   let token;
 
@@ -85,3 +87,48 @@ export const showNotification = async (notificationPushModel: NotificationPushMo
     trigger: null,
   });
 };
+export async function requestUserPermission() {
+
+  console.log("PermissionsAndroid.RESULTS.granted",PermissionsAndroid.RESULTS.GRANTED)
+  if(Platform.OS == 'android' && Platform.Version >= 33){
+  const granted =  await PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.POST_NOTIFICATIONS);
+  console.log("grantedgranted",granted)
+  if(granted === PermissionsAndroid.RESULTS.GRANTED){
+      getFCMToken()
+  }else{
+      console.log("permission denied")
+  }
+  }else{
+    getFCMToken()
+      const authStatus = await messaging().requestPermission();
+      
+      const enabled =
+        authStatus === messaging.AuthorizationStatus.AUTHORIZED ||
+        authStatus === messaging.AuthorizationStatus.PROVISIONAL;
+    
+      if (enabled) {
+        console.log('Authorization status:', authStatus);
+        getFCMToken()
+      }
+  }
+}
+const getFCMToken = async () => {
+  console.log("zô");
+ let ha = await messaging().getToken();
+  console.log("zô",ha);
+  try {
+    await messaging().registerDeviceForRemoteMessages();
+    let fcmToken = await AsyncStorage.getItem('fcm_token');
+    if (!fcmToken) {
+      fcmToken = await messaging().getToken();
+      await AsyncStorage.setItem('fcm_token', fcmToken);
+      console.log('FCM token mới: ', fcmToken);
+    } else {
+      console.log('FCM token cũ: ', fcmToken);
+    }
+  } catch (error) {
+    console.log('====================================');
+    console.log(error);
+    console.log('====================================');
+  }
+}

@@ -32,14 +32,13 @@ const ChatRoom: React.FC = () => {
     };
 
     const fetchData = useCallback(async () => {
-        // flatListRef.current?.scrollToEnd({ animated: true });
-        // console.log('long ', JSON.stringify(info))
         if (!info || !info.company_id || !info.userId) {
             return;
         }
 
         try {
             const companyInfo = await findCompanyById(String(info.company_id));
+            console.log(String(info.company_id))
             if (companyInfo) {
                 setCompanyInfo(companyInfo);
             }
@@ -47,13 +46,6 @@ const ChatRoom: React.FC = () => {
             // Fetch messages for the chat room
             const fetchedMessages = await getMessages(String(info.userId), String(info.company_id));
             setMessages(fetchedMessages);
-            // flatListRef.current?.scrollToIndex({index: fetchedMessages.length-1})
-            // if (fetchedMessages === null) {
-            //     const chatRoomInfo = await getChatRoomInfo(String(info.userId), String(info.company_id));
-            //     if (chatRoomInfo) {
-            //         setChatRoom(chatRoomInfo);
-            //     }
-            // }
 
         } catch (error) {
             console.error('Error fetching data:', error);
@@ -72,9 +64,6 @@ const ChatRoom: React.FC = () => {
 
     useEffect(() => {
         if (chatRoom) {
-            // socket.emit('connection', () => {
-            //     console.log('Socket connected ', String(chatRoom._id));
-            // });
             // Socket.IO setup
             socket.emit('joinRoom', String(chatRoom._id)); // Tham gia phòng chat
             // console.log('Socket connected ', String(chatRoom._id));
@@ -171,8 +160,17 @@ const ChatRoom: React.FC = () => {
                     keyExtractor={(item) => item._id}
                     renderItem={({ item }) => (
                         <View style={item.senderId === info.userId ? styles.myMessage : styles.otherMessage}>
-                            <Text style={styles.messageContent}>{item.content}</Text>
-                            <Text style={styles.timestamp}>{new Date(item.createdAt).toLocaleTimeString()}</Text>
+                            <View style={styles.messageContainer}>
+                                {item.senderId !== info.userId &&
+                                    <Image
+                                        source={companyInfo?.company_logo ? { uri: linkVps + companyInfo.company_logo } : require('../../assets/images/SplashLogo.png')}
+                                        style={styles.avatar}
+                                    />}
+                                <View>
+                                    <Text style={styles.messageContent}>{item.content}</Text>
+                                    <Text style={styles.timestamp}>{new Date(item.createdAt).toLocaleTimeString()}</Text>
+                                </View>
+                            </View>
                         </View>
                     )}
                     style={styles.messageList}
@@ -183,6 +181,7 @@ const ChatRoom: React.FC = () => {
                 //     console.log('Scroll failed', info);
                 // }}
                 />
+
 
                 <View style={styles.inputContainer}>
                     <TextInput
@@ -281,4 +280,17 @@ const styles = StyleSheet.create({
         height: 40,
         borderRadius: 30,
     },
+    messageContainer: {
+        flexDirection: 'row', // Đặt hướng hàng
+        alignItems: 'center', // Căn giữa dọc
+    },
+    avatar: {
+        width: 30, // Kích thước chiều rộng
+        height: 30, // Kích thước chiều cao
+        borderRadius: 20, // Bo tròn
+        marginRight: 10, // Khoảng cách giữa ảnh và nội dung
+    },
+    textContainer: {
+        flex: 1, // Chiếm không gian còn lại
+    }
 });

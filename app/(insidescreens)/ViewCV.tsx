@@ -1,30 +1,44 @@
-import { StyleSheet, View, BackHandler, TouchableOpacity, Text, SafeAreaView } from 'react-native';
-import React, {useEffect} from 'react';
-import { WebView } from 'react-native-webview';
-import { useLocalSearchParams, useRouter } from 'expo-router';
+import {
+  StyleSheet,
+  View,
+  BackHandler,
+  TouchableOpacity,
+  Text,
+  SafeAreaView,
+} from "react-native";
+import React, { useEffect } from "react";
+import { WebView } from "react-native-webview";
+import { useLocalSearchParams, useRouter } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
 const ViewCV = () => {
   const params = useLocalSearchParams();
   const cvUrl = params.cvUrl;
-  const googleDocsUrl = `https://docs.google.com/viewer?url=${cvUrl}&embedded=true`;
+  //console.log(cvUrl);
+  const googleDocsUrl = `https://docs.google.com/viewer?url=${cvUrl}&embedded=true&cachebuster=${new Date().getTime()}`;
+  //console.log(googleDocsUrl);
   const router = useRouter();
+  const [hasStartedLoading, setHasStartedLoading] = React.useState(true);
+  const [webViewKey, setWebViewKey] = React.useState(0);
 
+  const reloadWebView = () => {
+    setWebViewKey((prevKey) => prevKey + 1);
+  };
   useEffect(() => {
-      const backHandler = BackHandler.addEventListener(
-        "hardwareBackPress",
-        backAction
-      );
-  
-      return () => backHandler.remove();
-    }, []);
+    const backHandler = BackHandler.addEventListener(
+      "hardwareBackPress",
+      backAction
+    );
+
+    return () => backHandler.remove();
+  }, []);
 
   const backAction = () => {
-      router.back();
-      return true;
-    };
+    router.back();
+    return true;
+  };
   return (
     <SafeAreaView style={styles.container}>
-        <View style={styles.headerContainer}>
+      <View style={styles.headerContainer}>
         <TouchableOpacity
           onPress={router.back}
           style={{
@@ -32,8 +46,8 @@ const ViewCV = () => {
             borderRadius: 30,
             padding: 5,
             marginLeft: 10,
-            position:'absolute',
-            zIndex:100
+            position: "absolute",
+            zIndex: 100,
           }}
         >
           <Ionicons name="arrow-back" size={22} color="black" />
@@ -41,7 +55,13 @@ const ViewCV = () => {
         <Text style={styles.header}>Xem lại CV</Text>
         <View style={styles.separator} />
       </View>
-      <WebView style={{backgroundColor: 'white'}} source={{ uri: googleDocsUrl }} />
+      <WebView
+        source={{ uri: googleDocsUrl }}
+        incognito={true}
+        onLoadStart={() => console.log("WebView load start")}
+        onLoad={() => console.log("WebView load")}
+        onLoadEnd={() => console.log("WebView loaded")}
+      />
     </SafeAreaView>
   );
 };
@@ -50,16 +70,16 @@ export default ViewCV;
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: '#f5f5f5',
+    backgroundColor: "#f5f5f5",
     flex: 1,
-    padding: 20
+    padding: 20,
   },
   headerContainer: {
     flexDirection: "row",
     alignItems: "center",
     marginBottom: 20,
-    marginTop:10,
-    position:'relative'
+    marginTop: 10,
+    position: "relative",
   },
   icon: {
     width: 40,

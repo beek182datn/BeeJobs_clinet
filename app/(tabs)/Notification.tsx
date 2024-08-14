@@ -113,7 +113,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#f8f9fa',
-    padding: 20,
+    padding: 10,
   },
   header: {
     fontSize: 24,
@@ -126,6 +126,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     paddingHorizontal: 20,
+  
   },
   image: {
     width: 150,
@@ -161,6 +162,8 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.23,
     shadowRadius: 2.62,
     elevation: 4,
+    marginRight:10,
+    marginLeft:10
   },
   notificationMessage: {
     fontSize: 16,
