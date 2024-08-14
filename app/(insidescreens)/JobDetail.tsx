@@ -359,7 +359,7 @@ const JobDetail = () => {
 
 
       <Modal visible={showModal} animationType="slide" style={{ padding: 10 }}>
-        {/* {cvUri && (
+        {/* {cvUri && ( 
         <WebView
           style={{ flex: 1 }}
           source={{ uri: cvUri }}
