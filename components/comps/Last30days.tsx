@@ -1,15 +1,16 @@
 import { StyleSheet, Text, View, SafeAreaView, Image, FlatList, Pressable, TouchableOpacity, Linking } from 'react-native'
 import React, { useEffect, useState } from 'react'
-import { AppliedJob, User } from '../Model/Model';
+import { AppliedJob, User, Worker } from '../Model/Model';
 import { router } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
-import { getAppliedJobsLast30days, getUserInfo } from '../fetch_data/api';
+import { findWorkerById, getAppliedJobsLast30days, getUserInfo } from '../fetch_data/api';
 
 const Last30days = () => {
   const [ref, setRef] = useState(false);
   const linkVps = 'http://beejobs.io.vn:14307';
   const [appliedJobs, setAppliedJobs] = useState<AppliedJob[]>([]);
   const [user, setUser] = useState<User | null>(null);
+  const [worker, setWorker] = useState<Worker | null>();
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -17,9 +18,14 @@ const Last30days = () => {
         setUser(user);
 
         if (user) {
-          var jobsLastWeek = await getAppliedJobsLast30days(user.id_user);
-          setAppliedJobs(jobsLastWeek);
-          console.log('-----')
+          const worker = await findWorkerById(user.id_user);
+
+          if (worker) {
+            setWorker(worker);
+            var jobsLastWeek = await getAppliedJobsLast30days(worker._id);
+            setAppliedJobs(jobsLastWeek);
+          }
+
         }
       } catch (error) {
         console.log(error);
@@ -82,24 +88,24 @@ const Last30days = () => {
                   </View>
 
                   <View style={[styles.topView, { justifyContent: 'space-between' }]}>
-                    <View style={{flex: 1}}>
+                    <View style={{ flex: 1 }}>
                       <View style={{ flexDirection: 'row' }}>
                         <Ionicons name='location' size={14} color={'blue'} style={{ marginRight: 3 }} />
-                        <Text style={[styles.text, { width: '70%', flexWrap: 'wrap' }]}>{item.job_id.location}</Text>
+                        <Text style={[styles.text, { width: '70%', flexWrap: 'wrap' }]}>{item.job_id.location.slice(0, 15)}</Text>
                       </View>
                       <View style={{ flexDirection: 'row' }}>
                         <Ionicons name='cash' size={14} color={'blue'} style={{ marginRight: 3 }} />
                         <Text style={styles.text}>{item.job_id.salary}</Text>
                       </View>
                     </View>
-                    <View style={{flex:1}}>
+                    <View style={{ flex: 1 }}>
                       <View style={{ flexDirection: 'row' }}>
                         <Ionicons name='time' size={14} color={'blue'} style={{ marginRight: 3 }} />
-                        <Text style={styles.text}>{formatDate(item.job_id.created_at)}</Text>
+                        <Text style={styles.text}>{formatDate(String(item.applied_at))}</Text>
                       </View>
                       <View style={{ flexDirection: 'row', backgroundColor: '#0099CC', padding: 5, alignContent: 'center', justifyContent: 'center', borderRadius: 10 }}>
                         <Ionicons name='notifications' size={14} color={'white'} style={{ marginRight: 3, alignSelf: 'center' }} />
-                        <Text style={[styles.text, { color: 'white', fontSize: 14, alignSelf: 'center', textAlign:'center' }]}>{item.status}</Text>
+                        <Text style={[styles.text, { color: 'white', fontSize: 14, alignSelf: 'center', textAlign: 'center' }]}>{item.status}</Text>
                       </View>
                     </View>
                   </View>

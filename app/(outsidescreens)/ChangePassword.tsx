@@ -8,6 +8,8 @@ import {
   SafeAreaView,
   StyleSheet,
   BackHandler,
+  TouchableWithoutFeedback,
+  Keyboard,
 } from "react-native";
 import Icon from "react-native-vector-icons/Ionicons"; // Thêm thư viện cho icon (nếu sử dụng)
 import { useRouter, useLocalSearchParams } from "expo-router";
@@ -110,62 +112,64 @@ const ChangePassword = () => {
   };
 
   return (
-    <SafeAreaView style={styles.container}>
-      <View style={styles.header}>
-        {/* <Icon name="arrow-left" size={20} color="#000" onPress={router.back} /> */}
-        <TouchableOpacity
-          onPress={backAction}
-          style={{ backgroundColor: "#2196F3", borderRadius: 30, padding: 5 }}
-        >
-          <Ionicons name="arrow-back" size={22} color="black" />
-        </TouchableOpacity>
-        <Text style={styles.headerTitle}>Đổi mật khẩu</Text>
-      </View>
-      <View style={styles.form}>
-        <Text style={styles.label}>Email đăng nhập</Text>
-        <TextInput
-          style={styles.inputemail}
-          value={String(email)}
-          editable={false}
-        />
+    <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+      <SafeAreaView style={styles.container}>
+        <View style={styles.header}>
+          {/* <Icon name="arrow-left" size={20} color="#000" onPress={router.back} /> */}
+          <TouchableOpacity
+            onPress={backAction}
+            style={{ backgroundColor: "#2196F3", borderRadius: 30, padding: 5 }}
+          >
+            <Ionicons name="arrow-back" size={22} color="black" />
+          </TouchableOpacity>
+          <Text style={styles.headerTitle}>Đổi mật khẩu</Text>
+        </View>
+        <View style={styles.form}>
+          <Text style={styles.label}>Email đăng nhập</Text>
+          <TextInput
+            style={styles.inputemail}
+            value={String(email)}
+            editable={false}
+          />
 
-        <Text style={styles.label}>Mật khẩu hiện tại</Text>
-        <TextInput
-          style={styles.input}
-          placeholder="Nhập mật khẩu hiện tại"
-          secureTextEntry
-          value={currentPassword}
-          onChangeText={setCurrentPassword}
-        />
+          <Text style={styles.label}>Mật khẩu hiện tại</Text>
+          <TextInput
+            style={styles.input}
+            placeholder="Nhập mật khẩu hiện tại"
+            secureTextEntry
+            value={currentPassword}
+            onChangeText={setCurrentPassword}
+          />
 
-        <Text style={styles.label}>Mật khẩu mới</Text>
-        <TextInput
-          style={styles.input}
-          placeholder="Nhập mật khẩu mới"
-          secureTextEntry
-          value={newPassword}
-          onChangeText={setNewPassword}
-        />
+          <Text style={styles.label}>Mật khẩu mới</Text>
+          <TextInput
+            style={styles.input}
+            placeholder="Nhập mật khẩu mới"
+            secureTextEntry
+            value={newPassword}
+            onChangeText={setNewPassword}
+          />
 
-        <Text style={styles.label}>Nhập lại mật khẩu mới</Text>
-        <TextInput
-          style={styles.input}
-          placeholder="Nhập lại mật khẩu mới"
-          secureTextEntry
-          value={confirmNewPassword}
-          onChangeText={setConfirmNewPassword}
-        />
-      </View>
+          <Text style={styles.label}>Nhập lại mật khẩu mới</Text>
+          <TextInput
+            style={styles.input}
+            placeholder="Nhập lại mật khẩu mới"
+            secureTextEntry
+            value={confirmNewPassword}
+            onChangeText={setConfirmNewPassword}
+          />
+        </View>
 
-      <View style={styles.buttonContainer}>
-        <TouchableOpacity style={styles.buttonCancel} onPress={router.back}>
-          <Text style={styles.buttonText}>Hủy</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.buttonSave} onPress={handleSave}>
-          <Text style={styles.buttonText}>Lưu</Text>
-        </TouchableOpacity>
-      </View>
-    </SafeAreaView>
+        <View style={styles.buttonContainer}>
+          <TouchableOpacity style={styles.buttonCancel} onPress={router.back}>
+            <Text style={styles.buttonText}>Hủy</Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.buttonSave} onPress={handleSave}>
+            <Text style={styles.buttonText}>Lưu</Text>
+          </TouchableOpacity>
+        </View>
+      </SafeAreaView>
+    </TouchableWithoutFeedback>
   );
 };
 

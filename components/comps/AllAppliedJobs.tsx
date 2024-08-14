@@ -11,16 +11,18 @@ import {
   Linking,
 } from "react-native";
 import React, { useEffect, useState } from "react";
-import { AppliedJob, User } from "../Model/Model";
+import { AppliedJob, User, Worker } from "../Model/Model";
 import { router } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
-import { getAllAppliedJobs, getUserInfo } from "../fetch_data/api";
+import { findWorkerById, getAllAppliedJobs, getUserInfo } from "../fetch_data/api";
 
 const AllAppliedJobs = () => {
   const [ref, setRef] = useState(false);
   const linkVps = "http://beejobs.io.vn:14307";
   const [appliedJobs, setAppliedJobs] = useState<AppliedJob[]>([]);
   const [user, setUser] = useState<User | null>(null);
+  const [worker, setWorker] = useState<Worker | null>();
+
 
   const backAction = () => {
     router.back();
@@ -34,9 +36,14 @@ const AllAppliedJobs = () => {
         setUser(user);
 
         if (user) {
-          var jobsLastWeek = await getAllAppliedJobs(user.id_user);
-          setAppliedJobs(jobsLastWeek);
-          // console.log(JSON.stringify(jobsLastWeek));
+          const worker = await findWorkerById(user.id_user);
+
+          if (worker) {
+            setWorker(worker);
+            var jobsLastWeek = await getAllAppliedJobs(worker._id);
+            setAppliedJobs(jobsLastWeek);
+          }
+
         }
       } catch (error) {
         console.log(error);
@@ -133,7 +140,7 @@ const AllAppliedJobs = () => {
                             { width: "70%", flexWrap: "wrap" },
                           ]}
                         >
-                          {item.job_id.location}
+                          {item.job_id.location.slice(0, 15)}
                         </Text>
                       </View>
                       <View style={{ flexDirection: "row" }}>
@@ -149,7 +156,7 @@ const AllAppliedJobs = () => {
                     <View style={{flex: 1}}>
                       <View style={{ flexDirection: 'row' }}>
                         <Ionicons name='time' size={14} color={'blue'} style={{ marginRight: 3 }} />
-                        <Text style={styles.text}>{formatDate(item.job_id.created_at)}</Text>
+                        <Text style={styles.text}>{formatDate(String(item.applied_at))}</Text>
                       </View>
                       <View style={{ flexDirection: 'row', backgroundColor: '#0099CC', padding: 5, alignContent: 'center', justifyContent: 'center', borderRadius: 10 }}>
                         <Ionicons name='notifications' size={14} color={'white'} style={{ marginRight: 3, alignSelf: 'center' }} />

@@ -1,15 +1,9 @@
-import {
-  StyleSheet,
-  View,
-  BackHandler,
-  TouchableOpacity,
-  Text,
-  SafeAreaView,
-} from "react-native";
-import React, { useEffect } from "react";
-import { WebView } from "react-native-webview";
-import { useLocalSearchParams, useRouter } from "expo-router";
+import { StyleSheet, View, BackHandler, TouchableOpacity, Text, SafeAreaView, ActivityIndicator } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { WebView } from 'react-native-webview';
+import { useLocalSearchParams, useRouter } from 'expo-router';
 import { Ionicons } from "@expo/vector-icons";
+
 const ViewCV = () => {
   const params = useLocalSearchParams();
   const cvUrl = params.cvUrl;
@@ -28,9 +22,9 @@ const ViewCV = () => {
       "hardwareBackPress",
       backAction
     );
-
+console.log(googleDocsUrl)
     return () => backHandler.remove();
-  }, []);
+  }, [router]);
 
   const backAction = () => {
     router.back();
@@ -46,8 +40,8 @@ const ViewCV = () => {
             borderRadius: 30,
             padding: 5,
             marginLeft: 10,
-            position: "absolute",
-            zIndex: 100,
+            position: 'absolute',
+            zIndex: 100
           }}
         >
           <Ionicons name="arrow-back" size={22} color="black" />
@@ -55,13 +49,7 @@ const ViewCV = () => {
         <Text style={styles.header}>Xem lại CV</Text>
         <View style={styles.separator} />
       </View>
-      <WebView
-        source={{ uri: googleDocsUrl }}
-        incognito={true}
-        onLoadStart={() => console.log("WebView load start")}
-        onLoad={() => console.log("WebView load")}
-        onLoadEnd={() => console.log("WebView loaded")}
-      />
+      <WebView style={{ backgroundColor: 'white' }} source={{ uri: googleDocsUrl }} onLoadProgress={() => { console.log('Dang tai...') }} />
     </SafeAreaView>
   );
 };
@@ -78,8 +66,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     marginBottom: 20,
-    marginTop: 10,
-    position: "relative",
+    position: 'relative',
   },
   icon: {
     width: 40,
