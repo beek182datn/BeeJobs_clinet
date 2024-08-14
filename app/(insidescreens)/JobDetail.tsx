@@ -61,21 +61,19 @@ const JobDetail = () => {
 
     const fetchCompanyData = async () => {
       const user: User | null = await getUserInfo();
-      if (user) {
-        const response = await checkApplyJob(user.id_user, String(job._id));
-        setIsApplied(response.isApplied);
-      }
       setUser(user);
-
+      if (user) {
+        const workerInfo = await findWorkerById(String(user.id_user));
+        setWorker(workerInfo);
+        if (workerInfo) {
+          const response = await checkApplyJob(workerInfo._id, String(job._id));
+          setIsApplied(response.isApplied);
+        }
+      }
       const companyId = String(job.company_id);
       const company = await findCompanyById(companyId);
       if (company) {
         setCompanyInfo(company)
-      }
-
-      if (user) {
-        const workerInfo = await findWorkerById(String(user.id_user));
-        setWorker(workerInfo);
       }
     };
 
@@ -133,9 +131,9 @@ const JobDetail = () => {
           };
           const jobId = job._id;
           const userId = user.id_user;
-          console.log('workerId: '+worker._id +' jobId: '+jobId);
+          console.log('workerId: ' + worker._id + ' jobId: ' + jobId);
           const response = await createApplyJob(worker._id, jobId as any, data);
-          console.log('workerId: '+worker._id +' jobId: '+jobId);
+          console.log('workerId: ' + worker._id + ' jobId: ' + jobId);
           setShowModal(false);
           setColor('green');
           setMessage('Ứng tuyển thành công');
