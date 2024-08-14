@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View, ScrollView, Pressable, Image, Modal, TextInput, TouchableOpacity, Dimensions, SafeAreaView, Linking, Alert } from 'react-native'
+import { StyleSheet, Text, View, ScrollView, Pressable, Image, Modal, TextInput, TouchableOpacity, Dimensions, SafeAreaView, Linking, Alert, KeyboardAvoidingView, Platform, TouchableWithoutFeedback, Keyboard } from 'react-native'
 import React, { useEffect, useState } from 'react'
 import { useLocalSearchParams } from 'expo-router'
 import { findCompanyById, getUserInfo, checkApplyJob, findWorkerById } from '@/components/fetch_data/api';
@@ -204,6 +204,7 @@ const JobDetail = () => {
 
   const hanldeLoadCv = async () => {
     if (cvUri) {
+      setShowModal(false);
       router.push({ pathname: "ViewCV", params: { cvUrl: cvUri } });
     }
     // try {
@@ -344,86 +345,75 @@ const JobDetail = () => {
         }
       </View>
 
-
       <Modal visible={showModal} animationType="slide" style={{ padding: 10 }}>
-        {/* {cvUri && (
-        <WebView
-          style={{ flex: 1 }}
-          source={{ uri: cvUri }}
-          allowsInlineMediaPlayback
-        />
-      )} */}
-        <View style={{ flexDirection: 'row', justifyContent: 'center', marginBottom: 50, marginTop: 60 }}>
-          <Text style={{ fontSize: 18, color: 'black', fontWeight: 'bold' }}>CV ứng tuyển</Text>
-          {/* <Pressable style={[styles.refreshButton, { position: 'absolute', right: 0 }]} onPress={refresh}>
+        <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+          <View style={{ flex: 1 }}>
+            <View style={{ flexDirection: 'row', justifyContent: 'center', marginBottom: 50, marginTop: 60 }}>
+              <Text style={{ fontSize: 18, color: 'black', fontWeight: 'bold' }}>CV ứng tuyển</Text>
+              {/* <Pressable style={[styles.refreshButton, { position: 'absolute', right: 0 }]} onPress={refresh}>
           <FontAwesome name="refresh" size={18} color="#FFFFFF" />
         </Pressable> */}
-          <View style={styles.separator} />
-        </View>
-        <View style={styles.modalTopView}>
-          {!cv &&
-            <TouchableOpacity style={styles.buttonPickCv} onPress={pickFile}>
-              <Text style={{ color: 'white', fontWeight: '500' }}>Chọn cv</Text>
-            </TouchableOpacity>
-          }
-          {cv &&
-            <TouchableOpacity style={styles.buttonPickCv} onPress={hanldeLoadCv}>
-              <Text style={{ color: 'white', fontWeight: '500' }}>Xem CV</Text>
-            </TouchableOpacity>
-          }
-          <View style={styles.hanldeCvName}>
-            {cv && (
-              <Text>Tệp đã chọn: {cv.name.slice(0, 20)}</Text>
-            )}
-            {cv && (
-              <TouchableOpacity style={{ backgroundColor: 'gray' }} onPress={handleDeleteCv}>
-                <Ionicons name='close' size={18} color={'black'} />
-              </TouchableOpacity>
-            )}
-          </View>
+              <View style={styles.separator} />
+            </View>
+            <View style={styles.modalTopView}>
+              {!cv &&
+                <TouchableOpacity style={styles.buttonPickCv} onPress={pickFile}>
+                  <Text style={{ color: 'white', fontWeight: '500' }}>Chọn cv</Text>
+                </TouchableOpacity>
+              }
+              {cv &&
+                <TouchableOpacity style={styles.buttonPickCv} onPress={hanldeLoadCv}>
+                  <Text style={{ color: 'white', fontWeight: '500' }}>Xem CV</Text>
+                </TouchableOpacity>
+              }
+              <View style={styles.hanldeCvName}>
+                {cv && (
+                  <Text>Tệp đã chọn: {cv.name.slice(0, 20)}</Text>
+                )}
+                {cv && (
+                  <TouchableOpacity style={{ backgroundColor: 'gray' }} onPress={handleDeleteCv}>
+                    <Ionicons name='close' size={18} color={'black'} />
+                  </TouchableOpacity>
+                )}
+              </View>
 
-          <View style={styles.modalBottomView}>
-            <View style={styles.modalInfo}>
-              <Text>Họ và tên: </Text>
-              {/* <Text>Email: </Text> */}
-              <Text>Số điện thoại: </Text>
+              <View style={styles.modalBottomView}>
+                <View style={styles.modalInfo}>
+                  <Text>Họ và tên: </Text>
+                  {/* <Text>Email: </Text> */}
+                  <Text>Số điện thoại: </Text>
+                </View>
+
+                {worker &&
+                  <View style={[styles.modalInfo, { marginLeft: 20 }]}>
+                    <Text>{worker.worker_name}</Text>
+                    <Text>{worker.phone}</Text>
+                  </View>
+                }
+
+              </View>
             </View>
 
-            {worker &&
-              <View style={[styles.modalInfo, { marginLeft: 20 }]}>
-                <Text>{worker.worker_name}</Text>
-                {/* <Text>{worker.email}</Text> */}
-                <Text>{worker.phone}</Text>
-              </View>
-            }
-            {/* <View style={[styles.modalInfo, { marginLeft: 20 }]}>
-              <Text>Phí Đình Long</Text>
-              <Text>philongpdl@gmail.com</Text>
-              <Text>0987654321</Text>
-            </View> */}
+            <Text style={{ margin: 10, fontSize: 18, color: 'black', fontWeight: 500 }}>Thư giới thiệu</Text>
+            <TextInput
+              style={styles.input}
+              placeholder="Lời nhắn"
+              value={intro_letter}
+              onChangeText={setIntroLetter}
+              multiline={true}
+            />
 
+            <View style={styles.buttonContainer}>
+              <TouchableOpacity style={styles.button} onPress={handleCloseModal}>
+                <Text style={styles.buttonText}>Hủy</Text>
+              </TouchableOpacity>
+              <TouchableOpacity style={styles.button} onPress={handleApply}>
+                <Text style={styles.buttonText}>Ứng tuyển</Text>
+              </TouchableOpacity>
+            </View>
           </View>
-        </View>
-
-        <Text style={{ margin: 10, fontSize: 18, color: 'black', fontWeight: 500 }}>Thư giới thiệu</Text>
-        <TextInput
-          style={styles.input}
-          placeholder="Lời nhắn"
-          value={intro_letter}
-          onChangeText={setIntroLetter}
-          multiline={true}
-        />
-
-        <View style={styles.buttonContainer}>
-          <TouchableOpacity style={styles.button} onPress={handleCloseModal}>
-            <Text style={styles.buttonText}>Hủy</Text>
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.button} onPress={handleApply}>
-            <Text style={styles.buttonText}>Ứng tuyển</Text>
-          </TouchableOpacity>
-        </View>
+        </TouchableWithoutFeedback>
       </Modal>
-
       <AlertComponent message={message} color={color} visible={visible} onClose={() => setVisible(false)} />
     </SafeAreaView>
   )
@@ -616,7 +606,7 @@ const styles = StyleSheet.create({
     margin: 10,
     width: 'auto',
     padding: 10,
-   // backgroundColor: 'yellow',
+    // backgroundColor: 'yellow',
     borderRadius: 10,
     borderColor: 'blue',
     borderWidth: 1,

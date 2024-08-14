@@ -1,5 +1,5 @@
-import { StyleSheet, View, BackHandler, TouchableOpacity, Text, SafeAreaView } from 'react-native';
-import React, {useEffect} from 'react';
+import { StyleSheet, View, BackHandler, TouchableOpacity, Text, SafeAreaView, ActivityIndicator } from 'react-native';
+import React, {useEffect, useState} from 'react';
 import { WebView } from 'react-native-webview';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { Ionicons } from "@expo/vector-icons";
@@ -14,7 +14,7 @@ const ViewCV = () => {
         "hardwareBackPress",
         backAction
       );
-  
+
       return () => backHandler.remove();
     }, []);
 
