@@ -1,8 +1,9 @@
 import { StyleSheet, View, BackHandler, TouchableOpacity, Text, SafeAreaView, ActivityIndicator } from 'react-native';
-import React, {useEffect, useState} from 'react';
+import React, { useEffect, useState } from 'react';
 import { WebView } from 'react-native-webview';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { Ionicons } from "@expo/vector-icons";
+
 const ViewCV = () => {
   const params = useLocalSearchParams();
   const cvUrl = params.cvUrl;
@@ -10,21 +11,21 @@ const ViewCV = () => {
   const router = useRouter();
 
   useEffect(() => {
-      const backHandler = BackHandler.addEventListener(
-        "hardwareBackPress",
-        backAction
-      );
-
-      return () => backHandler.remove();
-    }, []);
+    const backHandler = BackHandler.addEventListener(
+      "hardwareBackPress",
+      backAction
+    );
+console.log(googleDocsUrl)
+    return () => backHandler.remove();
+  }, [router]);
 
   const backAction = () => {
-      router.back();
-      return true;
-    };
+    router.back();
+    return true;
+  };
   return (
     <SafeAreaView style={styles.container}>
-        <View style={styles.headerContainer}>
+      <View style={styles.headerContainer}>
         <TouchableOpacity
           onPress={router.back}
           style={{
@@ -32,8 +33,8 @@ const ViewCV = () => {
             borderRadius: 30,
             padding: 5,
             marginLeft: 10,
-            position:'absolute',
-            zIndex:100
+            position: 'absolute',
+            zIndex: 100
           }}
         >
           <Ionicons name="arrow-back" size={22} color="black" />
@@ -41,7 +42,7 @@ const ViewCV = () => {
         <Text style={styles.header}>Xem lại CV</Text>
         <View style={styles.separator} />
       </View>
-      <WebView style={{backgroundColor: 'white'}} source={{ uri: googleDocsUrl }} />
+      <WebView style={{ backgroundColor: 'white' }} source={{ uri: googleDocsUrl }} onLoadProgress={() => { console.log('Dang tai...') }} />
     </SafeAreaView>
   );
 };
@@ -57,7 +58,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     marginBottom: 20,
-    position:'relative',
+    position: 'relative',
   },
   icon: {
     width: 40,

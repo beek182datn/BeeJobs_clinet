@@ -123,7 +123,7 @@ export type Worker = {
   major: string;
   experience: string;
   address: string;
-  __v: number;
+  // __v: number;
 }
 
 export type WokerRespone = {

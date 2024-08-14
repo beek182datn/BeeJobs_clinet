@@ -133,9 +133,9 @@ const JobDetail = () => {
           };
           const jobId = job._id;
           const userId = user.id_user;
-
-          const response = await createApplyJob(userId, jobId as any, data);
-          // console.log(response.data);
+          console.log('workerId: '+worker._id +' jobId: '+jobId);
+          const response = await createApplyJob(worker._id, jobId as any, data);
+          console.log('workerId: '+worker._id +' jobId: '+jobId);
           setShowModal(false);
           setColor('green');
           setMessage('Ứng tuyển thành công');

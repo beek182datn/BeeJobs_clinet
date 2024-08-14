@@ -1,9 +1,9 @@
 import { StyleSheet, Text, View, SafeAreaView, Image, FlatList, Pressable, TouchableOpacity, Linking } from 'react-native'
 import React, { useEffect, useState } from 'react'
-import { AppliedJob, User } from '../Model/Model';
+import { AppliedJob, User, Worker } from '../Model/Model';
 import { router } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
-import { getAppliedJobsLastWeek, getUserInfo } from '../fetch_data/api';
+import { findWorkerById, getAppliedJobsLastWeek, getUserInfo } from '../fetch_data/api';
 
 
 
@@ -12,6 +12,7 @@ const LastWeek = () => {
   const linkVps = 'http://beejobs.io.vn:14307';
   const [appliedJobs, setAppliedJobs] = useState<AppliedJob[]>([]);
   const [user, setUser] = useState<User | null>(null);
+  const [worker, setWorker] = useState<Worker | null>();
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -19,9 +20,14 @@ const LastWeek = () => {
         setUser(user);
 
         if (user) {
-          var jobsLastWeek = await getAppliedJobsLastWeek(user.id_user);
-          setAppliedJobs(jobsLastWeek);
-          // console.log(JSON.stringify(jobsLastWeek))
+          const worker = await findWorkerById(user.id_user);
+
+          if (worker) {
+            setWorker(worker);
+            var jobsLastWeek = await getAppliedJobsLastWeek(worker._id);
+            setAppliedJobs(jobsLastWeek);
+          }
+
         }
       } catch (error) {
         console.log(error);
@@ -96,7 +102,7 @@ const LastWeek = () => {
                     <View style={{ flex: 1 }}>
                       <View style={{ flexDirection: 'row' }}>
                         <Ionicons name='time' size={14} color={'blue'} style={{ marginRight: 3 }} />
-                        <Text style={styles.text}>{formatDate(item.job_id.created_at)}</Text>
+                        <Text style={styles.text}>{formatDate(String(item.applied_at))}</Text>
                       </View>
                       <View style={{ flexDirection: 'row', backgroundColor: '#0099CC', padding: 5, alignContent: 'center', justifyContent: 'center', borderRadius: 10 }}>
                         <Ionicons name='notifications' size={14} color={'white'} style={{ marginRight: 3, alignSelf: 'center' }} />
