@@ -40,10 +40,10 @@ export const getUserInfo = async (): Promise<User | null> => {
   }
 };
 // danh sách công việc
-export const fetchJobs = async (): Promise<Job[]> => {
+export const fetchJobs = async (page?: number): Promise<Job[]> => {
   try {
     const response: AxiosResponse<JobsResponse> = await axios.get(
-      'http://beejobs.io.vn:14307/api/jobs/getListJobs'
+      `http://beejobs.io.vn:14307/getlistjob?page=${page}&limit=10`
     );
 
     // Lấy danh sách công việc
@@ -72,6 +72,7 @@ export const fetchJobs = async (): Promise<Job[]> => {
       job.company_name = companies[index].company_name;
       // console.log(JSON.stringify(companies[index].company_name))
     });
+    // console.log(response.data);
 
     return jobsable;
   } catch (error) {

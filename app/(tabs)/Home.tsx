@@ -7,7 +7,8 @@ import {
   TouchableOpacity,
   Image,
   SafeAreaView,
-  ToastAndroid
+  ToastAndroid,
+  ActivityIndicator
 } from "react-native";
 import React, { useState, useEffect, useCallback } from "react";
 import { useFocusEffect } from "@react-navigation/native";
@@ -27,18 +28,18 @@ import { useBackHandler } from "../../components/BackHandler";
 import AlertComponent from "@/components/AlertComponent";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import axios, { AxiosResponse } from "axios";
-interface FilterOptionProps {
-  label: string;
-  value: string;
-  onPress: (value: string) => void;
-}
+// interface FilterOptionProps {
+//   label: string;
+//   value: string;
+//   onPress: (value: string) => void;
+// }
 interface WorkerInfo {
   worker_avatar?: string;
   worker_name?: string;
 }
 const Home = () => {
   const [user, setUser] = useState<User | null>();
-  const [searchText, setSearchText] = useState("");
+  // const [searchText, setSearchText] = useState("");
   const [filterText, setFilterText] = useState("");
   const [jobs, setJobs] = useState<Job[]>([]);
   const [filteredJobs, setFilteredJobs] = useState<Job[]>([]);
@@ -46,58 +47,58 @@ const Home = () => {
   const [showOptions, setShowOptions] = useState(false);
   const [ref, setRef] = useState(false);
   const [backPressCount, setBackPressCount] = useState(0);
-  const [filterOptions, setFilterOptions] = useState([
-    { label: "Tiêu đề", value: "title" },
-    { label: "Mức lương", value: "salary" },
-    { label: "Địa điểm", value: "location" },
-    { label: "Ngành nghề", value: "type" },
-  ]);
-  const [selectedFilterOption, setSelectedFilterOption] = useState("title");
-  const [inputSearch, setInputSearch] = useState("Tìm kiếm");
+  // const [filterOptions, setFilterOptions] = useState([
+  //   { label: "Tiêu đề", value: "title" },
+  //   { label: "Mức lương", value: "salary" },
+  //   { label: "Địa điểm", value: "location" },
+  //   { label: "Ngành nghề", value: "type" },
+  // ]);
+  // const [selectedFilterOption, setSelectedFilterOption] = useState("title");
+  // const [inputSearch, setInputSearch] = useState("Tìm kiếm");
   const router = useRouter();
   const [refreshing, setRefreshing] = useState(false);
   //const [userID, setuserID] = useState<string | null>(null);
   const [userData, setUserData] = useState<WorkerInfo>({});
   const [error, setError] = useState(null);
   //const params = useLocalSearchParams();
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+
+
+  const loadJobs = async (page: number) => {
+    setIsLoading(true);
+    try {
+      const user = await getUserInfo();
+      setUser(user);
+
+      const fetchedJobs = await fetchJobs(page);
+      setFilteredJobs(fetchedJobs);
+      setIsLoading(false);
+
+      const response = await axios.get(`http://beejobs.io.vn:14307/getlistjob`);
+      setTotalPages(response.data.totalPages);
+    } catch (error) {
+      console.log(error);
+      setIsLoading(false);
+    }
+  };
 
   useFocusEffect(
     React.useCallback(() => {
-      const loadJobs = async () => {
-        setIsLoading(true);
-        try {
-          const user = await getUserInfo();
-          setUser(user);
-        } catch (error) {
-          console.log(error);
-        }
-
-        const fetchedJobs = await fetchJobs();
-        setJobs(fetchedJobs);
-        setFilteredJobs(fetchedJobs);
+      setCurrentPage(1);
+      setTotalPages(1);
+      loadJobs(1);
+      console.log('focous')
+      return () => {
         setIsLoading(false);
-      };
-      loadJobs();
+      }; // Cleanup to prevent memory leaks
     }, [])
   );
 
-  useEffect(() => {
-    const loadJobs = async () => {
-      setIsLoading(true);
-      try {
-        const user = await getUserInfo();
-        setUser(user);
-      } catch (error) {
-        console.log(error);
-      }
-
-      const fetchedJobs = await fetchJobs();
-      setJobs(fetchedJobs);
-      setFilteredJobs(fetchedJobs);
-      setIsLoading(false);
-    };
-    loadJobs();
-  }, [ref]);
+  // useEffect(() => {
+  //   // loadJobs(currentPage);
+  //   console.log('effect')
+  // }, [currentPage]);
 
   useEffect(() => {
     fetchData();
@@ -157,68 +158,11 @@ const Home = () => {
     }
   };
 
-  const refresh = () => {
-    setRef(!ref);
+
+  const handleSearch = () => {
+    router.push({pathname: '(insidescreens)/SearchJob'})
   };
 
-  const handleSearch = async (text: string) => {
-    setSearchText(text);
-    if (selectedFilterOption === "title") {
-      const results = await findJobByTitle(text);
-      setFilteredJobs(results);
-    } else if (selectedFilterOption === "salary") {
-      const results = await findJobBySalary(text);
-      setFilteredJobs(results);
-    } else if (selectedFilterOption === "location") {
-      const results = await findJobByLocation(text);
-      setFilteredJobs(results);
-    } else if (selectedFilterOption === "type") {
-      const results = await findJobByWorkType(text);
-      setFilteredJobs(results);
-    } else {
-      console.log("null");
-    }
-  };
-
-  const toggleOptions = () => {
-    setShowOptions(!showOptions);
-  };
-
-  const handleOptionPress = (value: string) => {
-    // Xử lý logic khi chọn một tùy chọn
-    setSelectedFilterOption(value);
-    setInputSearch(value);
-    if (value === "title") {
-      setInputSearch("Tiêu đề");
-    } else if (value === "salary") {
-      setInputSearch("Mức lương");
-    } else if (value === "location") {
-      setInputSearch("Địa điểm");
-    } else if (value === "type") {
-      setInputSearch("Ngành nghề");
-    } else {
-      setFilteredJobs(jobs);
-    }
-    console.log(`Đã chọn tùy chọn: ${value}`);
-    setShowOptions(false);
-  };
-
-  const FilterOption: React.FC<FilterOptionProps> = ({
-    label,
-    value,
-    onPress,
-  }) => (
-    <TouchableOpacity
-      style={styles.filterOption}
-      onPress={() => onPress(value)}
-    >
-      <Text style={styles.filterOptionText}>{label}</Text>
-    </TouchableOpacity>
-  );
-
-  const hanldeReLoad = () => {
-    // setRef(!ref);
-  }
 
   return (
     <SafeAreaView style={styles.container}>
@@ -229,7 +173,7 @@ const Home = () => {
           {!user &&
             <TouchableOpacity
               onPress={() => { router.push('/LoginScreen') }}>
-              <Text style={[styles.company, {fontWeight:'700'}]}>Đăng nhập</Text>
+              <Text style={[styles.company, { fontWeight: '700' }]}>Đăng nhập</Text>
             </TouchableOpacity>}
         </View>
         <Image
@@ -241,8 +185,8 @@ const Home = () => {
           style={styles.profileImage}
         />
       </View>
-      <View style={styles.searchBar}>
-        <TouchableOpacity onPress={refresh}>
+      <TouchableOpacity style={styles.searchBar} onPress={handleSearch}>
+        <TouchableOpacity>
           <Image
             source={require("../../assets/images/bee_jobs_light_blue.png")}
             style={styles.logo}
@@ -251,37 +195,34 @@ const Home = () => {
 
         <TextInput
           style={styles.searchInput}
-          placeholder={inputSearch}
-          value={searchText}
-          onChangeText={handleSearch}
+          placeholder="Tìm kiếm ... "
+          // onPointerDown={handleSearch}
+          onPress={handleSearch}
         />
-        <TouchableOpacity onPress={toggleOptions} style={styles.filterButton}>
-          <Text style={styles.filterIcon}>🔍</Text>
-        </TouchableOpacity>
-        {showOptions && (
-          <View style={styles.optionsContainer}>
-            {filterOptions.map((option, index) => (
-              <FilterOption
-                key={index}
-                label={option.label}
-                value={option.value}
-                onPress={handleOptionPress}
-              />
-            ))}
-          </View>
-        )}
-      </View>
+      </TouchableOpacity>
 
-      {isLoading ? (
+      {isLoading && currentPage === 1 ? (
         <View style={styles.loadingContainer}>
-          <Text style={styles.loadingText}>Đang tải...</Text>
+          <ActivityIndicator size="large" color="#0099FF" />
+          <Text>Loading...</Text>
         </View>
       ) : (
         <FlatList
           data={filteredJobs}
-          style={{ zIndex: 1 }}
-          keyExtractor={(item) => item._id}
-          renderItem={({ item }) => <JobsList job={item} callback={hanldeReLoad} />}
+          renderItem={({ item }) => <JobsList job={item} callback={()=>{}}/>}
+          keyExtractor={(item) => item._id.toString()}
+          onEndReachedThreshold={0.5}
+          ListFooterComponent={
+            currentPage < totalPages ?
+              <TouchableOpacity onPress={async () => {
+                setCurrentPage(currentPage + 1)
+                console.log(currentPage)
+                const fetchedJobs = await fetchJobs(currentPage+1);
+                setFilteredJobs((prevJobs) => [...prevJobs, ...fetchedJobs]);
+              }}>
+                <Text style={{color: '#0099FF', alignSelf:'center', fontSize:20, fontWeight:'500'}}>Tải thêm</Text>
+              </TouchableOpacity> : null
+          }
         />
       )}
     </SafeAreaView>
