@@ -4,6 +4,8 @@ import DocumentPicker, { DocumentPickerResponse } from 'react-native-document-pi
 // file model này chứa các định nghĩa về các object trong dự án
 export type JobsResponse = {
   data: Job[];
+  totalPages: number;
+  currentPage: number;
   message: string;
   createdBy: string;
 };
