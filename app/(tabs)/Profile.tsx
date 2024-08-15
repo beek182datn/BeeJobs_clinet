@@ -300,7 +300,6 @@ const Profile: React.FC = () => {
               </View>
             </View>
           </View>
-
           <View style={styles.jobManagement}>
             <Text style={styles.managementTitle}>Quản lý tìm việc</Text>
             <View style={styles.row}>
@@ -653,6 +652,9 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: "#fff",
     marginTop: 50,
+  },
+  scrollview: {
+    flexGrow: 1,
   },
   profileHeader: {
     flexDirection: "row",

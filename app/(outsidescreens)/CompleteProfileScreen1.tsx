@@ -9,7 +9,7 @@ import {
   Image,
   SafeAreaView,
   BackHandler,
-  ToastAndroid
+  ToastAndroid,
 } from "react-native";
 import Icon from "react-native-vector-icons/FontAwesome";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
@@ -95,7 +95,7 @@ const CompleteProfileScreen1: React.FC = () => {
 
   const handleContinue = () => {
     // sau khi hoàn thành thì cho vào màn Home
-    const newErrors = {
+    var newErrors = {
       worker_name: worker_name ? "" : "Tên không được để trống",
       worker_avatar: worker_avatar ? "" : "Ảnh đại diện không được bỏ trống",
       email: email ? "" : "Địa chỉ Gmail không được để trống",
@@ -105,6 +105,12 @@ const CompleteProfileScreen1: React.FC = () => {
       address: address ? "" : "Địa chỉ không được để trống",
     };
 
+    // Kiểm tra số điện thoại
+    if (phone && !isValidPhoneNumber(phone)) {
+      newErrors.phone = "Số điện thoại phải có 10 số & không có chữ cái";
+      return;
+    }
+
     setErrors(newErrors);
     const noErrors = Object.values(newErrors).every((error) => !error);
     if (!noErrors) {
@@ -112,12 +118,34 @@ const CompleteProfileScreen1: React.FC = () => {
     }
   };
 
+  const isValidPhoneNumber = (phone: string): boolean => {
+    // Kiểm tra số ký tự có đúng 10 ký tự không
+    if (phone.length !== 10) {
+      return false;
+    }
+
+    // Kiểm tra xem có chứa chữ cái không
+    const regexPhone = /^[0-9]{10}$/;
+    if (!regexPhone.test(phone)) {
+      return false;
+    }
+
+    return true;
+  };
+
   const handleRegister = async (): Promise<void> => {
     handleContinue();
 
     try {
       const avatarUrl = worker_avatar;
-      if (avatarUrl && worker_name && phone && major && experience !== "" && address) {
+      if (
+        avatarUrl &&
+        worker_name &&
+        phone &&
+        major &&
+        experience !== "" &&
+        address
+      ) {
         const formData = new FormData();
         formData.append("worker_name", worker_name);
         // formData.append("worker_avatar", avatarUrl);
@@ -264,7 +292,12 @@ const CompleteProfileScreen1: React.FC = () => {
         <Text style={styles.sectionHeader}>Chuyên ngành</Text>
         <View style={styles.section}>
           <View style={styles.inputContainer}>
-            <Icon name="briefcase" size={20} color="#A9A9A9" style={styles.icon} />
+            <Icon
+              name="briefcase"
+              size={20}
+              color="#A9A9A9"
+              style={styles.icon}
+            />
             <TextInput
               style={styles.input}
               placeholder="Chuyên ngành"
@@ -290,7 +323,7 @@ const CompleteProfileScreen1: React.FC = () => {
               }}
               style={styles.input}
             >
-              <Picker.Item label="-Kinh nghiệm-" value=""/>
+              <Picker.Item label="-Kinh nghiệm-" value="" />
               <Picker.Item label="Sắp đi làm" value="Sắp đi làm" />
               <Picker.Item label="Dưới 1 năm" value="Dưới 1 năm" />
               <Picker.Item label="1 năm" value="1 năm" />
@@ -317,11 +350,11 @@ const CompleteProfileScreen1: React.FC = () => {
 const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
-    backgroundColor: '#f5f5f5',
+    backgroundColor: "#f5f5f5",
   },
   container: {
     padding: 20,
-    backgroundColor: '#f5f5f5',
+    backgroundColor: "#f5f5f5",
   },
   headerContainer: {
     flexDirection: "row",

@@ -81,6 +81,11 @@ const Messenger = () => {
     }
   };
 
+  const clearSearch = () => {
+    setSearchQuery("");
+    setFilteredChatRooms(chatRooms);
+  };
+
   const handleItemPress = (job: Job) => {
     router.push({ pathname: "(insidescreens)/ChatRoom", params: { ...job, userId: firstMyID } });
   };
@@ -103,25 +108,30 @@ const Messenger = () => {
 
   return (
     <SafeAreaView style={styles.container}>
-      <View
-        //colors={["#f0f0f0", "#87cefa"]}
+      <LinearGradient
+        colors={['#f0f0f0', '#87cefa']}
         style={styles.container}
-        //start={[0, 1]}
-        //end={[1, 0]}
+        start={[0, 1]}
+        end={[1, 0]}
       >
-        <View style={styles.header}>
+        
           <Text style={styles.title}>Tin nhắn</Text>
           {/* <Ionicons name="person-add" size={24} color="black" /> */}
-        </View>
+        
 
         <View style={styles.searchContainer}>
-          <Ionicons name="search" size={24} color="#ddd" />
+          <Ionicons name="search" size={24} color="#888" />
           <TextInput
             style={styles.searchInput}
             placeholder="Search..."
             value={searchQuery}
             onChangeText={handleSearch}
           />
+          {searchQuery.length > 0 && (
+          <TouchableOpacity onPress={clearSearch} style={styles.clearButton}>
+            <Ionicons name="close" size={20} color="#999" />
+          </TouchableOpacity>
+        )}
         </View>
         <FlatList
           data={filteredChatRooms}
@@ -165,7 +175,7 @@ const Messenger = () => {
             );
           }}
         />
-      </View>
+      </LinearGradient>
     </SafeAreaView>
   );
 };
@@ -181,35 +191,42 @@ const styles = StyleSheet.create({
     padding: 20,
   },
   title: {
-    fontSize: 24,
-    fontWeight: "bold",
+    marginTop: 30,
+    marginBottom: 20,
+    fontSize: 28,
+    fontWeight: 'bold',
+    color: '#333',
+    textAlign: 'center',
   },
   searchContainer: {
-    flexDirection: "row",
-    alignItems: "center",
-    marginBottom: 20,
-    backgroundColor: "#fff",
-    borderColor: "#ccc",
-    borderWidth: 1,
-    borderRadius: 10,
-    paddingHorizontal: 10,
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#fff',
+    borderRadius: 20,
+    padding: 5,
     marginHorizontal: 20,
+    marginBottom: 20,
+    borderWidth: 1,
+    borderColor: '#ddd',
   },
   searchInput: {
     flex: 1,
-    height: 40,
-    paddingHorizontal: 10,
+    marginLeft: 15,
+    fontSize: 15,
+    color: '#333',
   },
   chatRoomItem: {
-    flexDirection: "row",
-    padding: 10,
+    flexDirection: 'row',
+    padding: 8,
     marginVertical: 5,
-    backgroundColor: "#f9f9f9",
-    borderBottomWidth: 1,
-    borderColor: "#ccc",
-    alignItems: "center",
-    marginLeft: 10,
-    marginRight: 10
+    marginHorizontal: 10,
+    backgroundColor: '#fff',
+    borderRadius: 10,
+    shadowColor: '#000',
+    shadowOpacity: 0.1,
+    shadowOffset: { width: 0, height: 2 },
+    shadowRadius: 5,
+    elevation: 3,
   },
   avatarContainer: {
     position: "relative",
@@ -218,19 +235,23 @@ const styles = StyleSheet.create({
     width: 50,
     height: 50,
     borderRadius: 25,
-    marginRight: 15,
+    borderWidth: 2,
+    borderColor: '#007BFF',
   },
   checkMark: {
     position: "absolute",
     bottom: 0,
-    right: 5,
+    right: -11,
   },
   textContainer: {
     flex: 1,
+    marginLeft: 17,
+    justifyContent: 'center',
   },
   workerName: {
     fontSize: 18,
-    fontWeight: "bold",
+    fontWeight: '600',
+    color: '#333',
   },
   lastMessage: {
     fontSize: 16,
@@ -244,6 +265,11 @@ const styles = StyleSheet.create({
     color: "red",
     fontSize: 18,
     alignSelf: "center",
+  },
+  clearButton: {
+    alignSelf: "center",
+    position: 'absolute',
+    right: 15,
   },
 });
 

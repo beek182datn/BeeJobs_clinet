@@ -1,7 +1,17 @@
-import { StyleSheet, View, BackHandler, TouchableOpacity, Text, SafeAreaView, ActivityIndicator } from 'react-native';
-import React, { useEffect, useState } from 'react';
-import { WebView } from 'react-native-webview';
-import { useLocalSearchParams, useRouter } from 'expo-router';
+import {
+  StyleSheet,
+  View,
+  BackHandler,
+  TouchableOpacity,
+  Text,
+  SafeAreaView,
+  ActivityIndicator,
+  Linking,
+  Alert
+} from "react-native";
+import React, { useEffect, useState } from "react";
+import { WebView } from "react-native-webview";
+import { useLocalSearchParams, useRouter } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
 
 const ViewCV = () => {
@@ -22,9 +32,20 @@ const ViewCV = () => {
       "hardwareBackPress",
       backAction
     );
-console.log(googleDocsUrl)
+    //console.log(googleDocsUrl);
     return () => backHandler.remove();
   }, [router]);
+
+  const handleShouldStartLoadWithRequest = (event: { url: string; }) => {
+    // Kiểm tra nếu URL không phải là URL của tài liệu và mở nó bằng trình duyệt
+    if (event.url !== googleDocsUrl) {
+      Linking.openURL(event.url).catch((err) =>
+        Alert.alert('Không thể mở liên kết', err.message)
+      );
+      return false; // Không tải URL bên trong WebView
+    }
+    return true; // Tải URL bên trong WebView
+  };
 
   const backAction = () => {
     router.back();
@@ -40,8 +61,8 @@ console.log(googleDocsUrl)
             borderRadius: 30,
             padding: 5,
             marginLeft: 10,
-            position: 'absolute',
-            zIndex: 100
+            position: "absolute",
+            zIndex: 100,
           }}
         >
           <Ionicons name="arrow-back" size={22} color="black" />
@@ -49,7 +70,14 @@ console.log(googleDocsUrl)
         <Text style={styles.header}>Xem lại CV</Text>
         <View style={styles.separator} />
       </View>
-      <WebView style={{ backgroundColor: 'white' }} source={{ uri: googleDocsUrl }} onLoadProgress={() => { console.log('Dang tai...') }} />
+      <WebView
+    incognito={true}
+    source={{ uri: googleDocsUrl }}
+    onLoadStart={() => console.log("WebView load start")}
+    onLoad={() => console.log("WebView load")}
+    onLoadEnd={() => console.log("WebView loaded")}
+    onShouldStartLoadWithRequest={handleShouldStartLoadWithRequest}
+  />
     </SafeAreaView>
   );
 };
@@ -66,7 +94,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     marginBottom: 20,
-    position: 'relative',
+    position: "relative",
   },
   icon: {
     width: 40,

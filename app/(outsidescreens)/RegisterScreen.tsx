@@ -6,7 +6,7 @@ import {
   TouchableOpacity,
   StyleSheet,
   Alert,
-  ActivityIndicator
+  ActivityIndicator,
 } from "react-native";
 import Icon from "react-native-vector-icons/FontAwesome";
 import AlertComponent from "@/components/AlertComponent";
@@ -54,6 +54,53 @@ const RegisterScreen = () => {
     return emailRegex.test(email);
   };
 
+  const isValidName = (account_name: string): boolean => {
+    // Kiểm tra độ dài tên
+    if (account_name.length > 50) {
+      return false;
+    }
+
+    // Kiểm tra xem tên có chứa số hay không
+    const regex = /\d/;
+    if (regex.test(account_name)) {
+      return false;
+    }
+
+    return true;
+  };
+
+  const isValidPassword = (passwd: string): boolean => {
+    // Kiểm tra độ dài của mật khẩu phải trên 6 ký tự
+    if (passwd.length <= 6) {
+        setMessage("Mật khẩu phải trên 6 ký tự");
+        setColor("red");
+        setShowMissingInfoAlert(true);
+        setLoading(false);
+      return false;
+    }
+
+    // Kiểm tra chữ cái đầu tiên phải là chữ cái viết hoa
+    const firstChar = passwd.charAt(0);
+    if (!/[A-Z]/.test(firstChar)) {
+        setMessage("Chữ cái đầu tiên phải của mật khẩu phải viết hoa");
+        setColor("red");
+        setShowMissingInfoAlert(true);
+        setLoading(false);
+      return false;
+    }
+
+    // Kiểm tra mật khẩu phải chứa ít nhất một số
+    if (!/\d/.test(passwd)) {
+        setMessage("Mật khẩu phải chứa ít nhất một số");
+        setColor("red");
+        setShowMissingInfoAlert(true);
+        setLoading(false);
+      return false;
+    }
+
+    return true;
+  };
+
   const handleRegister = async () => {
     const newErrors = {
       accout_name: accout_name ? "" : "Cho chúng tôi biết họ và tên của bạn",
@@ -67,11 +114,21 @@ const RegisterScreen = () => {
     const noErrors = Object.values(newErrors).every((error) => !error);
     if (noErrors) {
       setLoading(true);
-      if (!isValidEmail(email)) {
-        setMessage("Email không hợp lệ");
+      if (!isValidName(accout_name)) {
+        setMessage("Họ tên sai định dạng");
         setColor("red");
         setShowMissingInfoAlert(true);
         setLoading(false);
+        return;
+      }
+      if (!isValidEmail(email)) {
+        setMessage("Email sai định dạng");
+        setColor("red");
+        setShowMissingInfoAlert(true);
+        setLoading(false);
+        return;
+      }
+      if(!isValidPassword(passwd)){
         return;
       }
       if (passwd != passwd2) {
@@ -89,27 +146,23 @@ const RegisterScreen = () => {
             accout_name: accout_name,
             email: email,
             passwd: passwd,
-            type_role: "NLD",
-            verify: false,
           }
         );
-        console.log('huy check: ' + response.data.status)
-        if (response.data.status === 200){
+        console.log("huy check: " + response.data.status);
+        if (response.data.status === 200) {
           router.push({ pathname: "VerifyAccount", params: { email: email } });
-        }
-        else if(response.data.status === 400){
+        } else if (response.data.status === 400) {
           setMessage("Email đã được đăng ký!");
           setShowMissingInfoAlert(true);
           setColor("red");
           return;
         }
-        
       } catch (error) {
         console.error("Lỗi đăng ký:", error);
         setMessage("Đăng ký thất bại");
         setShowMissingInfoAlert(true);
         setColor("red");
-      }finally {
+      } finally {
         setLoading(false); // Kết thúc loading
       }
     }
@@ -204,8 +257,8 @@ const RegisterScreen = () => {
         <ActivityIndicator size="large" color="#0000ff" />
       ) : (
         <TouchableOpacity style={styles.button} onPress={handleRegister}>
-        <Text style={styles.buttonText}>Đăng ký</Text>
-      </TouchableOpacity>
+          <Text style={styles.buttonText}>Đăng ký</Text>
+        </TouchableOpacity>
       )}
       <Text style={styles.continueWithText}>----- continue with -----</Text>
       <View style={styles.socialIconsContainer}>

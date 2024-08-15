@@ -8,7 +8,8 @@ import {
   ScrollView,
   Image,
   SafeAreaView,
-  BackHandler
+  BackHandler,
+  
 } from "react-native";
 import Icon from "react-native-vector-icons/FontAwesome";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
@@ -16,6 +17,7 @@ import { useRouter, useLocalSearchParams } from "expo-router";
 import * as DocumentPicker from "expo-document-picker";
 import axios, { AxiosResponse } from "axios";
 import * as ImagePicker from "expo-image-picker";
+import AlertComponent from "@/components/AlertComponent";
 type SetterFunction = (uri: string) => void;
 import { User, Worker } from "../../components/Model/Model";
 import { getUserInfo, findWorkerById } from "@/components/fetch_data/api";
@@ -24,8 +26,8 @@ import { Picker } from "@react-native-picker/picker";
 
 const pickImage = async (setter: SetterFunction) => {
   const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
-  if (status !== 'granted') {
-    alert('Permission to access media library is required!');
+  if (status !== "granted") {
+    alert("Permission to access media library is required!");
     return;
   }
 
@@ -57,6 +59,9 @@ const CompleteProfileScreen2: React.FC = () => {
   const [email, setEmail] = useState(workerinfo.email);
   const [address, setAddress] = useState(workerinfo.address);
   const [pickerVisible, setPickerVisible] = useState(false);
+  const [showMissingInfoAlert, setShowMissingInfoAlert] = useState(false);
+  const [message, setMessage] = useState("");
+  const [color, setColor] = useState("");
 
   //console.log(user_id);
   const [errors, setErrors] = useState({
@@ -66,7 +71,7 @@ const CompleteProfileScreen2: React.FC = () => {
     phone: "",
     major: "",
     experience: "",
-    address: ""
+    address: "",
   });
 
   const backAction = () => {
@@ -111,35 +116,70 @@ const CompleteProfileScreen2: React.FC = () => {
       address: address ? "" : "Địa chỉ không được để trống",
     };
 
+    // Kiểm tra số điện thoại
+    if (phone && !isValidPhoneNumber(String(phone))) {
+      //newErrors.phone = "Số điện thoại phải có 10 số & không có chữ cái";
+      return ;
+    }
+
     setErrors(newErrors);
 
     const noErrors = Object.values(newErrors).every((error) => !error);
     if (noErrors) {
-      router.push('/Profile');
+      router.push("/Profile");
     }
   };
-  const handleRegister = async (): Promise<void> => {
 
+  const isValidPhoneNumber = (phone: string): boolean => {
+    // Kiểm tra số ký tự có đúng 10 ký tự không
+    if (phone.length !== 10) {
+      setMessage("Số điện thoại phải đủ 10 số");
+      setColor("red");
+      setShowMissingInfoAlert(true);
+      return false;
+    }
+
+    // Kiểm tra xem có chứa chữ cái không
+    const regexPhone = /^[0-9]{10}$/;
+    if (!regexPhone.test(phone)) {
+      setMessage("Số điện thoại không chứ chữ cái");
+      setColor("red");
+      setShowMissingInfoAlert(true);
+      return false;
+    }
+
+    return true;
+  };
+
+  const handleRegister = async (): Promise<void> => {
+    handleContinue();
     try {
       const avatarUrl = worker_avatar;
-      if (avatarUrl && worker_name && phone && major && experience !== "" && address) {
+      if (
+        avatarUrl &&
+        worker_name &&
+        phone &&
+        major &&
+        experience !== "" &&
+        address
+      ) {
         const formData = new FormData();
-        formData.append('worker_name', String(worker_name));
+        formData.append("worker_name", String(worker_name));
         // if (worker_avatar !== workerinfo.worker_avatar) {
         //   formData.append('worker_avatar', avatarUrl);
         // }
-        formData.append('email', String(email));  // Replace with actual email
-        formData.append('phone', String(phone));
-        formData.append('major', String(major));
-        formData.append('experience', String(experience));
-        formData.append('address', String(address));
+        formData.append("email", String(email)); // Replace with actual email
+        formData.append("phone", String(phone));
+        formData.append("major", String(major));
+        formData.append("experience", String(experience));
+        formData.append("address", String(address));
         if (worker_avatars) {
           const response = await fetch(worker_avatars);
           const blob = await response.blob();
-          formData.append('worker_avatar', {
+          formData.append("worker_avatar", {
             uri: worker_avatars,
             type: blob.type,
-            name: 'logo.jpg',
+            name: "logo.jpg",
           } as any);
         }
         //console.log(JSON.stringify(`http://beejobs.io.vn:14307/workers/update/${String(worker?.user_id)}`));
@@ -149,19 +189,16 @@ const CompleteProfileScreen2: React.FC = () => {
             formData,
             {
               headers: {
-                'Content-Type': 'multipart/form-data',
+                "Content-Type": "multipart/form-data",
               },
             }
           );
-
-
         }
-
       }
     } catch (error) {
-      console.error('Lỗi đăng ký:', error);
+      console.error("Lỗi đăng ký:", error);
     }
-    handleContinue();
+    
   };
 
   return (
@@ -265,7 +302,12 @@ const CompleteProfileScreen2: React.FC = () => {
         <Text style={styles.sectionHeader}>Chuyên ngành</Text>
         <View style={styles.section}>
           <View style={styles.inputContainer}>
-            <Icon name="briefcase" size={20} color="#A9A9A9" style={styles.icon} />
+            <Icon
+              name="briefcase"
+              size={20}
+              color="#A9A9A9"
+              style={styles.icon}
+            />
             <TextInput
               style={styles.input}
               placeholder="Chuyên ngành"
@@ -310,6 +352,12 @@ const CompleteProfileScreen2: React.FC = () => {
           <Text style={styles.buttonText}>Lưu</Text>
         </TouchableOpacity>
       </ScrollView>
+      <AlertComponent
+        color={color}
+        message={message}
+        visible={showMissingInfoAlert}
+        onClose={() => setShowMissingInfoAlert(false)}
+      />
     </SafeAreaView>
   );
 };
@@ -317,11 +365,11 @@ const CompleteProfileScreen2: React.FC = () => {
 const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
-    backgroundColor: '#f5f5f5',
+    backgroundColor: "#f5f5f5",
   },
   container: {
     padding: 20,
-    backgroundColor: '#f5f5f5',
+    backgroundColor: "#f5f5f5",
   },
   headerContainer: {
     flexDirection: "row",
@@ -419,8 +467,8 @@ const styles = StyleSheet.create({
     height: 120,
     borderRadius: 50,
     marginBottom: 10,
-    borderColor: 'blue',
-    borderWidth: 2
+    borderColor: "blue",
+    borderWidth: 2,
   },
 });
 
