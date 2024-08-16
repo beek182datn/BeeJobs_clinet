@@ -93,49 +93,40 @@ const CompleteProfileScreen1: React.FC = () => {
     return () => backHandler.remove();
   }, [user_id]);
 
-  const handleContinue = () => {
-    // sau khi hoàn thành thì cho vào màn Home
-    var newErrors = {
-      worker_name: worker_name ? "" : "Tên không được để trống",
+  const handleContinue = (): boolean => {
+    // Kiểm tra lỗi và trả về true nếu không có lỗi
+    const newErrors = {
+      worker_name: worker_name
+        ? (/^[A-Za-z\s]{1,50}$/.test(worker_name)
+          ? ""
+          : "Tên không được chứa ký tự số và phải dưới 50 ký tự")
+        : "Tên không được để trống",
       worker_avatar: worker_avatar ? "" : "Ảnh đại diện không được bỏ trống",
       email: email ? "" : "Địa chỉ Gmail không được để trống",
-      phone: phone ? "" : "Số điện thoại không được để trống",
+      phone: phone
+        ? (/^\d{10}$/.test(String(phone))
+          ? ""
+          : "Số điện thoại phải đủ 10 chữ số và không có ký tự chữ")
+        : "Số điện thoại không được để trống",
       major: major ? "" : "Ngành không được để trống",
       experience: experience ? "" : "Kinh nghiệm không được để trống",
       address: address ? "" : "Địa chỉ không được để trống",
     };
-
-    // Kiểm tra số điện thoại
-    if (phone && !isValidPhoneNumber(phone)) {
-      newErrors.phone = "Số điện thoại phải có 10 số & không có chữ cái";
-      return;
-    }
-
+  
     setErrors(newErrors);
+  
     const noErrors = Object.values(newErrors).every((error) => !error);
+    return noErrors; // Trả về true nếu không có lỗi
+  };
+  
+  const handleRegister = async (): Promise<void> => {
+    const noErrors = handleContinue(); // Kiểm tra lỗi
+  
+    // Nếu có lỗi thì dừng quá trình đăng ký
     if (!noErrors) {
       return;
     }
-  };
-
-  const isValidPhoneNumber = (phone: string): boolean => {
-    // Kiểm tra số ký tự có đúng 10 ký tự không
-    if (phone.length !== 10) {
-      return false;
-    }
-
-    // Kiểm tra xem có chứa chữ cái không
-    const regexPhone = /^[0-9]{10}$/;
-    if (!regexPhone.test(phone)) {
-      return false;
-    }
-
-    return true;
-  };
-
-  const handleRegister = async (): Promise<void> => {
-    handleContinue();
-
+  
     try {
       const avatarUrl = worker_avatar;
       if (
@@ -148,12 +139,12 @@ const CompleteProfileScreen1: React.FC = () => {
       ) {
         const formData = new FormData();
         formData.append("worker_name", worker_name);
-        // formData.append("worker_avatar", avatarUrl);
-        formData.append("email", email); // Replace with actual email
+        formData.append("email", email);
         formData.append("phone", phone);
         formData.append("major", major);
         formData.append("experience", experience);
         formData.append("address", address);
+  
         if (worker_avatar) {
           try {
             const response = await fetch(worker_avatar);
@@ -164,11 +155,11 @@ const CompleteProfileScreen1: React.FC = () => {
               name: "logo.jpg",
             } as any);
           } catch (err) {
-            console.error("Lỗi khi tải ảnh:");
+            console.error("Lỗi khi tải ảnh:", err);
             return; // Ngừng thực hiện nếu có lỗi khi tải ảnh
           }
         }
-
+  
         const response: AxiosResponse = await axios.post(
           `http://beejobs.io.vn:14307/workers/create/${user_id}`,
           formData,
@@ -178,16 +169,16 @@ const CompleteProfileScreen1: React.FC = () => {
             },
           }
         );
-
-        router.push("/Profile");
+  
+        router.push("/Profile"); // Chuyển hướng sau khi thành công
       } else {
-        // ToastAndroid.show("Ảnh chưa được chọn", ToastAndroid.SHORT);
-        // console.log("Ảnh chưa được chọn.");
+        console.log("Ảnh chưa được chọn hoặc dữ liệu không hợp lệ.");
       }
     } catch (error) {
       console.error("Lỗi đăng ký:", error);
     }
   };
+  
 
   return (
     <SafeAreaView style={styles.safeArea}>

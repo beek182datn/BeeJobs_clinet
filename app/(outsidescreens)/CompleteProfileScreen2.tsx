@@ -9,7 +9,6 @@ import {
   Image,
   SafeAreaView,
   BackHandler,
-  
 } from "react-native";
 import Icon from "react-native-vector-icons/FontAwesome";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
@@ -104,55 +103,41 @@ const CompleteProfileScreen2: React.FC = () => {
     return () => backHandler.remove();
   }, []);
 
-  const handleContinue = () => {
+  const handleContinue = (): boolean => {
     // sau khi hoàn thành thì cho vào màn Home
     const newErrors = {
-      worker_name: worker_name ? "" : "Tên không được để trống",
+      worker_name: worker_name
+        ? (/^[A-Za-z\s]{1,50}$/.test(String(worker_name))
+          ? ""
+          : "Tên không được chứa ký tự số và phải dưới 50 ký tự")
+        : "Tên không được để trống",
       worker_avatar: worker_avatar ? "" : "Ảnh đại diện không được bỏ trống",
       email: email ? "" : "Địa chỉ Gmail không được để trống",
-      phone: phone ? "" : "Số điện thoại không được để trống",
+      phone: phone
+        ? (/^\d{10}$/.test(String(phone))
+          ? ""
+          : "Số điện thoại phải đủ 10 chữ số và không có ký tự chữ")
+        : "Số điện thoại không được để trống",
       major: major ? "" : "Ngành không được để trống",
       experience: experience ? "" : "Kinh nghiệm không được để trống",
       address: address ? "" : "Địa chỉ không được để trống",
     };
-
-    // Kiểm tra số điện thoại
-    if (phone && !isValidPhoneNumber(String(phone))) {
-      //newErrors.phone = "Số điện thoại phải có 10 số & không có chữ cái";
-      return ;
-    }
-
+  
     setErrors(newErrors);
-
+  
+    // Kiểm tra nếu không có lỗi thì trả về true
     const noErrors = Object.values(newErrors).every((error) => !error);
-    if (noErrors) {
-      router.push("/Profile");
-    }
-  };
-
-  const isValidPhoneNumber = (phone: string): boolean => {
-    // Kiểm tra số ký tự có đúng 10 ký tự không
-    if (phone.length !== 10) {
-      setMessage("Số điện thoại phải đủ 10 số");
-      setColor("red");
-      setShowMissingInfoAlert(true);
-      return false;
-    }
-
-    // Kiểm tra xem có chứa chữ cái không
-    const regexPhone = /^[0-9]{10}$/;
-    if (!regexPhone.test(phone)) {
-      setMessage("Số điện thoại không chứ chữ cái");
-      setColor("red");
-      setShowMissingInfoAlert(true);
-      return false;
-    }
-
-    return true;
+    return noErrors;
   };
 
   const handleRegister = async (): Promise<void> => {
-    handleContinue();
+    const noErrors = handleContinue(); // Kiểm tra lỗi
+  
+    // Nếu có lỗi thì dừng không tiếp tục xử lý
+    if (!noErrors) {
+      return;
+    }
+  
     try {
       const avatarUrl = worker_avatar;
       if (
@@ -165,14 +150,12 @@ const CompleteProfileScreen2: React.FC = () => {
       ) {
         const formData = new FormData();
         formData.append("worker_name", String(worker_name));
-        // if (worker_avatar !== workerinfo.worker_avatar) {
-        //   formData.append('worker_avatar', avatarUrl);
-        // }
-        formData.append("email", String(email)); // Replace with actual email
+        formData.append("email", String(email));
         formData.append("phone", String(phone));
         formData.append("major", String(major));
         formData.append("experience", String(experience));
         formData.append("address", String(address));
+  
         if (worker_avatars) {
           const response = await fetch(worker_avatars);
           const blob = await response.blob();
@@ -182,8 +165,9 @@ const CompleteProfileScreen2: React.FC = () => {
             name: "logo.jpg",
           } as any);
         }
-        //console.log(JSON.stringify(`http://beejobs.io.vn:14307/workers/update/${String(worker?.user_id)}`));
+  
         if (worker) {
+          console.log("nhảy vào");
           const response: AxiosResponse = await axios.post(
             `http://beejobs.io.vn:14307/workers/update/${workerinfo.user_id}`,
             formData,
@@ -195,10 +179,11 @@ const CompleteProfileScreen2: React.FC = () => {
           );
         }
       }
+      // Chuyển hướng qua màn Home sau khi đăng ký thành công
+      router.push("/Profile");
     } catch (error) {
       console.error("Lỗi đăng ký:", error);
     }
-    
   };
 
   return (

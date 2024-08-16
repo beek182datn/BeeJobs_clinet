@@ -146,6 +146,7 @@ const RegisterScreen = () => {
             accout_name: accout_name,
             email: email,
             passwd: passwd,
+            type_role: 'NLD'
           }
         );
         console.log("huy check: " + response.data.status);
