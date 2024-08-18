@@ -59,15 +59,11 @@ const Profile: React.FC = () => {
   const [companyInfo, setCompanyInfo] = useState<Company[]>([]);
   const [appliedJobs, setAppliedJobs] = useState<AppliedJob[]>([]);
   const [jobs, setJobs] = useState<Job[]>([]);
-  const [loading, setLoading] = useState(false);
   useEffect(() => {
     fetchUserInfo();
     fetchData();
     fetchDataApplide();
   }, [router]);
-
-
-
   const fetchUserInfo = async () => {
     try {
       // const emailValue = await AsyncStorage.getItem('userProfile');

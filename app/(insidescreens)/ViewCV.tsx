@@ -17,7 +17,7 @@ import { Ionicons } from "@expo/vector-icons";
 const ViewCV = () => {
   const params = useLocalSearchParams();
   const cvUrl = params.cvUrl;
-  //console.log(cvUrl);
+  console.log(cvUrl);
   const googleDocsUrl = `https://docs.google.com/viewer?url=${cvUrl}&embedded=true&cachebuster=${new Date().getTime()}`;
   //console.log(googleDocsUrl);
   const router = useRouter();

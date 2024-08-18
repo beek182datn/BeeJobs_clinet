@@ -321,6 +321,8 @@ const styles = StyleSheet.create({
     height: 80,
     borderRadius: 40,
     backgroundColor: "#E0F7FA",
+    borderWidth: 2,
+    borderColor: '#0099FF'
   },
   headerText: {
     flex: 1,

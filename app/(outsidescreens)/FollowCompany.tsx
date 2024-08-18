@@ -58,7 +58,7 @@ const FollowCompany: React.FC = () => {
           `http://beejobs.io.vn:14307/api/findcompanys/${userId}`
         );
         setCompanyInfo(response.data);
-        console.log(response.data);
+        //console.log(response.data);
       } else {
         console.warn("No UserID found in AsyncStorage");
       }
@@ -156,7 +156,7 @@ const styles = StyleSheet.create({
   icon: {
     width: 40,
     height: 40,
-    borderRadius: 20,
+    borderRadius: 7,
     marginRight: 16,
   },
   header: {

@@ -220,12 +220,12 @@ const JobDetail = () => {
     // }
     try {
       const fileInfo = await FileSystem.getInfoAsync(cvUri);
-      // if (!fileInfo.exists) {
-      //   Alert.alert('Lỗi', 'File không tồn tại');
-      // }
-      // if (fileInfo.exists) {
-      //   Alert.alert('Ok', 'File tồn tại');
-      // }
+      if (!fileInfo.exists) {
+        Alert.alert('Lỗi', 'File không tồn tại');
+      }
+      if (fileInfo.exists) {
+        Alert.alert('Ok', 'File tồn tại');
+      }
       await Sharing.shareAsync(cvUri);
     } catch (error) {
       console.log(error)

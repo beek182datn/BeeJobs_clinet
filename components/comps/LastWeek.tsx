@@ -223,7 +223,8 @@ const styles = StyleSheet.create({
   companyLogo: {
     width: 50,
     height: 50,
-    marginRight: 10
+    marginRight: 10,
+    borderRadius: 7
   },
   companyName: {
     color: 'gray',
