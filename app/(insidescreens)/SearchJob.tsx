@@ -72,7 +72,7 @@ const SearchJob = () => {
         };
     };
 
-    const debouncedSearch = debounce(search, 2000);
+    const debouncedSearch = debounce(search, 1000);
 
     const handleSearch = (text: string) => {
         setSearchText(text);
