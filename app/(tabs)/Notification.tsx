@@ -3,6 +3,7 @@ import { StyleSheet, Text, View, Image, SafeAreaView, FlatList, ActivityIndicato
 import { getUnreadNotifications } from '@/components/fetch_data/notifi';
 import { NotificationModel, User } from '@/components/Model/Model';
 import { getUserInfo } from "@/components/fetch_data/api";
+import { useFocusEffect } from 'expo-router';
 
 interface NotificationScreenProps {
   userId: string;
@@ -12,6 +13,16 @@ const NotificationScreen: React.FC<NotificationScreenProps> = ({ userId }) => {
   const [notifications, setNotifications] = useState<NotificationModel[]>([]);
   const [loading, setLoading] = useState(true);
   const [storedUserId, setStoredUserId] = useState<string | null>(userId ?? null);
+
+  useFocusEffect(
+    React.useCallback(()=>{
+      if (!userId) {
+        fetchUserId();
+      } else {
+        fetchNotifications(userId);
+      }
+    }, [])
+  )
 
   useEffect(() => {
     if (!userId) {
