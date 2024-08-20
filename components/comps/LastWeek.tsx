@@ -24,7 +24,7 @@ const LastWeek = () => {
 
           if (worker) {
             setWorker(worker);
-            var jobsLastWeek = await getAppliedJobsLastWeek(worker._id);
+            var jobsLastWeek = await getAppliedJobsLastWeek(user.id_user);
             setAppliedJobs(jobsLastWeek);
           }
 

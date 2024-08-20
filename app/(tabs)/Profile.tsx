@@ -229,7 +229,7 @@ const Profile: React.FC = () => {
             //console.log(user.id_user);
             setWorker(worker);
             if (worker) {
-              var jobsLastWeek = await getAllAppliedJobs(worker._id);
+              var jobsLastWeek = await getAllAppliedJobs(user.id_user);
               setAppliedJobs(jobsLastWeek);
               console.log('long')
             }

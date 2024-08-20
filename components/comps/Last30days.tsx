@@ -22,7 +22,7 @@ const Last30days = () => {
 
           if (worker) {
             setWorker(worker);
-            var jobsLastWeek = await getAppliedJobsLast30days(worker._id);
+            var jobsLastWeek = await getAppliedJobsLast30days(user.id_user);
             setAppliedJobs(jobsLastWeek);
           }
 

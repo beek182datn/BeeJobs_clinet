@@ -122,11 +122,11 @@ const SearchJob = () => {
                 )}
             </View>
 
-            <View>
+            <View style={styles.loadingContainer}>
                 {isLoading ? (
-                    <View style={styles.loadingContainer}>
+                    <View>
                         <ActivityIndicator size="large" color="#0099FF" />
-                        <Text>Loading...</Text>
+                        {/* <Text>Loading...</Text> */}
                     </View>
                 ) : (
                     <FlatList
@@ -221,6 +221,7 @@ const styles = StyleSheet.create({
         flex: 1,
         justifyContent: "center",
         alignItems: "center",
+        alignContent:'center'
     },
     loadingText: {
         fontSize: 18,

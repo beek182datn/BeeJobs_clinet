@@ -11,7 +11,7 @@ import {
 } from "react-native";
 import React, { useEffect, useState } from "react";
 import { WebView } from "react-native-webview";
-import { useLocalSearchParams, useRouter } from "expo-router";
+import { useFocusEffect, useLocalSearchParams, useRouter } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
 
 const ViewCV = () => {
@@ -26,8 +26,7 @@ const ViewCV = () => {
 
   const reloadWebView = () => {
     setWebViewKey((prevKey) => prevKey + 1);
-  };
-  useEffect(() => {
+  };  useEffect(() => {
     const backHandler = BackHandler.addEventListener(
       "hardwareBackPress",
       backAction
@@ -51,6 +50,17 @@ const ViewCV = () => {
     router.back();
     return true;
   };
+
+  useEffect(()=>{
+    console.log('effect')
+  }, [cvUrl]);
+
+  useFocusEffect(
+    React.useCallback(()=>{
+      console.log('focus')
+    },[cvUrl])
+  )
+
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.headerContainer}>
