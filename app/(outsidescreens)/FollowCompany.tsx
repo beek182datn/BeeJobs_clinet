@@ -35,6 +35,7 @@ const FollowCompany: React.FC = () => {
   const router = useRouter();
   //const [userData, setUserData] = useState<CpmpanyInfo>({});
   const [companyInfo, setCompanyInfo] = useState<CpmpanyInfo[]>([]);
+  const [user_id, setUserId] = useState('');
   useEffect(() => {
     fetchData();
     const backHandler = BackHandler.addEventListener(
@@ -54,6 +55,7 @@ const FollowCompany: React.FC = () => {
     try {
       const userId = await AsyncStorage.getItem("userID");
       if (userId) {
+        setUserId(userId);
         const response = await axios.get(
           `http://beejobs.io.vn:14307/api/findcompanys/${userId}`
         );
@@ -82,8 +84,8 @@ const FollowCompany: React.FC = () => {
     //const router = useRouter();
     //router.push(`/CompanyDetail2/${companyId}`);
     router.push({
-      pathname: "CompanyDetail2",
-      params: { companyId: companyId },
+      pathname: "CompanyDetail",
+      params: { company_id: companyId, userId: user_id },
     });
   };
   useFocusEffect(
