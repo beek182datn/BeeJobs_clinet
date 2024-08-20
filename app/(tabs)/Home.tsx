@@ -25,6 +25,7 @@ import JobsList from "@/components/comps/JobsList";
 import { BackHandler, Alert } from "react-native";
 import { useRouter, useLocalSearchParams } from "expo-router";
 import { useBackHandler } from "../../components/BackHandler";
+import { LinearGradient } from "expo-linear-gradient";
 import AlertComponent from "@/components/AlertComponent";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import axios, { AxiosResponse } from "axios";
@@ -166,6 +167,12 @@ const Home = () => {
 
   return (
     <SafeAreaView style={styles.container}>
+      <LinearGradient
+        colors={['#f0f0f0', '#87cefa']}
+        style={styles.container}
+        start={[0, 1]}
+        end={[1, 0]}
+      >
       <View style={styles.header}>
         <View style={styles.headerText}>
           <Text style={styles.title}>Welcome Beejobs</Text>
@@ -225,6 +232,7 @@ const Home = () => {
           }
         />
       )}
+      </LinearGradient>
     </SafeAreaView>
   );
 };
@@ -232,7 +240,7 @@ const Home = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#ccc",
+    backgroundColor: "#fff",
   },
   searchBar: {
     flexDirection: "row",
@@ -315,6 +323,7 @@ const styles = StyleSheet.create({
   company: {
     color: "#0099FF",
     fontSize: 20,
+    fontWeight:'bold'
   },
   profileImage: {
     width: 80,
