@@ -5,7 +5,7 @@ import { Ionicons } from '@expo/vector-icons';
 import JobsList from '@/components/comps/JobsList';
 import { Job } from '@/components/Model/Model';
 import { findJobByLocation, findJobBySalary, findJobByTitle, findJobByWorkType } from '@/components/fetch_data/api';
-
+import Icon from 'react-native-vector-icons/MaterialIcons';
 interface FilterOptionProps {
     label: string;
     value: string;
@@ -44,7 +44,7 @@ const SearchJob = () => {
         } else if (value === "type") {
             setInputSearch("Hình thức");
         }
-        // console.log(`Đã chọn tùy chọn: ${value}`);
+        console.log(`Đã chọn tùy chọn: ${value}`);
         setShowOptions(false);
     };
 
@@ -112,7 +112,7 @@ const SearchJob = () => {
                     onChangeText={handleSearch}
                 />
                 <TouchableOpacity onPress={toggleOptions} style={styles.filterButton}>
-                    <Text style={styles.filterIcon}>🔍</Text>
+                <Icon name="tune" size={30} color="black" />
                 </TouchableOpacity>
                 {showOptions && (
                     <View style={styles.optionsContainer}>
@@ -155,6 +155,7 @@ const styles = StyleSheet.create({
         flex: 1,
         backgroundColor: "#F5F5F5", // Light background for better readability
         padding: 10, // Padding around the edges
+        position: 'relative',
     },
     headerContainer: {
         flexDirection: "row",
@@ -192,6 +193,7 @@ const styles = StyleSheet.create({
         borderRadius: 10,
         justifyContent: "center",
         alignItems: "center",
+        zIndex: 101, // Đảm bảo nút có zIndex cao hơn các thành phần khác
     },
     filterIcon: {
         fontSize: 20,
@@ -212,8 +214,10 @@ const styles = StyleSheet.create({
         shadowOffset: { width: 0, height: 2 },
         shadowRadius: 8,
         elevation: 5,
-        zIndex: 1000,
+        zIndex: 1000, // Đảm bảo zIndex cao để không bị che khuất
+        height: 'auto', // Điều chỉnh chiều cao tự động
     },
+    
     filterOption: {
         paddingVertical: 10,
         paddingHorizontal: 15,
