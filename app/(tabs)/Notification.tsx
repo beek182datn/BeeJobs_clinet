@@ -4,7 +4,7 @@ import { getUnreadNotifications } from '@/components/fetch_data/notifi';
 import { NotificationModel, User } from '@/components/Model/Model';
 import { getUserInfo } from "@/components/fetch_data/api";
 import { useFocusEffect } from 'expo-router';
-
+import { LinearGradient } from "expo-linear-gradient";
 interface NotificationScreenProps {
   userId: string;
 }
@@ -110,11 +110,16 @@ const NotificationScreen: React.FC<NotificationScreenProps> = ({ userId }) => {
   };
 
   return (
-    <SafeAreaView style={styles.container}>
+    <LinearGradient
+      colors={['#f0f0f0', '#87cefa']}
+      style={styles.container}
+      start={[0, 1]}
+      end={[1, 0]}
+    >
       <Text style={styles.header}>Thông báo</Text>
       <View style={styles.separator} />
       {renderContent()}
-    </SafeAreaView>
+    </LinearGradient>
   );
 };
 
@@ -127,11 +132,12 @@ const styles = StyleSheet.create({
     padding: 10,
   },
   header: {
-    fontSize: 24,
-    color: 'black',
+    fontSize: 28,
     fontWeight: 'bold',
+    color: '#333',
     textAlign: 'center',
-    marginBottom: 50,
+    marginTop: 30,
+    marginBottom: 20,
   },
   content: {
     alignItems: 'center',

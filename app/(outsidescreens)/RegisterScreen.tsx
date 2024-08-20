@@ -54,20 +54,20 @@ const RegisterScreen = () => {
     return emailRegex.test(email);
   };
 
-  const isValidName = (account_name: string): boolean => {
-    // Kiểm tra độ dài tên
-    if (account_name.length > 50) {
-      return false;
-    }
+  // const isValidName = (account_name: string): boolean => {
+  //   // Kiểm tra độ dài tên
+  //   if (account_name.length > 50) {
+  //     return false;
+  //   }
 
-    // Kiểm tra xem tên có chứa số hay không
-    const regex = /\d/;
-    if (regex.test(account_name)) {
-      return false;
-    }
+  //   // Kiểm tra xem tên có chứa số hay không
+  //   const regex = /\d/;
+  //   if (regex.test(account_name)) {
+  //     return false;
+  //   }
 
-    return true;
-  };
+  //   return true;
+  // };
 
   const isValidPassword = (passwd: string): boolean => {
     // Kiểm tra độ dài của mật khẩu phải trên 6 ký tự
@@ -114,13 +114,13 @@ const RegisterScreen = () => {
     const noErrors = Object.values(newErrors).every((error) => !error);
     if (noErrors) {
       setLoading(true);
-      if (!isValidName(accout_name)) {
-        setMessage("Họ tên sai định dạng");
-        setColor("red");
-        setShowMissingInfoAlert(true);
-        setLoading(false);
-        return;
-      }
+      // if (!isValidName(accout_name)) {
+      //   setMessage("Họ tên sai định dạng");
+      //   setColor("red");
+      //   setShowMissingInfoAlert(true);
+      //   setLoading(false);
+      //   return;
+      // }
       if (!isValidEmail(email)) {
         setMessage("Email sai định dạng");
         setColor("red");
@@ -180,7 +180,7 @@ const RegisterScreen = () => {
         <Icon name="user" size={20} color="#A9A9A9" style={styles.icon} />
         <TextInput
           style={styles.input}
-          placeholder="Họ và Tên"
+          placeholder="Username"
           value={accout_name}
           onChangeText={setName}
         />

@@ -98,7 +98,7 @@ const Last30days = () => {
                         <Text style={styles.text}>{item.job_id.salary}</Text>
                       </View>
                     </View>
-                    <View style={{ flex: 1 }}>
+                    <View style={{ flex: 1 , marginLeft: 10}}>
                       <View style={{ flexDirection: 'row' }}>
                         <Ionicons name='time' size={14} color={'blue'} style={{ marginRight: 3 }} />
                         <Text style={styles.text}>{formatDate(String(item.applied_at))}</Text>

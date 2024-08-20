@@ -153,12 +153,12 @@ const AllAppliedJobs = () => {
                         <Text style={styles.text}>{item.job_id.salary}</Text>
                       </View>
                     </View>
-                    <View style={{flex: 1}}>
+                    <View style={{flex: 1,  marginLeft: 10}}>
                       <View style={{ flexDirection: 'row' }}>
                         <Ionicons name='time' size={14} color={'blue'} style={{ marginRight: 3 }} />
                         <Text style={styles.text}>{formatDate(String(item.applied_at))}</Text>
                       </View>
-                      <View style={{ flexDirection: 'row', backgroundColor: '#0099CC', padding: 5, alignContent: 'center', justifyContent: 'center', borderRadius: 10 }}>
+                      <View style={{ flexDirection: 'row', backgroundColor: '#0099CC', padding: 5, alignContent: 'center', justifyContent: 'center', borderRadius: 10, }}>
                         <Ionicons name='notifications' size={14} color={'white'} style={{ marginRight: 3, alignSelf: 'center' }} />
                         <Text style={[styles.text, { color: 'white', fontSize: 14, alignSelf: 'center', textAlign: 'center' }]}>{item.status}</Text>
                       </View>

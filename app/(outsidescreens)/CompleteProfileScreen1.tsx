@@ -97,7 +97,8 @@ const CompleteProfileScreen1: React.FC = () => {
     // Kiểm tra lỗi và trả về true nếu không có lỗi
     const newErrors = {
       worker_name: worker_name
-        ? (/^[A-Za-z\s]{1,50}$/.test(worker_name)
+        ? (/^[A-Za-zÀÁÂÃÈÉÊÌÍÒÓÔÕÙÚĂĐĨŨƠàáâãèéêìíòóôõùúăđĩũơƯĂẠẢẤẦẨẪẬẮẰẲẴẶẸẺẼỀỀỂưăạảấầẩẫậắằẳẵặẹẻẽềềểẾỄỆỈỊọỏốồổỗộớờởỡợỤỦỨỪễệỉịỌỎỐỒỔỖỘỚỜỞỠỢỤỦỨỪửữựỳỵỷỹ\s]{1,50}$/
+.test(worker_name)
           ? ""
           : "Tên không được chứa ký tự số và phải dưới 50 ký tự")
         : "Tên không được để trống",
