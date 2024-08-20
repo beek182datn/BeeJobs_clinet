@@ -1,5 +1,5 @@
-import { ActivityIndicator, FlatList, ScrollView, Image, SafeAreaView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native'
-import React, { useEffect, useState } from 'react'
+import { ActivityIndicator, FlatList, SafeAreaView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import React, { useState } from 'react';
 import { router } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import JobsList from '@/components/comps/JobsList';
@@ -32,60 +32,54 @@ const SearchJob = () => {
     };
 
     const handleOptionPress = (value: string) => {
-        // Xử lý logic khi chọn một tùy chọn
         setSelectedFilterOption(value);
-        setInputSearch(value);
-        if (value === "title") {
-            setInputSearch("Tiêu đề");
-        } else if (value === "salary") {
-            setInputSearch("Mức lương");
-        } else if (value === "location") {
-            setInputSearch("Địa điểm");
-        } else if (value === "type") {
-            setInputSearch("Hình thức");
-        }
-        console.log(`Đã chọn tùy chọn: ${value}`);
+        setInputSearch(value === "title" ? "Tiêu đề" : value === "salary" ? "Mức lương" : value === "location" ? "Địa điểm" : "Hình thức");
         setShowOptions(false);
     };
 
-    const FilterOption: React.FC<FilterOptionProps> = ({
-        label,
-        value,
-        onPress,
-    }) => (
-        <TouchableOpacity
-            style={styles.filterOption}
-            onPress={() => onPress(value)}
-        >
+    const FilterOption: React.FC<FilterOptionProps> = ({ label, value, onPress }) => (
+        <TouchableOpacity style={styles.filterOption} onPress={() => onPress(value)}>
             <Text style={styles.filterOptionText}>{label}</Text>
         </TouchableOpacity>
     );
 
-
-    const handleSearch = async (text: string) => {
-        setSearchText(text);
+    const search = async (text: string) => {
+        setIsLoading(true);
+        let results;
         if (selectedFilterOption === "title") {
-            setIsLoading(true)
-            const results = await findJobByTitle(text);
-            setIsLoading(false)
-            setJobs(results);
+        console.log(text);
+
+            results = await findJobByTitle(text);
         } else if (selectedFilterOption === "salary") {
-            setIsLoading(true)
-            const results = await findJobBySalary(text);
-            setIsLoading(false)
-            setJobs(results);
+            results = await findJobBySalary(text);
         } else if (selectedFilterOption === "location") {
-            setIsLoading(true)
-            const results = await findJobByLocation(text);
-            setIsLoading(false)
-            setJobs(results);
+            results = await findJobByLocation(text);
         } else if (selectedFilterOption === "type") {
-            setIsLoading(true)
-            const results = await findJobByWorkType(text);
-            setIsLoading(false)
-            setJobs(results);
-        } else{
-            console.log("long");
+            results = await findJobByWorkType(text);
+        }
+        setIsLoading(false);
+        if (results) setJobs(results);
+    };
+
+    // Hàm debounce cho tìm kiếm
+    const debounce = (func: Function, delay: number) => {
+        let timeout: NodeJS.Timeout;
+        return (...args: any[]) => {
+            clearTimeout(timeout);
+            timeout = setTimeout(() => {
+                func(...args);
+            }, delay);
+        };
+    };
+
+    const debouncedSearch = debounce(search, 1000);
+
+    const handleSearch = (text: string) => {
+        setSearchText(text);
+        if (text.length === 0) {
+            setJobs([]); 
+        } else {
+            debouncedSearch(text);
         }
     };
 
@@ -137,32 +131,30 @@ const SearchJob = () => {
                 ) : (
                     <FlatList
                         data={searchText ? jobs : []}
-                        renderItem={({ item }) => <JobsList job={item} callback={()=>{setJobs([])}}/>}
+                        renderItem={({ item }) => <JobsList job={item} callback={() => { setJobs([]) }} />}
                         keyExtractor={(item) => item._id.toString()}
-                        contentContainerStyle={{ paddingBottom: 90 }} 
+                        contentContainerStyle={{ paddingBottom: 90 }}
                     />
                 )}
             </View>
-
         </SafeAreaView>
-    )
+    );
 }
 
-export default SearchJob
+export default SearchJob;
 
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: "#F5F5F5", // Light background for better readability
-        padding: 10, // Padding around the edges
-        position: 'relative',
+        backgroundColor: "#F5F5F5",
+        padding: 10,
     },
     headerContainer: {
         flexDirection: "row",
         alignItems: "center",
         marginBottom: 20,
         marginTop: 15,
-        backgroundColor: "#FFFFFF", // White background for the header
+        backgroundColor: "#FFFFFF",
         paddingVertical: 10,
         paddingHorizontal: 15,
         borderRadius: 10,
@@ -174,12 +166,12 @@ const styles = StyleSheet.create({
     },
     searchInput: {
         flex: 1,
-        backgroundColor: "#EFEFEF", // Softer gray for the search input
+        backgroundColor: "#EFEFEF",
         borderRadius: 10,
         paddingVertical: 10,
         paddingHorizontal: 15,
         fontSize: 16,
-        marginRight: 10, // Space between input and filter button
+        marginRight: 10,
         shadowColor: "#000",
         shadowOpacity: 0.1,
         shadowOffset: { width: 0, height: 3 },
@@ -187,7 +179,7 @@ const styles = StyleSheet.create({
         elevation: 3,
     },
     filterButton: {
-        backgroundColor: "#2196F3", // Blue color to match the theme
+        backgroundColor: "#2196F3",
         paddingHorizontal: 12,
         paddingVertical: 10,
         borderRadius: 10,
@@ -197,7 +189,7 @@ const styles = StyleSheet.create({
     },
     filterIcon: {
         fontSize: 20,
-        color: "#FFFFFF", // White icon for contrast
+        color: "#FFFFFF",
     },
     optionsContainer: {
         position: "absolute",
@@ -226,7 +218,7 @@ const styles = StyleSheet.create({
     },
     filterOptionText: {
         fontSize: 16,
-        color: "#333", // Darker text for better readability
+        color: "#333",
     },
     loadingContainer: {
         flex: 1,

@@ -228,6 +228,11 @@ const Profile: React.FC = () => {
             const worker = await findWorkerById(user.id_user);
             //console.log(user.id_user);
             setWorker(worker);
+            if (worker) {
+              var jobsLastWeek = await getAllAppliedJobs(worker._id);
+              setAppliedJobs(jobsLastWeek);
+              console.log('long')
+            }
             try {
               const jobsFollowed = await getFollowedJobs(user.id_user);
               setJobs(jobsFollowed);
@@ -243,7 +248,6 @@ const Profile: React.FC = () => {
 
       fetchUserInfo();
       fetchData();
-      fetchDataApplide();
     }, [])
   );
 

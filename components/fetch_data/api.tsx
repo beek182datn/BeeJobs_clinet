@@ -125,7 +125,7 @@ export const fetchJobsByCompanyId = async (keywword: string): Promise<Job[]> => 
 export const findJobBySalary = async (keyword: string): Promise<Job[]> => {
   try {
     const response: AxiosResponse<JobsResponse> = await axios.get(
-      `http://beejobs.io.vn:14307/api/jobs/getJobsBySalary`,
+      `http://beejobs.io.vn:14307/jobs/getJobsBySalary`,
       {
         params: {
           keyword,
@@ -169,7 +169,7 @@ export const findJobBySalary = async (keyword: string): Promise<Job[]> => {
 export const findJobByTitle = async (keyword: string): Promise<Job[]> => {
   try {
     const response: AxiosResponse<JobsResponse> = await axios.get(
-      `http://beejobs.io.vn:14307/api/jobs/getJobsByTitle`,
+      `http://beejobs.io.vn:14307/jobs/getJobsByTitle`,
       {
         params: {
           keyword,
@@ -213,7 +213,7 @@ export const findJobByTitle = async (keyword: string): Promise<Job[]> => {
 export const findJobByLocation = async (keyword: string): Promise<Job[]> => {
   try {
     const response: AxiosResponse<JobsResponse> = await axios.get(
-      `http://beejobs.io.vn:14307/api/jobs/getJobsByLocation`,
+      `http://beejobs.io.vn:14307/jobs/getJobsByLocation`,
       {
         params: {
           keyword,
@@ -257,7 +257,7 @@ export const findJobByLocation = async (keyword: string): Promise<Job[]> => {
 export const findJobByWorkType = async (keyword: string): Promise<Job[]> => {
   try {
     const response: AxiosResponse<JobsResponse> = await axios.get(
-      `http://beejobs.io.vn:14307/api/jobs/getJobsByForm`,
+      `http://beejobs.io.vn:14307/jobs/getJobsByForm`,
       {
         params: {
           keyword,
