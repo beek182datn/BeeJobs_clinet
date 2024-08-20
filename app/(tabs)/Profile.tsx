@@ -62,7 +62,6 @@ const Profile: React.FC = () => {
   useEffect(() => {
     fetchUserInfo();
     fetchData();
-    fetchDataApplide();
   }, [router]);
   const fetchUserInfo = async () => {
     try {
@@ -79,8 +78,6 @@ const Profile: React.FC = () => {
             const jobsFollowed = await getFollowedJobs(user.id_user);
             setJobs(jobsFollowed);
             // console.log('long: ', JSON.stringify(jobsFollowed.length))
-            var jobsLastWeek = await getAllAppliedJobs(worker._id);
-            setAppliedJobs(jobsLastWeek);
           } catch (error) {
             console.log(error);
           }
@@ -114,21 +111,21 @@ const Profile: React.FC = () => {
   //   }
   // };
 
-  const fetchDataApplide = async () => {
-    try {
-      const user: User | null = await getUserInfo();
-      setUser(user);
+  // const fetchDataApplide = async () => {
+  //   try {
+  //     const user: User | null = await getUserInfo();
+  //     setUser(user);
 
-      if (user && worker) {
+  //     if (user && worker) {
 
-        var jobsLastWeek = await getAllAppliedJobs(worker._id);
-        setAppliedJobs(jobsLastWeek);
-        console.log('long')
-      }
-    } catch (error) {
-      console.log(error);
-    }
-  };
+  //       var jobsLastWeek = await getAllAppliedJobs(worker._id);
+  //       setAppliedJobs(jobsLastWeek);
+  //       console.log('long')
+  //     }
+  //   } catch (error) {
+  //     console.log(error);
+  //   }
+  // };
 
   const fetchData = async () => {
     try {

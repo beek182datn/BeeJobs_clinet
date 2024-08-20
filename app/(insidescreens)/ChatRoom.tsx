@@ -145,12 +145,12 @@ const ChatRoom: React.FC = () => {
                         <Ionicons name="arrow-back" size={22} color="black" />
                     </TouchableOpacity>
                     <Image
-                        source={companyInfo?.company_logo ? { uri: linkVps + companyInfo.company_logo } : require('../../assets/images/SplashLogo.png')}
+                        source={info.company_logo ? { uri: linkVps + info.company_logo }: companyInfo?.company_logo ? { uri: linkVps + companyInfo?.company_logo } : require('../../assets/images/SplashLogo.png')}
                         style={styles.logo}
                     />
                     <View style={styles.viewTitle}>
-                        <Text style={styles.textTitle}>{companyInfo?.company_name}</Text>
-                        <Text>Tài khoản doanh nghiệp</Text>
+                        <Text style={styles.textTitle}>{info.company_name ? info.company_name : companyInfo?.company_name ? companyInfo?.company_name : 'Doanh nghiệp ?'}</Text>
+                        <Text>{info.type === 'DN' ? 'Tài khoản doanh nghiệp' : info.type === 'ADMIN' ? 'Tài khoản quản trị' : 'Tài khoản doanh nghiệp'}</Text>
                     </View>
                 </View>
 
@@ -163,7 +163,7 @@ const ChatRoom: React.FC = () => {
                             <View style={styles.messageContainer}>
                                 {item.senderId !== info.userId &&
                                     <Image
-                                        source={companyInfo?.company_logo ? { uri: linkVps + companyInfo.company_logo } : require('../../assets/images/SplashLogo.png')}
+                                        source={info.company_logo ? { uri: linkVps + info.company_logo }: companyInfo?.company_logo ? { uri: linkVps + companyInfo?.company_logo } : require('../../assets/images/SplashLogo.png')}
                                         style={styles.avatar}
                                     />}
                                 <View>

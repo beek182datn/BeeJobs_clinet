@@ -25,6 +25,7 @@ interface ChatRoomInfor {
   company_logo: string;
   company_name: string;
   lastMessage: string;
+  type: string;
 }
 
 interface Job {
@@ -32,6 +33,7 @@ interface Job {
   company_name: string;
   company_logo: string;
   userId: string;
+  type: string;
 }
 
 const Messenger = () => {
@@ -142,6 +144,7 @@ const Messenger = () => {
               company_name: item.company_name,
               company_logo: item.company_logo,
               userId: item.myID,
+              type: item.type
             };
             //console.log('huy check113: ' + JSON.stringify(job))
             return (

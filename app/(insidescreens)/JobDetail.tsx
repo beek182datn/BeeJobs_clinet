@@ -66,7 +66,7 @@ const JobDetail = () => {
         const workerInfo = await findWorkerById(String(user.id_user));
         setWorker(workerInfo);
         if (workerInfo) {
-          const response = await checkApplyJob(workerInfo._id, String(job._id));
+          const response = await checkApplyJob(user.id_user, String(job._id));
           setIsApplied(response.isApplied);
         }
       }

@@ -17,6 +17,8 @@ import { Ionicons } from "@expo/vector-icons";
 const ViewCV = () => {
   const params = useLocalSearchParams();
   const cvUrl = params.cvUrl;
+  const [docs, setDocs] = useState('');
+
   console.log(cvUrl);
   const googleDocsUrl = `https://docs.google.com/viewer?url=${cvUrl}&embedded=true&cachebuster=${new Date().getTime()}`;
   //console.log(googleDocsUrl);
@@ -26,7 +28,7 @@ const ViewCV = () => {
 
   const reloadWebView = () => {
     setWebViewKey((prevKey) => prevKey + 1);
-  };  useEffect(() => {
+  }; useEffect(() => {
     const backHandler = BackHandler.addEventListener(
       "hardwareBackPress",
       backAction
@@ -51,15 +53,15 @@ const ViewCV = () => {
     return true;
   };
 
-  useEffect(()=>{
-    console.log('effect')
-  }, [cvUrl]);
+  // useEffect(()=>{
+  //   setDocs(`https://docs.google.com/viewer?url=${cvUrl}&embedded=true&cachebuster=${new Date().getTime()}`)
+  // }, [cvUrl]);
 
-  useFocusEffect(
-    React.useCallback(()=>{
-      console.log('focus')
-    },[cvUrl])
-  )
+  // useFocusEffect(
+  //   React.useCallback(()=>{
+  //     setDocs(`https://docs.google.com/viewer?url=${cvUrl}&embedded=true&cachebuster=${new Date().getTime()}`)
+  //   },[cvUrl])
+  // )
 
   return (
     <SafeAreaView style={styles.container}>
@@ -81,13 +83,13 @@ const ViewCV = () => {
         <View style={styles.separator} />
       </View>
       <WebView
-    incognito={true}
-    source={{ uri: googleDocsUrl }}
-    onLoadStart={() => console.log("WebView load start")}
-    onLoad={() => console.log("WebView load")}
-    onLoadEnd={() => console.log("WebView loaded")}
-    //onShouldStartLoadWithRequest={handleShouldStartLoadWithRequest}
-  />
+        incognito={true}
+        source={{ uri: docs }}
+        onLoadStart={() => console.log("WebView load start")}
+        onLoad={() => console.log("WebView load")}
+        onLoadEnd={() => console.log("WebView loaded")}
+      //onShouldStartLoadWithRequest={handleShouldStartLoadWithRequest}
+      />
     </SafeAreaView>
   );
 };

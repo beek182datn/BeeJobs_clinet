@@ -65,6 +65,7 @@ export default function RootLayout() {
       <Stack.Screen name="(insidescreens)/HelpCenter" options={{ headerShown: false }} />
       <Stack.Screen name="(insidescreens)/ViewCV" options={{ headerShown: false }} />
       <Stack.Screen name="(insidescreens)/SearchJob" options={{ headerShown: false }} />
+      <Stack.Screen name="(outsidescreens)/OtpVerificationScreen" options={{ headerShown: false }} />
     </Stack>
   );
 }
