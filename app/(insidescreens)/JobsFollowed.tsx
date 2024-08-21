@@ -63,7 +63,7 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         backgroundColor: '#f8f9fa',
-        padding: 20,
+        paddingTop: 20,
         position: 'relative'
     },
     headerContainer: {
@@ -77,7 +77,8 @@ const styles = StyleSheet.create({
         textAlign: "center",
         fontSize: 18,
         fontWeight: "bold",
-        marginBottom: 20
+        marginBottom: 20,
+        marginTop: 15,
     },
     separator: {
         height: 1,

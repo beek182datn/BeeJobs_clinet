@@ -62,7 +62,7 @@ export default AppliedJobByTime;
 const styles = StyleSheet.create({
   conatiner: {
     flex: 1,
-    padding: 20,
+    paddingTop: 20,
   },
   separator: {
     height: 1,
