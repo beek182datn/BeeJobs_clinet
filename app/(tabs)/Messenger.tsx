@@ -239,7 +239,7 @@ const styles = StyleSheet.create({
     height: 50,
     borderRadius: 25,
     borderWidth: 2,
-    borderColor: '#007BFF',
+    //borderColor: '#0099CC',
   },
   checkMark: {
     position: "absolute",
