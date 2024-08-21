@@ -18,7 +18,7 @@ const JobsFollowed = () => {
             try {
                 const jobsFollowed = await getFollowedJobs(user.id_user);
                 setJobs(jobsFollowed);
-                // console.log('long: ', JSON.stringify(jobsFollowed))
+                console.log('long: ', JSON.stringify(jobsFollowed[0]))
             } catch (error) {
                 console.log(error);
             }
