@@ -143,6 +143,12 @@ const SearchJob = () => {
                         <ActivityIndicator size="large" color="#0099FF" />
                     </View>}
             </View>
+            <View style={styles.loadingContainer}>
+                {!isLoading && jobs.length === 0 && searchText !== '' &&
+                    <View>
+                        <Text>Không có kết quả</Text>
+                    </View>}
+            </View>
             <View style={{ flex: 1 }}>
                 <FlatList
                     data={searchText ? jobs : []}
