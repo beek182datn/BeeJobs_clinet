@@ -1,10 +1,10 @@
 import { ActivityIndicator, FlatList, SafeAreaView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { router } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import JobsList from '@/components/comps/JobsList';
-import { Job } from '@/components/Model/Model';
-import { findJobByLocation, findJobBySalary, findJobByTitle, findJobByWorkType } from '@/components/fetch_data/api';
+import { Job, User } from '@/components/Model/Model';
+import { findJobByLocation, findJobBySalary, findJobByTitle, findJobByWorkType, getUserInfo } from '@/components/fetch_data/api';
 
 interface FilterOptionProps {
     label: string;
@@ -19,6 +19,7 @@ const SearchJob = () => {
     const [selectedFilterOption, setSelectedFilterOption] = useState("title");
     const [isLoading, setIsLoading] = useState(false);
     const [jobs, setJobs] = useState<Job[]>([]);
+    const [user, setUser] = useState<User | null>();
 
     const [filterOptions, setFilterOptions] = useState([
         { label: "Tiêu đề", value: "title" },
@@ -26,6 +27,20 @@ const SearchJob = () => {
         { label: "Địa điểm", value: "location" },
         { label: "Hình thức", value: "type" },
     ]);
+
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                const userInfo = await getUserInfo();
+                if (userInfo) {
+                    setUser(userInfo);
+                }
+            } catch (error) {
+                console.log(error)
+            }
+        }
+        fetchData();
+    }, []);
 
     const toggleOptions = () => {
         setShowOptions(!showOptions);
@@ -47,15 +62,15 @@ const SearchJob = () => {
         setIsLoading(true);
         let results;
         if (selectedFilterOption === "title") {
-        console.log(text);
+            console.log(text);
 
-            results = await findJobByTitle(text);
+            results = await findJobByTitle(text, user?.id_user);
         } else if (selectedFilterOption === "salary") {
-            results = await findJobBySalary(text);
+            results = await findJobBySalary(text, user?.id_user);
         } else if (selectedFilterOption === "location") {
-            results = await findJobByLocation(text);
+            results = await findJobByLocation(text, user?.id_user);
         } else if (selectedFilterOption === "type") {
-            results = await findJobByWorkType(text);
+            results = await findJobByWorkType(text, user?.id_user);
         }
         setIsLoading(false);
         if (results) setJobs(results);
@@ -77,7 +92,7 @@ const SearchJob = () => {
     const handleSearch = (text: string) => {
         setSearchText(text);
         if (text.length === 0) {
-            setJobs([]); 
+            setJobs([]);
         } else {
             debouncedSearch(text);
         }
@@ -123,19 +138,18 @@ const SearchJob = () => {
             </View>
 
             <View style={styles.loadingContainer}>
-                {isLoading ? (
+                {isLoading &&
                     <View>
                         <ActivityIndicator size="large" color="#0099FF" />
-                        {/* <Text>Loading...</Text> */}
-                    </View>
-                ) : (
-                    <FlatList
-                        data={searchText ? jobs : []}
-                        renderItem={({ item }) => <JobsList job={item} callback={() => { setJobs([]) }} />}
-                        keyExtractor={(item) => item._id.toString()}
-                        contentContainerStyle={{ paddingBottom: 90 }}
-                    />
-                )}
+                    </View>}
+            </View>
+            <View style={{ flex: 1 }}>
+                <FlatList
+                    data={searchText ? jobs : []}
+                    renderItem={({ item }) => <JobsList job={item} callback={() => { setJobs([]) }} />}
+                    keyExtractor={(item) => item._id.toString()}
+                    contentContainerStyle={{ paddingBottom: 90 }}
+                />
             </View>
         </SafeAreaView>
     );
@@ -150,6 +164,7 @@ const styles = StyleSheet.create({
         padding: 10,
     },
     headerContainer: {
+        position:'relative',
         flexDirection: "row",
         alignItems: "center",
         marginBottom: 20,
@@ -163,6 +178,7 @@ const styles = StyleSheet.create({
         shadowOffset: { width: 0, height: 2 },
         shadowRadius: 5,
         elevation: 2,
+        zIndex: 1000
     },
     searchInput: {
         flex: 1,
@@ -218,10 +234,10 @@ const styles = StyleSheet.create({
         color: "#333",
     },
     loadingContainer: {
-        flex: 1,
+        // flex: 1,
         justifyContent: "center",
         alignItems: "center",
-        alignContent:'center'
+        alignContent: 'center'
     },
     loadingText: {
         fontSize: 18,
