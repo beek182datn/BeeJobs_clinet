@@ -35,6 +35,7 @@ export type Job = {
   number_of_recruitments: string;
   deadline: string;
   working_time: string;
+  isFollowing: boolean;
   __v: number;
 };
 

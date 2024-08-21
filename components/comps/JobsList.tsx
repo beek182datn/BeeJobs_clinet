@@ -19,9 +19,7 @@ const JobsList: React.FC<JobItemProps> = ({ job, callback }) => {
     const fetchData = async () => {
       const data: User | null = await getUserInfo();
       if (data) {
-        const folow = await checkFollowingJob(String(data.id_user), String(job._id))
-        setIsFolowing(folow.isFollowing)
-        // console.log(JSON.stringify(isFolowing))
+        setIsFolowing(job.isFollowing)
       }
 
     }

@@ -72,10 +72,10 @@ const Home = () => {
       const user = await getUserInfo();
       setUser(user);
 
-      const fetchedJobs = await fetchJobs(page);
+      const fetchedJobs = await fetchJobs(page, user?.id_user);
       setFilteredJobs(fetchedJobs);
       setIsLoading(false);
-      
+
       const response = await axios.get(`http://beejobs.io.vn:14307/getlistjob`);
       setTotalPages(response.data.totalPages);
     } catch (error) {
@@ -225,7 +225,7 @@ const Home = () => {
               <TouchableOpacity onPress={async () => {
                 setCurrentPage(currentPage + 1)
                 console.log(currentPage+1)
-                const fetchedJobs = await fetchJobs(currentPage+1);
+                const fetchedJobs = await fetchJobs(currentPage+1, user?.id_user);
                 setFilteredJobs((prevJobs) => [...prevJobs, ...fetchedJobs]);
               }}>
                 <Text style={{color: '#0099FF', alignSelf:'center', fontSize:20, fontWeight:'500'}}>Tải thêm</Text>

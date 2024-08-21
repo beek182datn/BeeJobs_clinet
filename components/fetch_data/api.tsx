@@ -23,10 +23,10 @@ export const getUserInfo = async (): Promise<User | null> => {
   }
 };
 // danh sách công việc
-export const fetchJobs = async (page?: number): Promise<Job[]> => {
+export const fetchJobs = async (page?: number, userId?: string): Promise<Job[]> => {
   try {
     const response: AxiosResponse<JobsResponse> = await axios.get(
-      `http://beejobs.io.vn:14307/getlistjob?page=${page}&limit=10`
+      `http://beejobs.io.vn:14307/getlistjob?page=${page}&limit=10&userId=${userId}`
     );
 
     // Lấy danh sách công việc
@@ -41,10 +41,10 @@ export const fetchJobs = async (page?: number): Promise<Job[]> => {
 
 
 // lấy danh sách công việc theo id company
-export const fetchJobsByCompanyId = async (keywword: string): Promise<Job[]> => {
+export const fetchJobsByCompanyId = async (company_id: string, userId?: string): Promise<Job[]> => {
   try {
     const response: AxiosResponse<JobsResponse> = await axios.get(
-      `http://beejobs.io.vn:14307/jobs/getjobbycompanyid/${keywword}`
+      `http://beejobs.io.vn:14307/jobs/getjobbycompanyid/${company_id}?userId=${userId}`
     );
     // Lấy danh sách công việc
     const jobs: Job[] = response.data.data;
@@ -57,43 +57,14 @@ export const fetchJobsByCompanyId = async (keywword: string): Promise<Job[]> => 
 };
 
 // rìm công việc theo mức lương
-export const findJobBySalary = async (keyword: string): Promise<Job[]> => {
+export const findJobBySalary = async (keyword?: string, userId?: string): Promise<Job[]> => {
   try {
     const response: AxiosResponse<JobsResponse> = await axios.get(
-      `http://beejobs.io.vn:14307/jobs/getJobsBySalary`,
-      {
-        params: {
-          keyword,
-        },
-      }
+      `http://beejobs.io.vn:14307/jobs/getJobsBySalary?keyword=${keyword}&userId=${userId}`
     );
     const jobs: Job[] = response.data.data;
-    const jobsable: Job[] = jobs.filter(job => {
-      const [day, month, year] = job.deadline.split('/').map(Number);
 
-      // Tạo ra một đối tượng Date từ các phần tử ngày, tháng, năm
-      const deadlineDate = new Date(year, month - 1, day);
-      return deadlineDate > new Date();
-    })
-
-    // Lấy thông tin công ty cho mỗi công việc
-    const companiesPromises = jobsable.map(async (job) => {
-      const companyResponse = await axios.get(
-        `http://beejobs.io.vn:14307/api/companies/getCompanyById/${job.company_id}`
-      );
-      return companyResponse.data.data as Company;
-    });
-
-    // Đợi tất cả các promise lấy thông tin công ty hoàn thành
-    const companies = await Promise.all(companiesPromises);
-
-    // Gán thông tin công ty vào từng công việc
-    jobsable.forEach((job, index) => {
-      job.company_name = companies[index].company_name;
-      // console.log(JSON.stringify(companies[index].company_name))
-    });
-
-    return jobsable;
+    return jobs;
   } catch (error) {
     console.log(error);
     return [];
@@ -101,43 +72,14 @@ export const findJobBySalary = async (keyword: string): Promise<Job[]> => {
 };
 
 // tìm công việc theo tên - tiêu đề
-export const findJobByTitle = async (keyword: string): Promise<Job[]> => {
+export const findJobByTitle = async (keyword?: string, userId?: string): Promise<Job[]> => {
   try {
     const response: AxiosResponse<JobsResponse> = await axios.get(
-      `http://beejobs.io.vn:14307/jobs/getJobsByTitle`,
-      {
-        params: {
-          keyword,
-        },
-      }
+      `http://beejobs.io.vn:14307/jobs/getJobsByTitle?keyword=${keyword}&userId=${userId}`
     );
     const jobs: Job[] = response.data.data;
-    const jobsable: Job[] = jobs.filter(job => {
-      const [day, month, year] = job.deadline.split('/').map(Number);
 
-      // Tạo ra một đối tượng Date từ các phần tử ngày, tháng, năm
-      const deadlineDate = new Date(year, month - 1, day);
-      return deadlineDate > new Date();
-    })
-
-    // Lấy thông tin công ty cho mỗi công việc
-    const companiesPromises = jobsable.map(async (job) => {
-      const companyResponse = await axios.get(
-        `http://beejobs.io.vn:14307/api/companies/getCompanyById/${job.company_id}`
-      );
-      return companyResponse.data.data as Company;
-    });
-
-    // Đợi tất cả các promise lấy thông tin công ty hoàn thành
-    const companies = await Promise.all(companiesPromises);
-
-    // Gán thông tin công ty vào từng công việc
-    jobsable.forEach((job, index) => {
-      job.company_name = companies[index].company_name;
-      // console.log(JSON.stringify(companies[index].company_name))
-    });
-
-    return jobsable;
+    return jobs;
   } catch (error) {
     console.log(error);
     return [];
@@ -145,43 +87,14 @@ export const findJobByTitle = async (keyword: string): Promise<Job[]> => {
 };
 
 // tìm công việc theo địa điểm
-export const findJobByLocation = async (keyword: string): Promise<Job[]> => {
+export const findJobByLocation = async (keyword?: string, userId?: string): Promise<Job[]> => {
   try {
     const response: AxiosResponse<JobsResponse> = await axios.get(
-      `http://beejobs.io.vn:14307/jobs/getJobsByLocation`,
-      {
-        params: {
-          keyword,
-        },
-      }
+      `http://beejobs.io.vn:14307/jobs/getJobsByLocation?keyword=${keyword}&userId=${userId}`
     );
     const jobs: Job[] = response.data.data;
-    const jobsable: Job[] = jobs.filter(job => {
-      const [day, month, year] = job.deadline.split('/').map(Number);
 
-      // Tạo ra một đối tượng Date từ các phần tử ngày, tháng, năm
-      const deadlineDate = new Date(year, month - 1, day);
-      return deadlineDate > new Date();
-    })
-
-    // Lấy thông tin công ty cho mỗi công việc
-    const companiesPromises = jobsable.map(async (job) => {
-      const companyResponse = await axios.get(
-        `http://beejobs.io.vn:14307/api/companies/getCompanyById/${job.company_id}`
-      );
-      return companyResponse.data.data as Company;
-    });
-
-    // Đợi tất cả các promise lấy thông tin công ty hoàn thành
-    const companies = await Promise.all(companiesPromises);
-
-    // Gán thông tin công ty vào từng công việc
-    jobsable.forEach((job, index) => {
-      job.company_name = companies[index].company_name;
-      // console.log(JSON.stringify(companies[index].company_name))
-    });
-
-    return jobsable;
+    return jobs;
   } catch (error) {
     console.log(error);
     return [];
@@ -189,43 +102,14 @@ export const findJobByLocation = async (keyword: string): Promise<Job[]> => {
 };
 
 // tìm công việc theo hình thức
-export const findJobByWorkType = async (keyword: string): Promise<Job[]> => {
+export const findJobByWorkType = async (keyword?: string, userId?: string): Promise<Job[]> => {
   try {
     const response: AxiosResponse<JobsResponse> = await axios.get(
-      `http://beejobs.io.vn:14307/jobs/getJobsByForm`,
-      {
-        params: {
-          keyword,
-        },
-      }
+      `http://beejobs.io.vn:14307/jobs/getJobsByForm?keyword=${keyword}&userId=${userId}`
     );
     const jobs: Job[] = response.data.data;
-    const jobsable: Job[] = jobs.filter(job => {
-      const [day, month, year] = job.deadline.split('/').map(Number);
 
-      // Tạo ra một đối tượng Date từ các phần tử ngày, tháng, năm
-      const deadlineDate = new Date(year, month - 1, day);
-      return deadlineDate > new Date();
-    })
-
-    // Lấy thông tin công ty cho mỗi công việc
-    const companiesPromises = jobsable.map(async (job) => {
-      const companyResponse = await axios.get(
-        `http://beejobs.io.vn:14307/api/companies/getCompanyById/${job.company_id}`
-      );
-      return companyResponse.data.data as Company;
-    });
-
-    // Đợi tất cả các promise lấy thông tin công ty hoàn thành
-    const companies = await Promise.all(companiesPromises);
-
-    // Gán thông tin công ty vào từng công việc
-    jobsable.forEach((job, index) => {
-      job.company_name = companies[index].company_name;
-      // console.log(JSON.stringify(companies[index].company_name))
-    });
-
-    return jobsable;
+    return jobs;
   } catch (error) {
     console.log(error);
     return [];

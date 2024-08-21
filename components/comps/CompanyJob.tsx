@@ -1,8 +1,8 @@
 import { FlatList, SafeAreaView, StyleSheet, Text, View } from 'react-native'
 import React, { useEffect, useState } from 'react'
-import { Company, Job } from '../Model/Model';
+import { Company, Job, User } from '../Model/Model';
 import { useRoute, RouteProp } from '@react-navigation/native';
-import { fetchJobsByCompanyId } from '../fetch_data/api';
+import { fetchJobsByCompanyId, getUserInfo } from '../fetch_data/api';
 import JobsList from './JobsList';
 import { useRouter } from 'expo-router';
 
@@ -18,10 +18,13 @@ const CompanyJob = () => {
   const { companyInfo } = route.params;
   const router = useRouter();
 
-  useEffect(()=>{
-    const fetchJobs = async ()=>{
-      const jobs = await fetchJobsByCompanyId(companyInfo._id);
-      setJobs(jobs);
+  useEffect(() => {
+    const fetchJobs = async () => {
+      const user: User | null = await getUserInfo();
+      if (user) {
+        const jobs = await fetchJobsByCompanyId(companyInfo._id, user.id_user);
+        setJobs(jobs);
+      }
     }
     fetchJobs();
   }, [router]);
@@ -29,10 +32,10 @@ const CompanyJob = () => {
   return (
     <SafeAreaView>
       <FlatList
-          data={jobs}
-          keyExtractor={(item) => item._id}
-          renderItem={({ item }) => <JobsList job={item} callback={()=>{}} />}
-        />
+        data={jobs}
+        keyExtractor={(item) => item._id}
+        renderItem={({ item }) => <JobsList job={item} callback={() => { }} />}
+      />
     </SafeAreaView>
   )
 }
