@@ -1,8 +1,8 @@
 import { StyleSheet, Text, View, ScrollView, Pressable, Image, Modal, TextInput, TouchableOpacity, Dimensions, SafeAreaView, Linking, Alert, KeyboardAvoidingView, Platform, TouchableWithoutFeedback, Keyboard } from 'react-native'
 import React, { useEffect, useState } from 'react'
 import { useLocalSearchParams } from 'expo-router'
-import { findCompanyById, getUserInfo, checkApplyJob, findWorkerById } from '@/components/fetch_data/api';
-import { ApplyJobData, Company, User, Worker } from '@/components/Model/Model';
+import { findCompanyById, getUserInfo, checkApplyJob, findWorkerById, findJobById } from '@/components/fetch_data/api';
+import { ApplyJobData, Company, Job, User, Worker } from '@/components/Model/Model';
 import { BackHandler, } from "react-native";
 import { useRouter, } from "expo-router";
 import { createApplyJob } from '@/components/fetch_data/api';
@@ -25,7 +25,7 @@ const Tab = createMaterialTopTabNavigator();
 const JobDetail = () => {
   const [companyInfo, setCompanyInfo] = useState<Company | null>(null);
   const [user, setUser] = useState<User | null>();
-  const job = useLocalSearchParams();
+  const params = useLocalSearchParams();
   const linkVps = 'http://beejobs.io.vn:14307';
   const router = useRouter();
   // alert
@@ -38,6 +38,7 @@ const JobDetail = () => {
   const [fullname, setFullname] = useState('');
   const [phone_number, setPhoneNumber] = useState('');
   const [intro_letter, setIntroLetter] = useState('');
+  const [job, setJob] = useState<Job | null>();
 
 
   // modal của ứng tuyển
@@ -52,28 +53,31 @@ const JobDetail = () => {
   };
 
   useEffect(() => {
-
-
     const backHandler = BackHandler.addEventListener(
       "hardwareBackPress",
       backAction
     );
 
     const fetchCompanyData = async () => {
+
+      const job = await findJobById(String(params?._id))
+      if (job) {
+        setJob(job)
+        const companyId = String(job.company_id._id);
+        const company = await findCompanyById(companyId);
+        if (company) {
+          setCompanyInfo(company)
+        }
+      }
       const user: User | null = await getUserInfo();
       setUser(user);
       if (user) {
         const workerInfo = await findWorkerById(String(user.id_user));
         setWorker(workerInfo);
         if (workerInfo) {
-          const response = await checkApplyJob(user.id_user, String(job._id));
+          const response = await checkApplyJob(user.id_user, String(params._id));
           setIsApplied(response.isApplied);
         }
-      }
-      const companyId = String(job.company_id);
-      const company = await findCompanyById(companyId);
-      if (company) {
-        setCompanyInfo(company)
       }
     };
 
@@ -106,7 +110,7 @@ const JobDetail = () => {
       );
       return;
     }
-    
+
     if (!worker && !user) {
       Alert.alert(
         "Thông báo",
@@ -187,27 +191,67 @@ const JobDetail = () => {
 
   const handleDetailCompany = () => {
     // if (user) {
-    router.push({ pathname: 'CompanyDetail', params: { ...job, userId: user?.id_user } })
+    router.push({ pathname: 'CompanyDetail', params: { ...job as any, userId: user?.id_user, company_id: job?.company_id._id } })
     // }
   }
 
   const getDaysLeft = (dateString: string) => {
+    // const today = new Date();
+    // let applicationDeadlineDate: Date | null = null;
+
+    // // Kiểm tra định dạng của dateString
+    // if (dateString.includes('/')) {
+    //   // Định dạng dd/mm/yyyy
+    //   const [day, month, year] = dateString.split('/').map(Number);
+    //   applicationDeadlineDate = new Date(Date.UTC(year, month - 1, day));
+    // } else if (dateString.includes('-')) {
+    //   // Định dạng yyyy-mm-dd
+    //   const [year, month, day] = dateString.split('-').map(Number);
+    //   applicationDeadlineDate = new Date(Date.UTC(year, month - 1, day));
+    // }
+
+    // // Kiểm tra ngày hợp lệ
+    // if (!applicationDeadlineDate || isNaN(applicationDeadlineDate.getTime())) {
+    //   return false;
+    // }
+
+    // // Tính toán số ngày còn lại
+    // const timeDiff = applicationDeadlineDate.getTime() - today.getTime();
+    // // const daysLeft = Math.ceil(timeDiff / (1000 * 3600 * 24));
+
+    // // Kiểm tra xem deadline đã qua hay chưa
+    // return applicationDeadlineDate > today;
     const today = new Date();
+    let applicationDeadlineDate: Date | null = null;
 
-    const [day, month, year] = dateString.split('/').map(Number);
-    const applicationDeadlineDate = new Date(year, month - 1, day);
-
-    const timeDiff = applicationDeadlineDate.getTime() - today.getTime();
-    const daysLeft = Math.ceil(timeDiff / (1000 * 3600 * 24));
-
-    if (applicationDeadlineDate <= new Date()) {
-      return false
+    // Kiểm tra định dạng của dateString
+    if (dateString.includes('/')) {
+        // Định dạng dd/mm/yyyy
+        const [day, month, year] = dateString.split('/').map(Number);
+        applicationDeadlineDate = new Date(year, month - 1, day);
+    } else if (dateString.includes('-')) {
+        // Định dạng yyyy-mm-dd
+        const [year, month, day] = dateString.split('-').map(Number);
+        applicationDeadlineDate = new Date(year, month - 1, day);
     }
-    if (isNaN(daysLeft)) {
-      return false
+
+    // Tính toán số ngày còn lại
+    if (applicationDeadlineDate) {
+        const timeDiff = applicationDeadlineDate.getTime() - today.getTime();
+        const daysLeft = Math.ceil(timeDiff / (1000 * 3600 * 24));
+
+        if (daysLeft < 0) {
+            return false;
+        } else if (daysLeft === 0) {
+            return true;
+        } else {
+            return true;
+        }
+    } else {
+        return false;
     }
-    return true;
-  }
+  };
+
 
   const handleDeleteCv = () => {
     setCv(null);
@@ -219,13 +263,13 @@ const JobDetail = () => {
     //   router.push({ pathname: "ViewCV", params: { cvUrl: cvUri } });
     // }
     try {
-      const fileInfo = await FileSystem.getInfoAsync(cvUri);
-      if (!fileInfo.exists) {
-        Alert.alert('Lỗi', 'File không tồn tại');
-      }
-      if (fileInfo.exists) {
-        Alert.alert('Ok', 'File tồn tại');
-      }
+      // const fileInfo = await FileSystem.getInfoAsync(cvUri);
+      // if (!fileInfo.exists) {
+      //   Alert.alert('Lỗi', 'File không tồn tại');
+      // }
+      // if (fileInfo.exists) {
+      //   Alert.alert('Ok', 'File tồn tại');
+      // }
       await Sharing.shareAsync(cvUri);
     } catch (error) {
       console.log(error)
@@ -251,7 +295,7 @@ const JobDetail = () => {
           </TouchableOpacity>
 
           <TouchableOpacity onPress={() => { console.log(JSON.stringify(companyInfo)) }}>
-            <Text style={styles.title}>{job.title}</Text>
+            <Text style={styles.title}>{job?.title}</Text>
           </TouchableOpacity>
 
           <TouchableOpacity onPress={handleDetailCompany}>
@@ -265,17 +309,17 @@ const JobDetail = () => {
             <View style={styles.gridView}>
               <Ionicons name='cash' size={30} color={'#4CAF50'} style={{ marginBottom: 10 }} />
               <Text style={{ fontSize: 14, color: 'gray' }}>Mức lương</Text>
-              <Text style={styles.textGrid}>{job.salary}</Text>
+              <Text style={styles.textGrid}>{job?.salary}</Text>
             </View>
             <View style={[styles.gridView, { borderLeftWidth: 0.5, borderLeftColor: 'gray', borderRightWidth: 0.5, borderRightColor: 'gray' }]}>
               <Ionicons name='location' size={30} color={'#4CAF50'} style={{ marginBottom: 10 }} />
               <Text style={{ fontSize: 14, color: 'gray' }}>Địa điểm</Text>
-              <Text style={styles.textGrid}>{job.location?.slice(0, 20)}</Text>
+              <Text style={styles.textGrid}>{job?.location?.slice(0, 20)}</Text>
             </View>
             <View style={styles.gridView}>
               <Ionicons name='star' size={30} color={'#4CAF50'} style={{ marginBottom: 10 }} />
               <Text style={{ fontSize: 14, color: 'gray' }}>Kinh nghiệm</Text>
-              <Text style={styles.textGrid}>{job.experience}</Text>
+              <Text style={styles.textGrid}>{job?.experience}</Text>
             </View>
 
           </View>
@@ -310,7 +354,7 @@ const JobDetail = () => {
 
 
       <View style={{ position: 'absolute', bottom: 0, width: '100%' }}>
-        {isApplied && getDaysLeft(String(job.deadline)) &&
+        {isApplied && getDaysLeft(String(job?.deadline)) &&
           <View style={{
             flexDirection: 'row', backgroundColor: 'white', width: '100%', padding: 10, justifyContent: 'space-between', shadowOpacity: 0.25,
             shadowRadius: 3.84,
@@ -330,7 +374,7 @@ const JobDetail = () => {
           </View>
         }
 
-        {!isApplied && getDaysLeft(String(job.deadline)) &&
+        {!isApplied && getDaysLeft(String(job?.deadline)) &&
           <View style={{
             flexDirection: 'row', backgroundColor: 'white', width: '100%', padding: 10, justifyContent: 'center', alignItems: 'center', position: 'absolute', bottom: 0, shadowOpacity: 0.25,
             shadowRadius: 3.84,
@@ -342,7 +386,7 @@ const JobDetail = () => {
             </TouchableOpacity>
           </View>
         }
-        {!getDaysLeft(String(job.deadline)) &&
+        {!getDaysLeft(String(job?.deadline)) &&
           <View style={{
             flexDirection: 'row', backgroundColor: 'white', width: '100%', padding: 10, justifyContent: 'center', alignItems: 'center', position: 'absolute', bottom: 0, shadowOpacity: 0.25,
             shadowRadius: 3.84,

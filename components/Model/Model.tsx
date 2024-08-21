@@ -18,7 +18,7 @@ export type JobsResponseSingle = {
 
 export type Job = {
   _id: string;
-  company_id: string;
+  company_id: Company;
   title: string;
   desc: string;
   requirements: string;

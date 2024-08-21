@@ -75,7 +75,7 @@ const Home = () => {
       const fetchedJobs = await fetchJobs(page);
       setFilteredJobs(fetchedJobs);
       setIsLoading(false);
-
+      
       const response = await axios.get(`http://beejobs.io.vn:14307/getlistjob`);
       setTotalPages(response.data.totalPages);
     } catch (error) {
@@ -86,10 +86,11 @@ const Home = () => {
 
   useFocusEffect(
     React.useCallback(() => {
+      
       setCurrentPage(1);
       setTotalPages(1);
       loadJobs(1);
-      console.log('focous')
+      
       return () => {
         setIsLoading(false);
       }; // Cleanup to prevent memory leaks
@@ -223,7 +224,7 @@ const Home = () => {
             currentPage < totalPages ?
               <TouchableOpacity onPress={async () => {
                 setCurrentPage(currentPage + 1)
-                console.log(currentPage)
+                console.log(currentPage+1)
                 const fetchedJobs = await fetchJobs(currentPage+1);
                 setFilteredJobs((prevJobs) => [...prevJobs, ...fetchedJobs]);
               }}>
