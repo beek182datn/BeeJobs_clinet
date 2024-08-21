@@ -14,7 +14,7 @@ const JobsList: React.FC<JobItemProps> = ({ job, callback }) => {
   const [isFolowing, setIsFolowing] = useState(false);
   const [user, setUser] = useState<User | null>();
   const linkVps = 'http://beejobs.io.vn:14307';
-
+  console.log(job.company_id.company_logo);
   useEffect(() => {
     const fetchData = async () => {
       const data: User | null = await getUserInfo();
