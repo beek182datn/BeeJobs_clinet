@@ -6,23 +6,6 @@ import FormData from 'form-data'
 // import { DocumentPickerAsset } from "expo-document-picker";
 // import File from "react-native";
 
-// const getDaysLeft = (dateString: string) => {
-//   const today = new Date();
-
-//   const [day, month, year] = dateString.split('/').map(Number);
-//   const applicationDeadlineDate = new Date(year, month - 1, day);
-
-//   const timeDiff = applicationDeadlineDate.getTime() - today.getTime();
-//   const daysLeft = Math.ceil(timeDiff / (1000 * 3600 * 24));
-
-//   if (applicationDeadlineDate <= new Date()) {
-//     return false
-//   }
-//   if (isNaN(daysLeft)) {
-//     return false
-//   }
-//   return true;
-// }
 
 // lấy dữ liệu của user từ asyncstorage
 export const getUserInfo = async (): Promise<User | null> => {
@@ -48,73 +31,25 @@ export const fetchJobs = async (page?: number): Promise<Job[]> => {
 
     // Lấy danh sách công việc
     const jobs: Job[] = response.data.data;
-    const jobsable: Job[] = jobs.filter(job => {
-      const [day, month, year] = job.deadline.split('/').map(Number);
 
-      // Tạo ra một đối tượng Date từ các phần tử ngày, tháng, năm
-      const deadlineDate = new Date(year, month - 1, day);
-      return deadlineDate > new Date();
-    })
-
-    // Lấy thông tin công ty cho mỗi công việc
-    const companiesPromises = jobsable.map(async (job) => {
-      const companyResponse = await axios.get(
-        `http://beejobs.io.vn:14307/api/companies/getCompanyById/${job.company_id}`
-      );
-      return companyResponse.data.data as Company;
-    });
-
-    // Đợi tất cả các promise lấy thông tin công ty hoàn thành
-    const companies = await Promise.all(companiesPromises);
-
-    // Gán thông tin công ty vào từng công việc
-    jobsable.forEach((job, index) => {
-      job.company_name = companies[index].company_name;
-      // console.log(JSON.stringify(companies[index].company_name))
-    });
-    // console.log(response.data);
-
-    return jobsable;
+    return jobs;
   } catch (error) {
     console.error('Error fetching jobs:', error);
     return [];
   }
 };
 
+
 // lấy danh sách công việc theo id company
 export const fetchJobsByCompanyId = async (keywword: string): Promise<Job[]> => {
   try {
     const response: AxiosResponse<JobsResponse> = await axios.get(
-      `http://beejobs.io.vn:14307/api/jobs/getJobsByIdCompany/${keywword}`
+      `http://beejobs.io.vn:14307/jobs/getjobbycompanyid/${keywword}`
     );
     // Lấy danh sách công việc
     const jobs: Job[] = response.data.data;
-    const jobsable: Job[] = jobs.filter(job => {
-      const [day, month, year] = job.deadline.split('/').map(Number);
 
-      // Tạo ra một đối tượng Date từ các phần tử ngày, tháng, năm
-      const deadlineDate = new Date(year, month - 1, day);
-      return deadlineDate > new Date();
-    })
-
-    // Lấy thông tin công ty cho mỗi công việc
-    const companiesPromises = jobsable.map(async (job) => {
-      const companyResponse = await axios.get(
-        `http://beejobs.io.vn:14307/api/companies/getCompanyById/${job.company_id}`
-      );
-      return companyResponse.data.data as Company;
-    });
-
-    // Đợi tất cả các promise lấy thông tin công ty hoàn thành
-    const companies = await Promise.all(companiesPromises);
-
-    // Gán thông tin công ty vào từng công việc
-    jobsable.forEach((job, index) => {
-      job.company_name = companies[index].company_name;
-      // console.log(JSON.stringify(companies[index].company_name))
-    });
-
-    return jobsable;
+    return jobs;
   } catch (error) {
     console.error('Error fetching jobs:', error);
     return [];
@@ -732,34 +667,25 @@ export const getFollowedJobs = async (userId: string): Promise<Job[]> => {
 
     // Lấy danh sách công việc
     const jobs: Job[] = response.data.data;
-    const jobsable: Job[] = jobs.filter(job => {
-      const [day, month, year] = job.deadline.split('/').map(Number);
-
-      // Tạo ra một đối tượng Date từ các phần tử ngày, tháng, năm
-      const deadlineDate = new Date(year, month - 1, day);
-      return deadlineDate > new Date();
-    })
-
-    // Lấy thông tin công ty cho mỗi công việc
-    const companiesPromises = jobsable.map(async (job) => {
-      const companyResponse = await axios.get(
-        `http://beejobs.io.vn:14307/api/companies/getCompanyById/${job.company_id}`
-      );
-      return companyResponse.data.data as Company;
-    });
-
-    // Đợi tất cả các promise lấy thông tin công ty hoàn thành
-    const companies = await Promise.all(companiesPromises);
-
-    // Gán thông tin công ty vào từng công việc
-    jobsable.forEach((job, index) => {
-      job.company_name = companies[index].company_name;
-      // console.log(JSON.stringify(companies[index].company_name))
-    });
-
-    return jobsable;
+    
+    return jobs;
   } catch (error) {
     console.error('Error fetching jobs:', error);
     return [];
+  }
+};
+
+
+export const findJobById = async (job_id: string): Promise<Job | null> => {
+  try {
+    const response: AxiosResponse<JobsResponseSingle> = await axios.get(
+      `http://beejobs.io.vn:14307/jobs/getjobbyid/${job_id}`
+    );
+    // console.log(response.status)
+    const job = response.data.data;
+    return job;
+  } catch (error) {
+    console.log(error);
+    return null;
   }
 };

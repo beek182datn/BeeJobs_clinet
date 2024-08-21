@@ -13,7 +13,7 @@ const Tab = createMaterialTopTabNavigator();
 
 
 const CompanyDetail = () => {
-    const job = useLocalSearchParams();
+    const params = useLocalSearchParams();
     // const userId = useLocalSearchParams()
     const [companyInfo, setCompanyInfo] = useState<Company | null>(null);
     const linkVps = 'http://beejobs.io.vn:14307';
@@ -26,7 +26,7 @@ const CompanyDetail = () => {
 
     useEffect(() => {
 
-        const companyId = String(job.company_id);
+        const companyId = String(params.company_id);
         const fetchData = async () => {
             const company = await findCompanyById(companyId);
             if (company) {
@@ -35,7 +35,7 @@ const CompanyDetail = () => {
             const user: User | null = await getUserInfo();
             setUser(user);
 
-            const folow = await checkFolowCompany(String(job.userId), String(job.company_id))
+            const folow = await checkFolowCompany(String(params.userId), String(params.company_id))
             setIsFolowing(folow.isFollowing)
         };
         fetchData();
@@ -49,7 +49,7 @@ const CompanyDetail = () => {
     const handleFolowCompany = async () => {
         if (user) {
             try {
-                await folowCompany(String(job.userId), String(job.company_id))
+                await folowCompany(String(params.userId), String(params.company_id))
                 setIsFolowing(true)
             } catch (error) {
                 console.log(error)
@@ -71,7 +71,7 @@ const CompanyDetail = () => {
 
     const handleUnFolowCompany = async () => {
         try {
-            await unFolowCompany(String(job.userId), String(job.company_id))
+            await unFolowCompany(String(params.userId), String(params.company_id))
             setIsFolowing(false)
         } catch (error) {
             console.log(error)

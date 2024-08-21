@@ -31,7 +31,7 @@ const CompanyJob = () => {
       <FlatList
           data={jobs}
           keyExtractor={(item) => item._id}
-          renderItem={({ item }) => <JobsList job={item} />}
+          renderItem={({ item }) => <JobsList job={item} callback={()=>{}} />}
         />
     </SafeAreaView>
   )

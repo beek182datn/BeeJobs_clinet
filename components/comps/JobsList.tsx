@@ -33,28 +33,42 @@ const JobsList: React.FC<JobItemProps> = ({ job, callback }) => {
   const handleDetail = () => {
     router.push({
       pathname: 'JobDetail',
-      params: job
+      params: job as any ,
     });
   }
   // console.log('Huy check: ' + JSON.stringify(job));
   const getDaysLeft = (dateString: string) => {
     const today = new Date();
+    let applicationDeadlineDate: Date | null = null;
 
-    const [day, month, year] = dateString.split('/').map(Number);
-    const applicationDeadlineDate = new Date(year, month - 1, day);
-
-    const timeDiff = applicationDeadlineDate.getTime() - today.getTime();
-    const daysLeft = Math.ceil(timeDiff / (1000 * 3600 * 24));
-
-    // Math.ceil((new Date(job.deadline).getTime() - new Date().getTime()) / (1000 * 3600 * 24))
-    if (daysLeft <= 0) {
-      return 'Hết hạn ứng tuyển'
+    // Kiểm tra định dạng của dateString
+    if (dateString.includes('/')) {
+        // Định dạng dd/mm/yyyy
+        const [day, month, year] = dateString.split('/').map(Number);
+        applicationDeadlineDate = new Date(year, month - 1, day);
+    } else if (dateString.includes('-')) {
+        // Định dạng yyyy-mm-dd
+        const [year, month, day] = dateString.split('-').map(Number);
+        applicationDeadlineDate = new Date(year, month - 1, day);
     }
-    if (isNaN(daysLeft)) {
-      return <Ionicons name='sad' size={18} color={'red'} />
+
+    // Tính toán số ngày còn lại
+    if (applicationDeadlineDate) {
+        const timeDiff = applicationDeadlineDate.getTime() - today.getTime();
+        const daysLeft = Math.ceil(timeDiff / (1000 * 3600 * 24));
+
+        if (daysLeft < 0) {
+            return 'Hết hạn ứng tuyển';
+        } else if (daysLeft === 0) {
+            return 'Ứng tuyển ngay trong hôm nay';
+        } else {
+            return 'Còn ' + daysLeft + ' ngày để ứng tuyển';
+        }
+    } else {
+        return 'Ngày không hợp lệ';
     }
-    return 'Còn ' + daysLeft + ' ngày để ứng tuyển';
-  }
+};
+
 
   const vv = (value: string) => {
     if (value.length >= 20) {
@@ -105,12 +119,12 @@ const JobsList: React.FC<JobItemProps> = ({ job, callback }) => {
       <View style={styles.card}>
         <View style={styles.header}>
           <Image
-            source={job.company_logo != '' ? { uri: linkVps + job.company_logo } : require('../../assets/images/profile.png')}
+            source={job.company_id.company_logo != '' ? { uri: linkVps + job.company_id.company_logo } : require('../../assets/images/profile.png')}
             style={styles.logo}
           />
           <View style={styles.headerText}>
             <Text style={styles.title}>{job.title}</Text>
-            <Text style={styles.company}>{job.company_name}</Text>
+            <Text style={styles.company}>{job.company_id.company_name}</Text>
           </View>
           {!isFolowing &&
             <TouchableOpacity onPress={handleFolowJob}>
