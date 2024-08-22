@@ -203,7 +203,7 @@ export default ChatRoom;
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        padding: 10,
+        paddingTop: 10,
         backgroundColor: '#f9f9f9', // Màu nền nhẹ
     },
     headerTitle: {

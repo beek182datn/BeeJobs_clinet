@@ -394,7 +394,7 @@ const Profile: React.FC = () => {
       {worker && user && (
         <>
           <View style={styles.profileHeader} >
-            <TouchableOpacity onPress={() => pickImage(setWorker_avatars)}>
+            <TouchableOpacity >
               <Image
                 source={{
                   uri: !worker_avatars
@@ -662,7 +662,7 @@ const styles = StyleSheet.create({
   avatar: {
     width: 100,
     height: 100,
-    borderRadius: 30,
+    borderRadius: 50,
     marginBottom: 10,
     borderColor: "#0099CC",
     borderWidth: 2,

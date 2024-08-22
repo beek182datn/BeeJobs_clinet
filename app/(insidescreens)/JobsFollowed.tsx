@@ -1,4 +1,4 @@
-import { FlatList, SafeAreaView, StyleSheet, Text, TouchableOpacity,BackHandler, View } from 'react-native'
+import { FlatList, SafeAreaView, StyleSheet, Text,Image, TouchableOpacity,BackHandler, View } from 'react-native'
 import React, { useEffect, useState } from 'react'
 import { Job, User } from '@/components/Model/Model';
 import { getFollowedJobs, getUserInfo } from '@/components/fetch_data/api';
@@ -47,12 +47,28 @@ const JobsFollowed = () => {
                 <Text style={styles.header}>Việc làm đã lưu</Text>
                 <View style={styles.separator} />
             </View>
+            {jobs.length == 0 && 
+                <View style={styles.container}>
+                <View style={styles.content}>
+                  <Image
+                    source={require('../../assets/images/iconsave2.png')}
+                    style={styles.image}
+                  />
+                  <Text style={styles.title}>Bạn chưa lưu công việc nào</Text>
+                  <Text style={styles.description}>
+                    Hãy lưu việc ngay bằng cách nhấn vào icon trên mỗi item!
+                  </Text>
+                </View>
+              </View>
+            }
+            {jobs.length != 0 && 
             <FlatList
                 data={jobs}
                 style={{ zIndex: 1 }}
                 keyExtractor={(item) => item._id}
                 renderItem={({ item }) => <JobsList job={item} callback={()=>{setRefreshing(!refreshing)}}/>}
             />
+        }
         </SafeAreaView>
     )
 }
@@ -89,5 +105,27 @@ const styles = StyleSheet.create({
         bottom: 0, // Đặt nó ở phía dưới
         left: 0,
         right: 0,
+      },
+      content: {
+        alignItems: 'center',
+        justifyContent: 'center',
+        paddingHorizontal: 20,
+      },
+      image: {
+        width: 100,
+        height: 100,
+        marginBottom: 20,
+      },
+      title: {
+        fontSize: 18,
+        fontWeight: 'bold',
+        color: '#000',
+        marginBottom: 10,
+        textAlign: 'center'
+      },
+      description: {
+        fontSize: 14,
+        color: '#666',
+        textAlign: 'center',
       },
 })

@@ -35,6 +35,7 @@ const FollowCompany: React.FC = () => {
   const router = useRouter();
   //const [userData, setUserData] = useState<CpmpanyInfo>({});
   const [companyInfo, setCompanyInfo] = useState<CpmpanyInfo[]>([]);
+  console.log(companyInfo.length)
   const [user_id, setUserId] = useState('');
   useEffect(() => {
     fetchData();
@@ -113,6 +114,20 @@ const FollowCompany: React.FC = () => {
         <Text style={styles.header}>Công ty đang theo dõi</Text>
         <View style={styles.separator} />
       </View>
+      {companyInfo.length == 0 && 
+      <View style={styles.container}>
+      <View style={styles.content}>
+        <Image
+          source={require('../../assets/images/iconcompany2.png')}
+          style={styles.image}
+        />
+        <Text style={styles.title}>Bạn chưa theo dõi công ty nào</Text>
+        <Text style={styles.description}>
+          Hãy theo dõi công ty nếu bạn đang quan tâm!
+        </Text>
+      </View>
+    </View>}
+    {companyInfo.length != 0 && 
       <FlatList
         data={companyInfo}
         keyExtractor={(item) => item.company_name || ""}
@@ -139,6 +154,7 @@ const FollowCompany: React.FC = () => {
           </TouchableOpacity>
         )}
       />
+    }
     </SafeAreaView>
   );
 };
@@ -211,6 +227,28 @@ const styles = StyleSheet.create({
     bottom: 0, // Đặt nó ở phía dưới
     left: 0,
     right: 0,
+  },
+  content: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingHorizontal: 20,
+  },
+  image: {
+    width: 100,
+    height: 100,
+    marginBottom: 20,
+  },
+  title: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: '#000',
+    marginBottom: 10,
+    textAlign: 'center'
+  },
+  description: {
+    fontSize: 14,
+    color: '#666',
+    textAlign: 'center',
   },
 });
 
