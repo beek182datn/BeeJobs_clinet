@@ -398,7 +398,7 @@ const Profile: React.FC = () => {
               <Image
                 source={{
                   uri: !worker_avatars
-                    ? `http://beejobs.io.vn:14307${worker.worker_avatar}`
+                    ? worker.worker_avatar
                     : worker_avatars,
                 }}
                 style={styles.avatar}

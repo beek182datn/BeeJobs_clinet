@@ -187,7 +187,7 @@ const Home = () => {
         <Image
           source={{
             uri: user && userData.worker_avatar
-              ? `http://beejobs.io.vn:14307/${userData.worker_avatar}`
+              ? userData.worker_avatar
               : "http://beejobs.io.vn:14307/uploads/1721866026009-logo.jpg",
           }}
           style={styles.profileImage}

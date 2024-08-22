@@ -180,3 +180,11 @@ export interface NotificationPushModel {
   title: string;
   message: string;
 }
+
+export interface province {
+  name: string;
+  code: number;
+  division_type: string;
+  codename: string;
+  phone_code: number;
+}
