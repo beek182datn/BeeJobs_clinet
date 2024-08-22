@@ -325,11 +325,11 @@ const Profile: React.FC = () => {
 
           <View style={styles.section}>
             <View style={styles.row}>
-              <View style={styles.infoBox}>
+              {/* <View style={styles.infoBox}>
                 <Ionicons name="eye" size={30} color="#0099CC" />
                 <Text style={styles.infoText}>NTD đã xem hồ sơ</Text>
                 <Text style={styles.infoNumber}>0</Text>
-              </View>
+              </View> */}
               <TouchableOpacity
                 style={styles.infoBox}
                 onPress={() => {
@@ -398,7 +398,7 @@ const Profile: React.FC = () => {
               <Image
                 source={{
                   uri: !worker_avatars
-                    ? `http://beejobs.io.vn:14307${worker.worker_avatar}`
+                    ? worker.worker_avatar
                     : worker_avatars,
                 }}
                 style={styles.avatar}
@@ -447,11 +447,11 @@ const Profile: React.FC = () => {
 
           <View style={styles.section}>
             <View style={styles.row}>
-              <View style={styles.infoBox}>
+              {/* <View style={styles.infoBox}>
                 <Ionicons name="eye" size={30} color="#0099CC" />
                 <Text style={styles.infoText}>NTD đã xem hồ sơ</Text>
                 <Text style={styles.infoNumber}>0</Text>
-              </View>
+              </View> */}
               <TouchableOpacity
                 style={styles.infoBox}
                 onPress={() => {
@@ -579,11 +579,11 @@ const Profile: React.FC = () => {
 
           <View style={styles.section}>
             <View style={styles.row}>
-              <View style={styles.infoBox}>
+              {/* <View style={styles.infoBox}>
                 <Ionicons name="eye" size={30} color="#0099CC" />
                 <Text style={styles.infoText}>NTD đã xem hồ sơ</Text>
                 <Text style={styles.infoNumber}>0</Text>
-              </View>
+              </View> */}
               <View style={styles.infoBox}>
                 <Ionicons name="business" size={30} color="#0099CC" />
                 <Text style={styles.infoText}>Công ty đang theo dõi</Text>

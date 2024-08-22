@@ -5,6 +5,8 @@ import { Ionicons } from '@expo/vector-icons';
 import JobsList from '@/components/comps/JobsList';
 import { Job, User } from '@/components/Model/Model';
 import { findJobByLocation, findJobBySalary, findJobByTitle, findJobByWorkType, getUserInfo } from '@/components/fetch_data/api';
+import axios from 'axios';
+import { Picker } from '@react-native-picker/picker';
 
 interface FilterOptionProps {
     label: string;
@@ -12,9 +14,17 @@ interface FilterOptionProps {
     onPress: (value: string) => void;
 }
 
+interface Location {
+    name: string;
+    codename: string;
+}
+
 const SearchJob = () => {
     const [inputSearch, setInputSearch] = useState("Tìm kiếm");
     const [searchText, setSearchText] = useState("");
+    const [locationValue, setLocVal] = useState("");
+    const [salaryValue, setSalVal] = useState("");
+    const [experienceValue, setExVal] = useState("");
     const [showOptions, setShowOptions] = useState(false);
     const [selectedFilterOption, setSelectedFilterOption] = useState("title");
     const [isLoading, setIsLoading] = useState(false);
@@ -28,6 +38,29 @@ const SearchJob = () => {
         { label: "Hình thức", value: "type" },
     ]);
 
+    const [salaryOption, setShowSalaryOption] = useState(false);
+    const [salary, setSalary] = useState("");
+    const [salaryFilters, setSalaryFilters] = useState([
+        { label: "1-5 triệu", value: "1-5" },
+        { label: "5-10 triệu", value: "5-10" },
+        { label: "10-15 triệu", value: "10-15" },
+        { label: "trên 15 triệu", value: ">15" },
+    ]);
+    const [locationOption, setShowLocationOption] = useState(false);
+    const [location, setLocation] = useState("");
+    const [locationFilters, setLocationFilters] = useState<{ label: string; value: string }[]>([]);
+    const [experienceOption, setShowExperienceOption] = useState(false);
+    const [experience, setExperience] = useState("");
+    const [experienceFilters, setExperienceFilters] = useState([
+        { label: "Chưa có KN", value: "0" },
+        { label: "1 năm", value: "1" },
+        { label: "2 năm", value: "2" },
+        { label: "3 năm", value: "3" },
+        { label: "4 năm", value: "4" },
+        { label: "5 năm", value: "5" },
+        { label: "trên 5 năm", value: ">5" },
+    ]);
+
     useEffect(() => {
         const fetchData = async () => {
             try {
@@ -35,6 +68,16 @@ const SearchJob = () => {
                 if (userInfo) {
                     setUser(userInfo);
                 }
+                const provinces = await axios.get('https://provinces.open-api.vn/api/p/');
+                const data: Location[] = await provinces.data;
+                // Chuyển đổi dữ liệu thành định dạng mà bạn cần
+                const formattedData = data.map(item => ({
+                    label: item.name,
+                    value: item.codename
+                }));
+                formattedData.push({ label: 'Địa điểm', value: '' });
+
+                setLocationFilters(formattedData);
             } catch (error) {
                 console.log(error)
             }
@@ -55,6 +98,12 @@ const SearchJob = () => {
     const FilterOption: React.FC<FilterOptionProps> = ({ label, value, onPress }) => (
         <TouchableOpacity style={styles.filterOption} onPress={() => onPress(value)}>
             <Text style={styles.filterOptionText}>{label}</Text>
+        </TouchableOpacity>
+    );
+
+    const Filter: React.FC<FilterOptionProps> = ({ label, value, onPress }) => (
+        <TouchableOpacity style={styles.filterOption} onPress={() => onPress(value)}>
+            <Text style={[styles.filterOptionText, { fontSize: 14 }]}>{label}</Text>
         </TouchableOpacity>
     );
 
@@ -98,6 +147,55 @@ const SearchJob = () => {
         }
     };
 
+    const handleSalary = () => {
+        setShowSalaryOption(!salaryOption)
+    }
+    const handleSalaryPress = (value: string) => {
+        let label = '';
+        salaryFilters.map(item => {
+            if (value === item.value)
+                label = item.label;
+        })
+        setSalary(label)
+        setSalVal(value)
+        setShowSalaryOption(false);
+    }
+
+    const handleLocation = () => {
+        setShowLocationOption(!locationOption)
+    }
+    const handleLocationPress = (value: string) => {
+        let label = '';
+        let val = '';
+        locationFilters.map(item => {
+            if (value === item.value){
+                label = item.label.replace(/Thành phố|Tỉnh/g, '').trim();
+                val = item.value.replace(/tinh|thanh|pho|_/gi, ' ').trim();
+            }
+        })
+        setLocation(label)
+        setLocVal(val)
+        setShowLocationOption(false);
+    }
+
+    const handleExperience = () => {
+        setShowExperienceOption(!experienceOption)
+    }
+    const handleExperiencePress = (value: string) => {
+        let label = '';
+        experienceFilters.map(item => {
+            if (value === item.value)
+                label = item.label;
+        })
+        setExperience(label)
+        setExVal(value)
+        setShowExperienceOption(false);
+    }
+
+    const handelFilter = async()=>{
+        console.log(locationValue +' - '+salaryValue+' - '+experienceValue)
+    }
+
     return (
         <SafeAreaView style={styles.container}>
             <View style={styles.headerContainer}>
@@ -121,7 +219,7 @@ const SearchJob = () => {
                     onChangeText={handleSearch}
                 />
                 <TouchableOpacity onPress={toggleOptions} style={styles.filterButton}>
-                    <Text style={styles.filterIcon}>🔍</Text>
+                    <Ionicons name='caret-down' size={18} color={'white'} />
                 </TouchableOpacity>
                 {showOptions && (
                     <View style={styles.optionsContainer}>
@@ -135,6 +233,77 @@ const SearchJob = () => {
                         ))}
                     </View>
                 )}
+            </View>
+
+            <View style={styles.filter}>
+                <View style={{ flex: 1 }}>
+                    <TouchableOpacity style={styles.optionFilter} onPress={handleLocation}>
+                        <Text>{location ? location : 'Địa điểm'}</Text>
+                        <Ionicons name='caret-down' size={18} color={'black'} />
+                    </TouchableOpacity>
+                    {locationOption && (
+                        <View style={{ height: 200 }}>
+                            <FlatList
+                                data={locationFilters}
+                                keyExtractor={(item) => item.value}
+                                renderItem={({ item }) => (
+                                    <TouchableOpacity onPress={() => handleLocationPress(item.value)}>
+                                        <Text style={{}}>{item.label}</Text>
+                                    </TouchableOpacity>
+                                )}
+                            />
+                        </View>
+                    )}
+                </View>
+                <View style={{ flex: 1 }}>
+                    <TouchableOpacity style={styles.optionFilter} onPress={handleSalary}>
+                        <Text>{salary ? salary : 'Mức lương'}</Text>
+                        <Ionicons name='caret-down' size={18} color={'black'} />
+                    </TouchableOpacity>
+                    {salaryOption && (
+                        <View>
+                            {salaryFilters.map((option, index) => (
+                                <Filter
+                                    key={index}
+                                    label={option.label}
+                                    value={option.value}
+                                    onPress={handleSalaryPress}
+                                />
+                            ))}
+                        </View>
+                    )}
+                </View>
+                <View style={{ flex: 1 }}>
+                    <TouchableOpacity style={styles.optionFilter} onPress={handleExperience}>
+                        <Text>{experience ? experience : 'Kinh nghiệm'}</Text>
+                        <Ionicons name='caret-down' size={18} color={'black'} />
+                    </TouchableOpacity>
+                    {experienceOption && (
+                        <View>
+                            {experienceFilters.map((option, index) => (
+                                <Filter
+                                    key={index}
+                                    label={option.label}
+                                    value={option.value}
+                                    onPress={handleExperiencePress}
+                                />
+                            ))}
+                        </View>
+                    )}
+                </View>
+
+                <View>
+                    <TouchableOpacity onPress={handelFilter} style={{
+                        backgroundColor: "#2196F3",
+                        borderRadius: 10,
+                        justifyContent: "center",
+                        alignItems: "center",
+                        padding: 5
+                    }}>
+                        <Ionicons name='options' size={18} color={'white'} />
+                    </TouchableOpacity>
+                </View>
+
             </View>
 
             <View style={styles.loadingContainer}>
@@ -170,10 +339,9 @@ const styles = StyleSheet.create({
         padding: 10,
     },
     headerContainer: {
-        position:'relative',
+        position: 'relative',
         flexDirection: "row",
         alignItems: "center",
-        marginBottom: 20,
         marginTop: 15,
         backgroundColor: "#FFFFFF",
         paddingVertical: 10,
@@ -202,14 +370,14 @@ const styles = StyleSheet.create({
     },
     filterButton: {
         backgroundColor: "#2196F3",
-        paddingHorizontal: 12,
-        paddingVertical: 10,
+        paddingHorizontal: 8,
+        paddingVertical: 8,
         borderRadius: 10,
         justifyContent: "center",
         alignItems: "center",
     },
     filterIcon: {
-        fontSize: 20,
+        fontSize: 18,
         color: "#FFFFFF",
     },
     optionsContainer: {
@@ -250,4 +418,22 @@ const styles = StyleSheet.create({
         color: "#666",
         marginTop: 10,
     },
+    filter: {
+        width: '100%',
+        flexDirection: 'row',
+        marginBottom: 20,
+        justifyContent: 'space-between'
+    },
+    optionFilter: {
+        flexDirection: 'row',
+        shadowColor: "#000",
+        shadowOpacity: 0.1,
+        shadowOffset: { width: 0, height: 2 },
+        shadowRadius: 5,
+        borderColor: 'grey',
+        padding: 5,
+        borderRadius: 10,
+        backgroundColor: 'white',
+        zIndex: 10
+    }
 });
