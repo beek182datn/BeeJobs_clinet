@@ -114,7 +114,7 @@ const FollowCompany: React.FC = () => {
         <Text style={styles.header}>Công ty đang theo dõi</Text>
         <View style={styles.separator} />
       </View>
-      {companyInfo.length == 0 && 
+      {companyInfo.length == 0 && String(companyInfo) === 'undefined' && 
       <View style={styles.container}>
       <View style={styles.content}>
         <Image
