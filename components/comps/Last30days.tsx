@@ -73,14 +73,14 @@ const Last30days = () => {
                 onPress={() => {
                   router.push({
                     pathname: 'JobDetail',
-                    params: item.job_id
+                    params: item.job_id as any
                   });
                 }}
               >
                 <View>
 
                   <View style={styles.topView}>
-                    <Image source={item.company.company_logo != '' ? { uri: linkVps + item.company.company_logo } : require('../../assets/images/profile.png')} style={styles.companyLogo} />
+                    <Image source={item.company.company_logo != '' ? { uri: item.company.company_logo } : require('../../assets/images/profile.png')} style={styles.companyLogo} />
                     <View>
                       <Text style={styles.jobTitle}>{item.job_id.title}</Text>
                       <Text style={styles.companyName}>{item.company.company_name}</Text>
@@ -113,7 +113,7 @@ const Last30days = () => {
                   <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
                     <TouchableOpacity style={styles.buttonLeft} onPress={() => {
                       if (user) {
-                        router.push({ pathname: '(insidescreens)/ChatRoom', params: { ...item.job_id, userId: user.id_user } });
+                        router.push({ pathname: '(insidescreens)/ChatRoom', params: { ...item.job_id, userId: user.id_user } as any });
                       }
                     }}>
                       <Text style={styles.buttonText}>Gửi Tin Nhắn</Text>

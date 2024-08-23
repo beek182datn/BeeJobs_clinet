@@ -98,7 +98,7 @@ const AllAppliedJobs = () => {
                 onPress={() => {
                   router.push({
                     pathname: "JobDetail",
-                    params: item.job_id,
+                    params: item.job_id as any,
                   });
                 }}
               >
@@ -107,7 +107,7 @@ const AllAppliedJobs = () => {
                     <Image
                       source={
                         item.company.company_logo != ""
-                          ? { uri: linkVps + item.company.company_logo }
+                          ? { uri: item.company.company_logo }
                           : require("../../assets/images/profile.png")
                       }
                       style={styles.companyLogo}
@@ -177,7 +177,7 @@ const AllAppliedJobs = () => {
                         if (user) {
                           router.push({
                             pathname: "(insidescreens)/ChatRoom",
-                            params: { ...item.job_id, userId: user.id_user },
+                            params: { ...item.job_id, userId: user.id_user } as any,
                           });
                         }
                       }}

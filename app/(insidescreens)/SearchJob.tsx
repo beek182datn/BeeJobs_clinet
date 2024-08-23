@@ -4,7 +4,7 @@ import { router } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import JobsList from '@/components/comps/JobsList';
 import { Job, User } from '@/components/Model/Model';
-import { findJobByLocation, findJobBySalary, findJobByTitle, findJobByWorkType, getUserInfo } from '@/components/fetch_data/api';
+import { findJobByFilterOption, findJobByLocation, findJobBySalary, findJobByTitle, findJobByWorkType, getUserInfo } from '@/components/fetch_data/api';
 import axios from 'axios';
 import { Picker } from '@react-native-picker/picker';
 
@@ -20,23 +20,13 @@ interface Location {
 }
 
 const SearchJob = () => {
-    const [inputSearch, setInputSearch] = useState("Tìm kiếm");
     const [searchText, setSearchText] = useState("");
     const [locationValue, setLocVal] = useState("");
     const [salaryValue, setSalVal] = useState("");
     const [experienceValue, setExVal] = useState("");
-    const [showOptions, setShowOptions] = useState(false);
-    const [selectedFilterOption, setSelectedFilterOption] = useState("title");
     const [isLoading, setIsLoading] = useState(false);
     const [jobs, setJobs] = useState<Job[]>([]);
     const [user, setUser] = useState<User | null>();
-
-    const [filterOptions, setFilterOptions] = useState([
-        { label: "Tiêu đề", value: "title" },
-        { label: "Mức lương", value: "salary" },
-        { label: "Địa điểm", value: "location" },
-        { label: "Hình thức", value: "type" },
-    ]);
 
     const [salaryOption, setShowSalaryOption] = useState(false);
     const [salary, setSalary] = useState("");
@@ -44,7 +34,7 @@ const SearchJob = () => {
         { label: "1-5 triệu", value: "1-5" },
         { label: "5-10 triệu", value: "5-10" },
         { label: "10-15 triệu", value: "10-15" },
-        { label: "trên 15 triệu", value: ">15" },
+        { label: "trên 15 triệu", value: "15-200" },
     ]);
     const [locationOption, setShowLocationOption] = useState(false);
     const [location, setLocation] = useState("");
@@ -52,7 +42,7 @@ const SearchJob = () => {
     const [experienceOption, setShowExperienceOption] = useState(false);
     const [experience, setExperience] = useState("");
     const [experienceFilters, setExperienceFilters] = useState([
-        { label: "Chưa có KN", value: "0" },
+        { label: "Chưa có KN", value: "khong" },
         { label: "1 năm", value: "1" },
         { label: "2 năm", value: "2" },
         { label: "3 năm", value: "3" },
@@ -60,6 +50,8 @@ const SearchJob = () => {
         { label: "5 năm", value: "5" },
         { label: "trên 5 năm", value: ">5" },
     ]);
+    const [isNoData, setIsNoData] = useState(false);
+
 
     useEffect(() => {
         const fetchData = async () => {
@@ -85,21 +77,6 @@ const SearchJob = () => {
         fetchData();
     }, []);
 
-    const toggleOptions = () => {
-        setShowOptions(!showOptions);
-    };
-
-    const handleOptionPress = (value: string) => {
-        setSelectedFilterOption(value);
-        setInputSearch(value === "title" ? "Tiêu đề" : value === "salary" ? "Mức lương" : value === "location" ? "Địa điểm" : "Hình thức");
-        setShowOptions(false);
-    };
-
-    const FilterOption: React.FC<FilterOptionProps> = ({ label, value, onPress }) => (
-        <TouchableOpacity style={styles.filterOption} onPress={() => onPress(value)}>
-            <Text style={styles.filterOptionText}>{label}</Text>
-        </TouchableOpacity>
-    );
 
     const Filter: React.FC<FilterOptionProps> = ({ label, value, onPress }) => (
         <TouchableOpacity style={styles.filterOption} onPress={() => onPress(value)}>
@@ -107,45 +84,10 @@ const SearchJob = () => {
         </TouchableOpacity>
     );
 
-    const search = async (text: string) => {
-        setIsLoading(true);
-        let results;
-        if (selectedFilterOption === "title") {
-            console.log(text);
-
-            results = await findJobByTitle(text, user?.id_user);
-        } else if (selectedFilterOption === "salary") {
-            results = await findJobBySalary(text, user?.id_user);
-        } else if (selectedFilterOption === "location") {
-            results = await findJobByLocation(text, user?.id_user);
-        } else if (selectedFilterOption === "type") {
-            results = await findJobByWorkType(text, user?.id_user);
-        }
-        setIsLoading(false);
-        if (results) setJobs(results);
-    };
-
-    // Hàm debounce cho tìm kiếm
-    const debounce = (func: Function, delay: number) => {
-        let timeout: NodeJS.Timeout;
-        return (...args: any[]) => {
-            clearTimeout(timeout);
-            timeout = setTimeout(() => {
-                func(...args);
-            }, delay);
-        };
-    };
-
-    const debouncedSearch = debounce(search, 1000);
-
-    const handleSearch = (text: string) => {
-        setSearchText(text);
-        if (text.length === 0) {
-            setJobs([]);
-        } else {
-            debouncedSearch(text);
-        }
-    };
+    const handelSearchPress = (val: string) => {
+        setSearchText(val);
+        if (val === '') setJobs([]);
+    }
 
     const handleSalary = () => {
         setShowSalaryOption(!salaryOption)
@@ -168,13 +110,13 @@ const SearchJob = () => {
         let label = '';
         let val = '';
         locationFilters.map(item => {
-            if (value === item.value){
+            if (value === item.value) {
                 label = item.label.replace(/Thành phố|Tỉnh/g, '').trim();
                 val = item.value.replace(/tinh|thanh|pho|_/gi, ' ').trim();
             }
         })
         setLocation(label)
-        setLocVal(val)
+        setLocVal(label)
         setShowLocationOption(false);
     }
 
@@ -192,8 +134,23 @@ const SearchJob = () => {
         setShowExperienceOption(false);
     }
 
-    const handelFilter = async()=>{
-        console.log(locationValue +' - '+salaryValue+' - '+experienceValue)
+    const handelFilter = async () => {
+        setIsLoading(true)
+        try {
+            const jobs = await findJobByFilterOption(user?.id_user, searchText, salaryValue, locationValue, experienceValue);
+            if (jobs.length !== 0) {
+                setJobs(jobs)
+                setIsNoData(false);
+                console.log('false')
+            } else {
+                setIsNoData(true);
+                console.log('true')
+            }
+        } catch (error) {
+            console.log(error)
+        } finally {
+            setIsLoading(false)
+        }
     }
 
     return (
@@ -214,25 +171,13 @@ const SearchJob = () => {
 
                 <TextInput
                     style={styles.searchInput}
-                    placeholder={inputSearch}
+                    placeholder={'Tìm kiếm ...'}
                     value={searchText}
-                    onChangeText={handleSearch}
+                    onChangeText={handelSearchPress}
                 />
-                <TouchableOpacity onPress={toggleOptions} style={styles.filterButton}>
-                    <Ionicons name='caret-down' size={18} color={'white'} />
+                <TouchableOpacity onPress={handelFilter} style={styles.filterButton}>
+                    <Ionicons name='search' size={18} color={'white'} />
                 </TouchableOpacity>
-                {showOptions && (
-                    <View style={styles.optionsContainer}>
-                        {filterOptions.map((option, index) => (
-                            <FilterOption
-                                key={index}
-                                label={option.label}
-                                value={option.value}
-                                onPress={handleOptionPress}
-                            />
-                        ))}
-                    </View>
-                )}
             </View>
 
             <View style={styles.filter}>
@@ -313,14 +258,14 @@ const SearchJob = () => {
                     </View>}
             </View>
             <View style={styles.loadingContainer}>
-                {!isLoading && jobs.length === 0 && searchText !== '' &&
+                {isNoData &&
                     <View>
                         <Text>Không có kết quả</Text>
                     </View>}
             </View>
             <View style={{ flex: 1 }}>
                 <FlatList
-                    data={searchText ? jobs : []}
+                    data={searchText || location || experience || salary ? jobs : []}
                     renderItem={({ item }) => <JobsList job={item} callback={() => { setJobs([]) }} />}
                     keyExtractor={(item) => item._id.toString()}
                     contentContainerStyle={{ paddingBottom: 90 }}

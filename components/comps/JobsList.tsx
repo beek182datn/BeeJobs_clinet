@@ -13,7 +13,7 @@ interface JobItemProps {
 const JobsList: React.FC<JobItemProps> = ({ job, callback }) => {
   const [isFolowing, setIsFolowing] = useState(false);
   const [user, setUser] = useState<User | null>();
-  const linkVps = 'http://beejobs.io.vn:14307';
+  // const linkVps = 'http://beejobs.io.vn:14307';
   //console.log(job.company_id.company_logo);
   useEffect(() => {
     const fetchData = async () => {
@@ -117,7 +117,7 @@ const JobsList: React.FC<JobItemProps> = ({ job, callback }) => {
       <View style={styles.card}>
         <View style={styles.header}>
           <Image
-            source={job.company_id.company_logo != '' ? { uri: linkVps + job.company_id.company_logo } : require('../../assets/images/profile.png')}
+            source={job.company_id.company_logo != '' ? { uri: job.company_id.company_logo } : require('../../assets/images/profile.png')}
             style={styles.logo}
           />
           <View style={styles.headerText}>

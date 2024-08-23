@@ -35,7 +35,7 @@ const FollowCompany: React.FC = () => {
   const router = useRouter();
   //const [userData, setUserData] = useState<CpmpanyInfo>({});
   const [companyInfo, setCompanyInfo] = useState<CpmpanyInfo[]>([]);
-  console.log(companyInfo.length)
+  // console.log(companyInfo.length)
   const [user_id, setUserId] = useState('');
   useEffect(() => {
     fetchData();
@@ -138,7 +138,7 @@ const FollowCompany: React.FC = () => {
           >
             <Image
               source={{
-                uri: `http://beejobs.io.vn:14307${item.company_logo}`,
+                uri: item.company_logo,
               }}
               style={styles.icon}
             />

@@ -77,7 +77,6 @@ const Profile: React.FC = () => {
           try {
             const jobsFollowed = await getFollowedJobs(user.id_user);
             setJobs(jobsFollowed);
-            // console.log('long: ', JSON.stringify(jobsFollowed.length))
           } catch (error) {
             console.log(error);
           }
@@ -228,12 +227,10 @@ const Profile: React.FC = () => {
             if (worker) {
               var jobsLastWeek = await getAllAppliedJobs(user.id_user);
               setAppliedJobs(jobsLastWeek);
-              console.log('long')
             }
             try {
               const jobsFollowed = await getFollowedJobs(user.id_user);
               setJobs(jobsFollowed);
-              // console.log('long: ', JSON.stringify(jobsFollowed.length))
             } catch (error) {
               console.log(error);
             }
