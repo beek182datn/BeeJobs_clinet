@@ -16,7 +16,7 @@ const CompanyDetail = () => {
     const params = useLocalSearchParams();
     // const userId = useLocalSearchParams()
     const [companyInfo, setCompanyInfo] = useState<Company | null>(null);
-    const linkVps = 'http://beejobs.io.vn:14307';
+    // const linkVps = 'http://beejobs.io.vn:14307';
     const [isFolowing, setIsFolowing] = useState(false);
     const [user, setUser] = useState<User | null>();
     const backAction = () => {
@@ -92,7 +92,7 @@ const CompanyDetail = () => {
             <View >
                 <View style={styles.header}>
                     <Image
-                        source={companyInfo?.company_logo ? { uri: linkVps + companyInfo.company_logo } : require('../../assets/images/SplashLogo.png')}
+                        source={companyInfo?.company_logo ? { uri: companyInfo.company_logo } : require('../../assets/images/SplashLogo.png')}
                         style={styles.logo}
                     />
                     <View style={styles.headerTextContainer}>

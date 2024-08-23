@@ -153,7 +153,7 @@ const Messenger = () => {
                   <View style={styles.avatarContainer}>
                     <Image
                       source={{
-                        uri: "http://beejobs.io.vn:14307" + item.company_logo,
+                        uri: item.company_logo,
                       }}
                       style={styles.avatar}
                     />
