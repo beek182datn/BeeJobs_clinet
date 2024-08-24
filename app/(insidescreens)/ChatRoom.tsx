@@ -149,11 +149,10 @@ const ChatRoom: React.FC = () => {
                         style={styles.logo}
                     />
                     <View style={styles.viewTitle}>
-                        <Text style={styles.textTitle}>{info.company_name ? info.company_name : companyInfo?.company_name ? companyInfo?.company_name : 'Doanh nghiệp ?'}</Text>
+                        <Text style={styles.textTitle} numberOfLines={1} ellipsizeMode="tail">{info.company_name ? info.company_name : companyInfo?.company_name ? companyInfo?.company_name : 'Doanh nghiệp ?'}</Text>
                         <Text>{info.type === 'DN' ? 'Tài khoản doanh nghiệp' : info.type === 'ADMIN' ? 'Tài khoản quản trị' : 'Tài khoản doanh nghiệp'}</Text>
                     </View>
                 </View>
-
                 <FlatList
                     ref={flatListRef}
                     data={messages}
@@ -279,6 +278,7 @@ const styles = StyleSheet.create({
         width: 40,
         height: 40,
         borderRadius: 30,
+        
     },
     messageContainer: {
         flexDirection: 'row', // Đặt hướng hàng

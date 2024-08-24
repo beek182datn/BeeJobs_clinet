@@ -110,6 +110,7 @@ const NotificationScreen: React.FC<NotificationScreenProps> = ({ userId }) => {
   };
 
   return (
+    <View style={styles.container}>
     <LinearGradient
       colors={['#f0f0f0', '#87cefa']}
       style={styles.container}
@@ -120,6 +121,7 @@ const NotificationScreen: React.FC<NotificationScreenProps> = ({ userId }) => {
       <View style={styles.separator} />
       {renderContent()}
     </LinearGradient>
+    </View>
   );
 };
 
@@ -129,7 +131,6 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#f8f9fa',
-    padding: 10,
     paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0
   },
   header: {
@@ -137,7 +138,6 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     color: '#333',
     textAlign: 'center',
-    marginTop: 30,
     marginBottom: 20,
   },
   content: {

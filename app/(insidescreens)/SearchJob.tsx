@@ -274,11 +274,11 @@ const SearchJob = () => {
             </View>
             <View style={styles.loadingContainer}>
                 {isNoData &&
-                    <View>
-                        <Text>Không có kết quả</Text>
+                    <View style={{width: "auto", height: 'auto'}}>
+                        <Text style={{fontWeight: 'bold'}}>Không có kết quả</Text>
                     </View>}
             </View>
-            {!locationOption && !salaryOption && !experienceOption &&
+            {!locationOption && !salaryOption && !experienceOption && !isNoData &&
                 <View style={{ flex: 1 }}>
                     <FlatList
                         data={searchText || location || experience || salary ? jobs : []}

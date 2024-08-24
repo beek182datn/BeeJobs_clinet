@@ -4,6 +4,7 @@ import { TabBarIcon } from "@/components/navigation/TabBarIcon";
 import { Colors } from "@/constants/Colors";
 import { useColorScheme } from "@/hooks/useColorScheme";
 import {registerForPushNotificationsAsync} from "@/scripts/notificationService"
+import { Text } from 'react-native';
 export default () => {
   const colorScheme = useColorScheme();
   return (
@@ -17,7 +18,9 @@ export default () => {
         name="Home"
         options={{
           title: "Việc làm",
-          tabBarLabel: "Việc làm",
+          tabBarLabel: ({ focused }) => (
+            <Text style={{ fontSize: 11, color: focused ? "#0099CC" : "#333" }}>Việc làm</Text>
+            ),
           tabBarIcon: ({ color, focused }) => (
             <TabBarIcon
               name={focused ? "bag" : "bag-outline"}
@@ -33,6 +36,9 @@ export default () => {
         name="Messenger"
         options={{
           title: "Tin nhắn",
+          tabBarLabel: ({ focused }) => (
+            <Text style={{ fontSize: 11, color: focused ? "#0099CC" : "#333" }}>Tin nhắn</Text>
+            ),
           tabBarIcon: ({ color, focused }) => (
             <TabBarIcon
               name={focused ? "chatbox-ellipses" : "chatbox-ellipses-outline"}
@@ -46,6 +52,9 @@ export default () => {
         name="Notification"
         options={{
           title: "Thông báo",
+          tabBarLabel: ({ focused }) => (
+            <Text style={{ fontSize: 11, color: focused ? "#0099CC" : "#333" }}>Thông báo</Text>
+            ),
           tabBarIcon: ({ color, focused }) => (
             <TabBarIcon
               name={focused ? "notifications" : "notifications-outline"}
@@ -59,6 +68,9 @@ export default () => {
         name="Profile"
         options={{
           title: "Tài khoản",
+          tabBarLabel: ({ focused }) => (
+            <Text style={{ fontSize: 11, color: focused ? "#0099CC" : "#333" }}>Tài khoản</Text>
+            ),
           tabBarIcon: ({ color, focused }) => (
             <TabBarIcon
               name={focused ? "person" : "person-outline"}
