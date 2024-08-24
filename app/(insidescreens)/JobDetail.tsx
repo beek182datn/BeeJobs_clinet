@@ -149,7 +149,7 @@ const JobDetail = () => {
           const jobId = job._id;
           const userId = user.id_user;
           console.log('workerId: ' + worker._id + ' jobId: ' + jobId);
-          const response = await createApplyJob(userId, jobId as any, data);
+          const response = await createApplyJob(userId, jobId , data);
           console.log('workerId: ' + worker._id + ' jobId: ' + jobId);
           setShowModal(false);
           setColor('green');

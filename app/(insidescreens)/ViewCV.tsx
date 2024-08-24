@@ -53,15 +53,15 @@ const ViewCV = () => {
     return true;
   };
 
-  // useEffect(()=>{
-  //   setDocs(`https://docs.google.com/viewer?url=${cvUrl}&embedded=true&cachebuster=${new Date().getTime()}`)
-  // }, [cvUrl]);
+  useEffect(() => {
+    setDocs(`https://docs.google.com/viewer?url=${cvUrl}&embedded=true&cachebuster=${new Date().getTime()}`)
+  }, [webViewKey]);
 
-  // useFocusEffect(
-  //   React.useCallback(()=>{
-  //     setDocs(`https://docs.google.com/viewer?url=${cvUrl}&embedded=true&cachebuster=${new Date().getTime()}`)
-  //   },[cvUrl])
-  // )
+  useFocusEffect(
+    React.useCallback(() => {
+      setDocs(`https://docs.google.com/viewer?url=${cvUrl}&embedded=true&cachebuster=${new Date().getTime()}`)
+    }, [webViewKey])
+  )
 
   return (
     <SafeAreaView style={styles.container}>
@@ -80,6 +80,9 @@ const ViewCV = () => {
           <Ionicons name="arrow-back" size={22} color="black" />
         </TouchableOpacity>
         <Text style={styles.header}>Xem lại CV</Text>
+        <TouchableOpacity onPress={() => { setWebViewKey((prevKey) => prevKey + 1); }}>
+          <Ionicons name="refresh-circle" size={24} color={'blue'} />
+        </TouchableOpacity>
         <View style={styles.separator} />
       </View>
       <WebView

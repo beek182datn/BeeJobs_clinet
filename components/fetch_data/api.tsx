@@ -155,7 +155,7 @@ export const createApplyJob = async (worker_id: string, job_id: string, data: Ap
     formData.append('intro_letter', data.intro_letter)
 
     const response = await axios.post(
-      `http://beejobs.io.vn:14307/api/applyJobs/create/${worker_id}/${job_id}`,
+      `http://beejobs.io.vn:14307/applyJobs/create/${worker_id}/${job_id}`,
       formData,
       {
         headers: {
