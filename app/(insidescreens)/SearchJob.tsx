@@ -51,6 +51,7 @@ const SearchJob = () => {
         { label: "trên 5 năm", value: ">5" },
     ]);
     const [isNoData, setIsNoData] = useState(false);
+    const [isDisplay, setisDisplay] = useState(false);
 
 
     useEffect(() => {
@@ -139,10 +140,12 @@ const SearchJob = () => {
         try {
             const jobs = await findJobByFilterOption(user?.id_user, searchText, salaryValue, locationValue, experienceValue);
             if (jobs.length !== 0) {
+                setisDisplay(true)
                 setJobs(jobs)
                 setIsNoData(false);
                 console.log('false')
             } else {
+                setisDisplay(false)
                 setIsNoData(true);
                 console.log('true')
             }
@@ -151,6 +154,18 @@ const SearchJob = () => {
         } finally {
             setIsLoading(false)
         }
+    }
+
+    const handelClear = ()=>{
+        setJobs([])
+        setIsNoData(false)
+        setExVal('');
+        setExperience('')
+        setLocVal('');
+        setLocation('')
+        setSalVal('');
+        setSalary('')
+        setSearchText('')
     }
 
     return (
@@ -238,14 +253,14 @@ const SearchJob = () => {
                 </View>
 
                 <View>
-                    <TouchableOpacity onPress={handelFilter} style={{
+                    <TouchableOpacity onPress={handelClear} style={{
                         backgroundColor: "#2196F3",
                         borderRadius: 10,
                         justifyContent: "center",
                         alignItems: "center",
                         padding: 5
                     }}>
-                        <Ionicons name='options' size={18} color={'white'} />
+                        <Ionicons name='close' size={18} color={'white'} />
                     </TouchableOpacity>
                 </View>
 
@@ -263,14 +278,15 @@ const SearchJob = () => {
                         <Text>Không có kết quả</Text>
                     </View>}
             </View>
-            <View style={{ flex: 1 }}>
-                <FlatList
-                    data={searchText || location || experience || salary ? jobs : []}
-                    renderItem={({ item }) => <JobsList job={item} callback={() => { setJobs([]) }} />}
-                    keyExtractor={(item) => item._id.toString()}
-                    contentContainerStyle={{ paddingBottom: 90 }}
-                />
-            </View>
+            {!locationOption && !salaryOption && !experienceOption &&
+                <View style={{ flex: 1 }}>
+                    <FlatList
+                        data={searchText || location || experience || salary ? jobs : []}
+                        renderItem={({ item }) => <JobsList job={item} callback={() => { setJobs([]) }} />}
+                        keyExtractor={(item) => item._id.toString()}
+                        contentContainerStyle={{ paddingBottom: 90 }}
+                    />
+                </View>}
         </SafeAreaView>
     );
 }

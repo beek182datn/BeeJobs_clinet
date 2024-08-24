@@ -122,7 +122,7 @@ const LastWeek = () => {
                     </TouchableOpacity>
                     <TouchableOpacity style={styles.buttonRight} onPress={async () => {
                       // await WebBrowser.openBrowserAsync(linkVps+item.cv);
-                      router.push({ pathname: "ViewCV", params: { cvUrl: linkVps + item.cv } });
+                      router.push({ pathname: "ViewCV", params: { cvUrl: item.cv } });
                     }}>
                       <Text style={styles.buttonText}>Xem Lại CV</Text>
                     </TouchableOpacity>
