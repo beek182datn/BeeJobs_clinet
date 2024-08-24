@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { StyleSheet, Text, View, Image, SafeAreaView, FlatList, ActivityIndicator } from 'react-native';
+import { StyleSheet, Text, View, Image, SafeAreaView, FlatList, ActivityIndicator, StatusBar, Platform } from 'react-native';
 import { getUnreadNotifications } from '@/components/fetch_data/notifi';
 import { NotificationModel, User } from '@/components/Model/Model';
 import { getUserInfo } from "@/components/fetch_data/api";
@@ -130,6 +130,7 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#f8f9fa',
     padding: 10,
+    paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0
   },
   header: {
     fontSize: 28,

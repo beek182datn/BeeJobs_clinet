@@ -1,4 +1,4 @@
-import { SafeAreaView, StyleSheet, View, Text, TouchableOpacity } from "react-native";
+import { SafeAreaView, StyleSheet, View, Text, TouchableOpacity, StatusBar, Platform, } from "react-native";
 import React from "react";
 import { createMaterialTopTabNavigator } from "@react-navigation/material-top-tabs";
 import LastWeek from "@/components/comps/LastWeek";
@@ -62,7 +62,7 @@ export default AppliedJobByTime;
 const styles = StyleSheet.create({
   conatiner: {
     flex: 1,
-    paddingTop: 20,
+    paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0
   },
   separator: {
     height: 1,

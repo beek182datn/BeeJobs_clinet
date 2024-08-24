@@ -10,6 +10,8 @@ import {
   SafeAreaView,
   FlatList,
   BackHandler,
+  StatusBar,
+  Platform
 } from "react-native";
 import Icon from "react-native-vector-icons/FontAwesome";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
@@ -163,7 +165,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "#fff",
-    paddingTop: 20,
+    paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0
   },
   headerContainer: {
     flexDirection: "row",

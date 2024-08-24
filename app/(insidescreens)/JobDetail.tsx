@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View, ScrollView, Pressable, Image, Modal, TextInput, TouchableOpacity, Dimensions, SafeAreaView, Linking, Alert, KeyboardAvoidingView, Platform, TouchableWithoutFeedback, Keyboard } from 'react-native'
+import { StyleSheet, Text, View, ScrollView, Pressable, Image, Modal, TextInput,StatusBar, TouchableOpacity, Dimensions, SafeAreaView, Linking, Alert, KeyboardAvoidingView, Platform, TouchableWithoutFeedback, Keyboard } from 'react-native'
 import React, { useEffect, useState } from 'react'
 import { useLocalSearchParams } from 'expo-router'
 import { findCompanyById, getUserInfo, checkApplyJob, findWorkerById, findJobById } from '@/components/fetch_data/api';
@@ -479,8 +479,8 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "#f2f2f2",
-    marginTop: 10,
     position: 'relative',
+    paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0
   },
   topView: {
     width: '100%',

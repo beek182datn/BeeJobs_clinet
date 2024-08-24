@@ -1,4 +1,4 @@
-import { SafeAreaView, StyleSheet, Text, TouchableOpacity, View, FlatList, BackHandler, TextInput, Button, Image, KeyboardAvoidingView, Platform, Animated } from 'react-native';
+import { SafeAreaView, StyleSheet, Text, TouchableOpacity, View,StatusBar, FlatList, BackHandler, TextInput, Button, Image, KeyboardAvoidingView, Platform, Animated } from 'react-native';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { useLocalSearchParams, router } from 'expo-router';
 import { findCompanyById, sendMessage as apiSendMessage, getMessages, getChatRoomInfo, checkChatRoom } from '@/components/fetch_data/api';

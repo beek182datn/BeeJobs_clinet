@@ -1,4 +1,4 @@
-import { ActivityIndicator, FlatList, SafeAreaView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import { ActivityIndicator, FlatList, SafeAreaView, StyleSheet, Text, TextInput,StatusBar, Platform, TouchableOpacity, View } from 'react-native';
 import React, { useEffect, useState } from 'react';
 import { router } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
@@ -298,6 +298,7 @@ const styles = StyleSheet.create({
         flex: 1,
         backgroundColor: "#F5F5F5",
         padding: 10,
+        paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0
     },
     headerContainer: {
         position: 'relative',

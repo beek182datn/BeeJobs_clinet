@@ -1,4 +1,4 @@
-import { FlatList, SafeAreaView, StyleSheet, Text,Image, TouchableOpacity,BackHandler, View } from 'react-native'
+import { FlatList, SafeAreaView, StyleSheet, Text,Image, TouchableOpacity,BackHandler, View, StatusBar, Platform } from 'react-native'
 import React, { useEffect, useState } from 'react'
 import { Job, User } from '@/components/Model/Model';
 import { getFollowedJobs, getUserInfo } from '@/components/fetch_data/api';
@@ -78,8 +78,8 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         backgroundColor: '#f8f9fa',
-        paddingTop: 20,
-        position: 'relative'
+        position: 'relative',
+        paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0
     },
     headerContainer: {
         flexDirection: "row",

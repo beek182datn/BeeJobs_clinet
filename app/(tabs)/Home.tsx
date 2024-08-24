@@ -8,7 +8,9 @@ import {
   Image,
   SafeAreaView,
   ToastAndroid,
-  ActivityIndicator
+  ActivityIndicator,
+  StatusBar,
+  Platform 
 } from "react-native";
 import React, { useState, useEffect, useCallback } from "react";
 import { useFocusEffect } from "@react-navigation/native";
@@ -168,6 +170,7 @@ const Home = () => {
 
   return (
     <SafeAreaView style={styles.container}>
+      
       <LinearGradient
         colors={['#f0f0f0', '#87cefa']}
         style={styles.container}
@@ -242,6 +245,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "#fff",
+    paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0 
   },
   searchBar: {
     flexDirection: "row",
@@ -263,7 +267,9 @@ const styles = StyleSheet.create({
   header: {
     flexDirection: "row",
     alignItems: "center",
-    margin: 20,
+    marginLeft: 20,
+    marginRight: 20,
+    marginBottom: 20
   },
   searchInput: {
     flex: 1,

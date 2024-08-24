@@ -9,6 +9,8 @@ import {
   SafeAreaView,
   TextInput,
   TouchableOpacity,
+  StatusBar,
+  Platform
 } from "react-native";
 import axios from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -186,6 +188,7 @@ const Messenger = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0
   },
   header: {
     flexDirection: "row",
@@ -194,7 +197,6 @@ const styles = StyleSheet.create({
     padding: 20,
   },
   title: {
-    marginTop: 30,
     marginBottom: 20,
     fontSize: 28,
     fontWeight: 'bold',

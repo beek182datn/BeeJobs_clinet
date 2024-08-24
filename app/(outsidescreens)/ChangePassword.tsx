@@ -10,6 +10,8 @@ import {
   BackHandler,
   TouchableWithoutFeedback,
   Keyboard,
+  StatusBar,
+  Platform
 } from "react-native";
 import Icon from "react-native-vector-icons/Ionicons"; // Thêm thư viện cho icon (nếu sử dụng)
 import { useRouter, useLocalSearchParams } from "expo-router";
@@ -178,7 +180,7 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: "#f5f5f5",
     position: "relative",
-    //paddingTop: 20
+    paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0
   },
   header: {
     flexDirection: "row",

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { SafeAreaView, StyleSheet, Text, View, Image, Pressable, ScrollView, TouchableOpacity, BackHandler, Alert } from 'react-native';
+import { SafeAreaView, StyleSheet, Text, View, Image, Pressable, ScrollView,StatusBar, Platform, TouchableOpacity, BackHandler, Alert } from 'react-native';
 import { FontAwesome, Ionicons } from '@expo/vector-icons';
 import { router, useLocalSearchParams } from 'expo-router';
 import { Company, User } from '@/components/Model/Model';
@@ -167,6 +167,7 @@ export default CompanyDetail;
 const styles = StyleSheet.create({
     container: {
         flex: 1,
+        paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0
     },
     header: {
         flexDirection: 'row',

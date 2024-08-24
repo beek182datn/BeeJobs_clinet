@@ -11,6 +11,8 @@ import {
   Animated,
   SafeAreaView,
   Pressable,
+  StatusBar,
+  Platform
 } from "react-native";
 import Ionicons from "react-native-vector-icons/Ionicons";
 //import ActionSheet from "react-native-actionsheet";
@@ -645,7 +647,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "#fff",
-    marginTop: 50,
+    paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0
   },
   scrollview: {
     flexGrow: 1,
