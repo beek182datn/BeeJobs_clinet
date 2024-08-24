@@ -157,6 +157,9 @@ const SearchJob = () => {
     }
 
     const handelClear = ()=>{
+        setShowLocationOption(false);
+        setShowSalaryOption(false);
+        setShowExperienceOption(false);
         setJobs([])
         setIsNoData(false)
         setExVal('');

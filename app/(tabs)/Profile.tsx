@@ -135,8 +135,8 @@ const Profile: React.FC = () => {
         const response = await axios.get(
           `http://beejobs.io.vn:14307/api/findcompanys/${userId}`
         );
-        setCompanyInfo(response.data);
-        // console.log(response.data);
+        setCompanyInfo(response.data.data);
+        // console.log(response.data.data);
       } else {
         console.log("No UserID found in AsyncStorage");
       }
@@ -175,7 +175,7 @@ const Profile: React.FC = () => {
               await AsyncStorage.removeItem("userID");
               await AsyncStorage.removeItem('data');
               await AsyncStorage.removeItem('workerData');
-              console.log(`Removed item with key: userId`);
+              // console.log(`Removed item with key: userId`);
               router.push("/LoginScreen");
             } catch (error) {
               console.error("Error removing item from AsyncStorage: ", error);
