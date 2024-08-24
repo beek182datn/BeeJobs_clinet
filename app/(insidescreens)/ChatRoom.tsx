@@ -25,7 +25,7 @@ const ChatRoom: React.FC = () => {
     const [user, setUser] = useState<User | null>(null);
     const flatListRef = useRef<FlatList<Message>>(null);
     const [chatRoom, setChatRoom] = useState<ChatRoomModel | null>(null);
-    
+    console.log('huy==: ' + info.company_logo);
     const backAction = () => {
         router.back();
         return true;
@@ -263,7 +263,7 @@ const styles = StyleSheet.create({
     inputContainer: {
         flexDirection: 'row',
         alignItems: 'center',
-        marginTop: 10,
+        margin: 10
     },
     input: {
         flex: 1,

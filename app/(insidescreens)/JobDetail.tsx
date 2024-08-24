@@ -309,19 +309,18 @@ const JobDetail = () => {
             <View style={styles.gridView}>
               <Ionicons name='cash' size={30} color={'#4CAF50'} style={{ marginBottom: 10 }} />
               <Text style={{ fontSize: 14, color: 'gray' }}>Mức lương</Text>
-              <Text style={styles.textGrid}>{job?.salary}</Text>
+              <Text style={styles.textGrid} numberOfLines={1} ellipsizeMode="tail">{job?.salary}</Text>
             </View>
             <View style={[styles.gridView, { borderLeftWidth: 0.5, borderLeftColor: 'gray', borderRightWidth: 0.5, borderRightColor: 'gray' }]}>
               <Ionicons name='location' size={30} color={'#4CAF50'} style={{ marginBottom: 10 }} />
               <Text style={{ fontSize: 14, color: 'gray' }}>Địa điểm</Text>
-              <Text style={styles.textGrid}>{job?.location?.slice(0, 20)}</Text>
+              <Text style={styles.textGrid} numberOfLines={1} ellipsizeMode="tail">{job?.location?.slice(0, 20)}</Text>
             </View>
             <View style={styles.gridView}>
               <Ionicons name='star' size={30} color={'#4CAF50'} style={{ marginBottom: 10 }} />
               <Text style={{ fontSize: 14, color: 'gray' }}>Kinh nghiệm</Text>
-              <Text style={styles.textGrid}>{job?.experience}</Text>
+              <Text style={[styles.textGrid]} numberOfLines={1} ellipsizeMode="tail">{job?.experience}</Text>
             </View>
-
           </View>
         </View>
         {companyInfo &&
@@ -645,11 +644,13 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    paddingTop: 10
+    paddingTop: 10,
+    paddingBottom: 10,
   },
   textGrid: {
     color: '#4CAF50',
-    fontSize: 16
+    fontSize: 15,
+    textAlign:'center',
   },
   body: {
     marginTop: 10,
