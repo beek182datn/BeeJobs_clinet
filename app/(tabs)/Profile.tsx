@@ -811,7 +811,7 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
     paddingHorizontal: 20,
     marginTop: 20,
-    marginBottom: 20,
+    marginBottom: 50,
   },
   logoutText: {
     marginRight: 10,

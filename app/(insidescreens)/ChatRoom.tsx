@@ -236,6 +236,7 @@ const styles = StyleSheet.create({
         shadowOffset: { width: 0, height: 1 },
         shadowOpacity: 0.2,
         shadowRadius: 1,
+        margin: 10
     },
     otherMessage: {
         alignSelf: 'flex-start',
@@ -248,6 +249,7 @@ const styles = StyleSheet.create({
         shadowOffset: { width: 0, height: 1 },
         shadowOpacity: 0.2,
         shadowRadius: 1,
+        margin: 10
     },
     messageContent: {
         fontSize: 16,
