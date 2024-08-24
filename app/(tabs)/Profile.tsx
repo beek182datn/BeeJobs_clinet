@@ -174,6 +174,7 @@ const Profile: React.FC = () => {
               await AsyncStorage.removeItem("token");
               await AsyncStorage.removeItem("userID");
               await AsyncStorage.removeItem('data');
+              await AsyncStorage.removeItem('workerData');
               console.log(`Removed item with key: userId`);
               router.push("/LoginScreen");
             } catch (error) {
