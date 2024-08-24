@@ -135,8 +135,8 @@ const Profile: React.FC = () => {
         const response = await axios.get(
           `http://beejobs.io.vn:14307/api/findcompanys/${userId}`
         );
-        setCompanyInfo(response.data.data);
-        // console.log(response.data.data);
+        setCompanyInfo(response.data);
+        // console.log(response.data);
       } else {
         console.log("No UserID found in AsyncStorage");
       }
