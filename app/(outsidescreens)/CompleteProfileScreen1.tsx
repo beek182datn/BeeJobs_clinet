@@ -21,6 +21,7 @@ import axios, { AxiosResponse } from "axios";
 import * as ImagePicker from "expo-image-picker";
 import { Ionicons } from "@expo/vector-icons";
 import { Picker } from "@react-native-picker/picker";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 type SetterFunction = (uri: string) => void;
 
 const pickImage = async (setter: SetterFunction) => {
@@ -172,8 +173,13 @@ const CompleteProfileScreen1: React.FC = () => {
             },
           }
         );
-  
-        router.push("/Profile"); // Chuyển hướng sau khi thành công
+
+        const dataWorker = await AsyncStorage.getItem('workerData');
+        if(dataWorker){
+          router.back()
+        }else{
+          router.push("/Profile"); // Chuyển hướng sau khi thành công
+        }
       } else {
         console.log("Ảnh chưa được chọn hoặc dữ liệu không hợp lệ.");
       }

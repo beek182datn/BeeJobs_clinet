@@ -106,11 +106,12 @@ const JobDetail = () => {
           },
           {
             text: "Cập nhật",
-            onPress: () => {
+            onPress: async () => {
               router.push({
                 pathname: "/CompleteProfileScreen1",
                 params: { id_user: user.id_user },
               });
+              await AsyncStorage.setItem('workerData', 'wokwerData in here!');
             },
           },
         ],
