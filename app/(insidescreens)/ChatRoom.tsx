@@ -220,6 +220,7 @@ const styles = StyleSheet.create({
         color: 'black',
         fontSize: 18,
         fontWeight: '500',
+        width: '80%'
     },
     messageList: {
         flex: 1,
