@@ -1,6 +1,6 @@
 import { Stack } from "expo-router";
 import { SafeAreaView } from "react-native";
-import { configureNotifications, requestNotificationPermissions, requestUserPermission, showNotification } from '../scripts/notificationService';
+import { configureNotifications, requestNotificationPermissions, showNotification } from '../scripts/notificationService';
 import socket, { listenForNotifications } from "@/components/fetch_data/config";
 import { useEffect } from "react";
 import { NotificationPushModel } from "@/components/Model/Model";
@@ -8,7 +8,7 @@ export default function RootLayout() {
 
   useEffect(() => {
 
-    requestUserPermission();
+    // requestUserPermission();
     const setupNotifications = async () => {
       
       configureNotifications();
