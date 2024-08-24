@@ -1,13 +1,14 @@
 import React, { useEffect, useState } from 'react';
-import { SafeAreaView, StyleSheet, Text, View, Image, Pressable, ScrollView,StatusBar, Platform, TouchableOpacity, BackHandler, Alert } from 'react-native';
+import { SafeAreaView, StyleSheet, Text, View, Image, Pressable, ScrollView, StatusBar, Platform, TouchableOpacity, BackHandler, Alert } from 'react-native';
 import { FontAwesome, Ionicons } from '@expo/vector-icons';
-import { router, useLocalSearchParams } from 'expo-router';
+import { router, useFocusEffect, useLocalSearchParams } from 'expo-router';
 import { Company, User } from '@/components/Model/Model';
 import { findCompanyById, folowCompany, checkFolowCompany, unFolowCompany, getUserInfo } from '@/components/fetch_data/api';
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
 import CompanyJob from '@/components/comps/CompanyJob';
 import CompanyInfo from '@/components/comps/CompanyInfo';
 import { RouteProp } from '@react-navigation/native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const Tab = createMaterialTopTabNavigator();
 
@@ -19,25 +20,32 @@ const CompanyDetail = () => {
     // const linkVps = 'http://beejobs.io.vn:14307';
     const [isFolowing, setIsFolowing] = useState(false);
     const [user, setUser] = useState<User | null>();
+
     const backAction = () => {
         router.back();
         return true;
     };
 
-    useEffect(() => {
+    useFocusEffect(
+        React.useCallback(() => {
+            fetchData();
+        }, [])
+    );
 
+    const fetchData = async () => {
         const companyId = String(params.company_id);
-        const fetchData = async () => {
-            const company = await findCompanyById(companyId);
-            if (company) {
-                setCompanyInfo(company);
-            }
-            const user: User | null = await getUserInfo();
-            setUser(user);
+        const company = await findCompanyById(companyId);
+        if (company) {
+            setCompanyInfo(company);
+        }
+        const user: User | null = await getUserInfo();
+        setUser(user);
 
-            const folow = await checkFolowCompany(String(params.userId), String(params.company_id))
-            setIsFolowing(folow.isFollowing)
-        };
+        const folow = await checkFolowCompany(String(params.userId), String(params.company_id))
+        setIsFolowing(folow.isFollowing)
+    };
+
+    useEffect(() => {
         fetchData();
         const backHandler = BackHandler.addEventListener(
             "hardwareBackPress",
@@ -59,8 +67,9 @@ const CompanyDetail = () => {
                 "Thông báo",
                 "Bạn cần đăng nhập",
                 [{
-                    text: "OK", onPress: () => {
+                    text: "OK", onPress: async () => {
                         router.push('/LoginScreen')
+                        await AsyncStorage.setItem('data', 'data in here!');
                     }
                 }],
                 { cancelable: true }
@@ -117,8 +126,9 @@ const CompanyDetail = () => {
                                         "Thông báo",
                                         "Bạn cần đăng nhập",
                                         [{
-                                            text: "OK", onPress: () => {
+                                            text: "OK", onPress: async () => {
                                                 router.push('/LoginScreen')
+                                                await AsyncStorage.setItem('data', 'data in here!');
                                             }
                                         }],
                                         { cancelable: true }

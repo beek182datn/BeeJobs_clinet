@@ -1,6 +1,6 @@
 import { StyleSheet, Text, View, ScrollView, Pressable, Image, Modal, TextInput,StatusBar, TouchableOpacity, Dimensions, SafeAreaView, Linking, Alert, KeyboardAvoidingView, Platform, TouchableWithoutFeedback, Keyboard } from 'react-native'
 import React, { useEffect, useState } from 'react'
-import { useLocalSearchParams } from 'expo-router'
+import { useFocusEffect, useLocalSearchParams } from 'expo-router'
 import { findCompanyById, getUserInfo, checkApplyJob, findWorkerById, findJobById } from '@/components/fetch_data/api';
 import { ApplyJobData, Company, Job, User, Worker } from '@/components/Model/Model';
 import { BackHandler, } from "react-native";
@@ -17,6 +17,7 @@ import Infomation from '@/components/comps/Infomation';
 import * as FileSystem from 'expo-file-system';
 import { WebView } from 'react-native-webview';
 import * as Sharing from 'expo-sharing';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 
 const Tab = createMaterialTopTabNavigator();
@@ -52,34 +53,41 @@ const JobDetail = () => {
     return true;
   };
 
+  //focus
+  useFocusEffect(
+    React.useCallback(()=>{
+      fetchCompanyData();
+    }, [])
+  )
+
+  const fetchCompanyData = async () => {
+
+    const job = await findJobById(String(params?._id))
+    if (job) {
+      setJob(job)
+      const companyId = String(job.company_id._id);
+      const company = await findCompanyById(companyId);
+      if (company) {
+        setCompanyInfo(company)
+      }
+    }
+    const user: User | null = await getUserInfo();
+    setUser(user);
+    if (user) {
+      const workerInfo = await findWorkerById(String(user.id_user));
+      setWorker(workerInfo);
+      if (workerInfo) {
+        const response = await checkApplyJob(user.id_user, String(params._id));
+        setIsApplied(response.isApplied);
+      }
+    }
+  };
+
   useEffect(() => {
     const backHandler = BackHandler.addEventListener(
       "hardwareBackPress",
       backAction
     );
-
-    const fetchCompanyData = async () => {
-
-      const job = await findJobById(String(params?._id))
-      if (job) {
-        setJob(job)
-        const companyId = String(job.company_id._id);
-        const company = await findCompanyById(companyId);
-        if (company) {
-          setCompanyInfo(company)
-        }
-      }
-      const user: User | null = await getUserInfo();
-      setUser(user);
-      if (user) {
-        const workerInfo = await findWorkerById(String(user.id_user));
-        setWorker(workerInfo);
-        if (workerInfo) {
-          const response = await checkApplyJob(user.id_user, String(params._id));
-          setIsApplied(response.isApplied);
-        }
-      }
-    };
 
     fetchCompanyData();
     return () => backHandler.remove();
@@ -114,10 +122,11 @@ const JobDetail = () => {
     if (!worker && !user) {
       Alert.alert(
         "Thông báo",
-        "Bạn cần đang nhập!",
+        "Bạn cần đăng nhập!",
         [{
-          text: "OK", onPress: () => { router.push('/LoginScreen') }
-
+          text: "OK", onPress: async () => { router.push('/LoginScreen') 
+            await AsyncStorage.setItem("data", 'data in here!');
+          }
         }],
         { cancelable: true }
       );

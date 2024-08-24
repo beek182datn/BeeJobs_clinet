@@ -24,6 +24,9 @@ const CompanyJob = () => {
       if (user) {
         const jobs = await fetchJobsByCompanyId(companyInfo._id, user.id_user);
         setJobs(jobs);
+      }else{
+        const jobs = await fetchJobsByCompanyId(companyInfo._id);
+        setJobs(jobs);
       }
     }
     fetchJobs();

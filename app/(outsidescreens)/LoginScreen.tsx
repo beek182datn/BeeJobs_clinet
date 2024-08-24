@@ -107,19 +107,19 @@ const LoginScreen = () => {
 
       try {
         let tokenfcm = await AsyncStorage.getItem('fcm_token');
-        console.log("Tokenfmc",tokenfcm);
-        
+        console.log("Tokenfmc", tokenfcm);
+
         const response = await axios.post(
           "http://beejobs.io.vn:14307/api/login",
           {
             username: username,
             passwd: passwd,
-            fcmtoken:tokenfcm
+            fcmtoken: tokenfcm
           }
         );
         const userId = response.data.user_info.id_user
         await AsyncStorage.setItem("userID", userId);
-        console.log('log ra id: ' +userId);
+        console.log('log ra id: ' + userId);
 
         if (response.data.status === 200) {
           setLoggedInUser(response.data.user_info.email);
@@ -140,7 +140,13 @@ const LoginScreen = () => {
           } catch (error) {
             console.error("Error saving user profile:", error);
           }
-          router.push("/Home");
+
+          const data = await AsyncStorage.getItem('data');
+          if (data) {
+            router.back();
+          } else {
+            router.push("/Home");
+          }
         } else if (response.data.status === 400) {
           setMessage("Thông tin đăng nhập không chính xác!");
           setColor("#FF0000");
@@ -254,12 +260,12 @@ const LoginScreen = () => {
         </Text>
       </Text>
       <Text
-          style={{textAlign: 'center', color: "#007BFF", fontWeight:'bold', fontSize: 16}}
-          onPress={() => router.push("/Home")}
-        >
-          {" "}
-          Trải nghiệm không cần đăng nhập
-        </Text>
+        style={{ textAlign: 'center', color: "#007BFF", fontWeight: 'bold', fontSize: 16 }}
+        onPress={() => router.push("/Home")}
+      >
+        {" "}
+        Trải nghiệm không cần đăng nhập
+      </Text>
       <AlertComponent
         color={color}
         message={message}
@@ -366,7 +372,7 @@ const styles = StyleSheet.create({
   signupText: {
     color: "#007BFF",
     fontWeight: "bold",
-    alignSelf:'center'
+    alignSelf: 'center'
   },
   errorText: {
     color: "red",

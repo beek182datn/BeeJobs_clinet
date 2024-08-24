@@ -88,7 +88,7 @@ const Home = () => {
 
   useFocusEffect(
     React.useCallback(() => {
-      
+      fetchData();
       setCurrentPage(1);
       setTotalPages(1);
       loadJobs(1);

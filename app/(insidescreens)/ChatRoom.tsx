@@ -25,7 +25,7 @@ const ChatRoom: React.FC = () => {
     const [user, setUser] = useState<User | null>(null);
     const flatListRef = useRef<FlatList<Message>>(null);
     const [chatRoom, setChatRoom] = useState<ChatRoomModel | null>(null);
-    console.log('huy==: ' + info.company_logo);
+    // console.log('huy==: ' + info.company_logo);
     const backAction = () => {
         router.back();
         return true;

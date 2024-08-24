@@ -4,6 +4,7 @@ import { Job, User } from '../Model/Model';
 import { router } from 'expo-router';
 import { Ionicons, FontAwesome } from '@expo/vector-icons';
 import { checkFollowingJob, followJob, getUserInfo, unFollowJob } from '../fetch_data/api';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 interface JobItemProps {
   job: Job;
@@ -90,8 +91,9 @@ const JobsList: React.FC<JobItemProps> = ({ job, callback }) => {
         "Thông báo",
         "Bạn cần đăng nhập",
         [{
-          text: "OK", onPress: () => {
+          text: "OK", onPress: async () => {
             router.push('/LoginScreen')
+            await AsyncStorage.setItem('data', 'data in here!');
           }
         }],
         { cancelable: true }

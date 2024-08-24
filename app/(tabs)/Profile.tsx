@@ -173,6 +173,7 @@ const Profile: React.FC = () => {
               await AsyncStorage.removeItem("userProfile");
               await AsyncStorage.removeItem("token");
               await AsyncStorage.removeItem("userID");
+              await AsyncStorage.removeItem('data');
               console.log(`Removed item with key: userId`);
               router.push("/LoginScreen");
             } catch (error) {
@@ -550,8 +551,9 @@ const Profile: React.FC = () => {
               <View style={styles.buttonContainer}>
                 <TouchableOpacity
                   style={styles.upgradeButton}
-                  onPress={() => {
+                  onPress={async () => {
                     router.push("/LoginScreen");
+                    await AsyncStorage.setItem('data', 'data in here!');
                   }}
                 >
                   <Text style={styles.upgradeText}>Đăng nhập</Text>
