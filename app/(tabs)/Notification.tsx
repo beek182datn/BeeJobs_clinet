@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { StyleSheet, Text, View, Image, SafeAreaView, FlatList, ActivityIndicator, StatusBar, Platform } from 'react-native';
-import { getUnreadNotifications } from '@/components/fetch_data/notifi';
+import { StyleSheet, Text, View, Image, SafeAreaView, FlatList, ActivityIndicator, StatusBar, Platform, TouchableOpacity, Alert } from 'react-native';
+import { getAllNotifications, getUnreadNotifications, markNotificationAsRead } from '@/components/fetch_data/notifi';
 import { NotificationModel, User } from '@/components/Model/Model';
 import { getUserInfo } from "@/components/fetch_data/api";
-import { useFocusEffect } from 'expo-router';
+import { router, useFocusEffect } from 'expo-router';
 import { LinearGradient } from "expo-linear-gradient";
+import { Ionicons } from '@expo/vector-icons';
+import axios from 'axios';
 interface NotificationScreenProps {
   userId: string;
 }
@@ -15,7 +17,7 @@ const NotificationScreen: React.FC<NotificationScreenProps> = ({ userId }) => {
   const [storedUserId, setStoredUserId] = useState<string | null>(userId ?? null);
 
   useFocusEffect(
-    React.useCallback(()=>{
+    React.useCallback(() => {
       if (!userId) {
         fetchUserId();
       } else {
@@ -51,7 +53,7 @@ const NotificationScreen: React.FC<NotificationScreenProps> = ({ userId }) => {
   const fetchNotifications = async (userId: string) => {
     try {
       setLoading(true);
-      const unreadNotifications = await getUnreadNotifications(userId);
+      const unreadNotifications = await getAllNotifications(userId);
       setNotifications(unreadNotifications);
     } catch (error) {
       console.error('Error fetching notifications:', error);
@@ -60,11 +62,55 @@ const NotificationScreen: React.FC<NotificationScreenProps> = ({ userId }) => {
     }
   };
 
+  const handelNotification = async (item: NotificationModel) => {
+    Alert.alert(
+      "Xóa thông báo",
+      "Bạn có muốn xóa thông báo!",
+      [
+        {
+          text: "Hủy",
+          style: "cancel", // Dùng để tạo nút hủy và đóng cảnh báo mà không làm gì thêm
+        },
+        {
+          text: "Xóa",
+          onPress: async () => {
+            // code xoa thong bao o day
+            try {
+              await axios.delete(`http://beejobs.io.vn:14307/delete/${item._id}`);
+              setNotifications(prevNotifications =>
+                prevNotifications.filter(notification => notification._id !== item._id)
+              );
+            } catch (error) {
+              console.log(error)
+            }
+          },
+        },
+      ],
+      { cancelable: true }
+    );
+  }
+
   const renderNotification = ({ item }: { item: NotificationModel }) => (
-    <View style={styles.notificationItem}>
-      <Text style={styles.notificationMessage}>{item.message}</Text>
-      <Text style={styles.notificationTime}>{new Date(item.createdAt).toLocaleString()}</Text>
-    </View>
+    <TouchableOpacity style={styles.notificationItem} onPress={async () => {
+      await markNotificationAsRead(item._id);
+      router.push({
+        pathname: 'JobDetail',
+        params: {
+          _id: item.job_id
+        }
+      })
+    }} onLongPress={()=>{handelNotification(item)}}>
+      <View>
+        <Text style={styles.notificationMessage}>{item.message}</Text>
+        <Text style={styles.notificationTime}>{new Date(item.createdAt).toLocaleString()}</Text>
+      </View>
+      <TouchableOpacity style={{ flexDirection: 'row' }}>
+        {item.isRead ? (
+          <Text>Đã xem</Text>) : (
+          <Text>Chưa xem</Text>
+        )}
+      </TouchableOpacity>
+    </TouchableOpacity>
   );
 
   const renderContent = () => {
@@ -111,16 +157,16 @@ const NotificationScreen: React.FC<NotificationScreenProps> = ({ userId }) => {
 
   return (
     <View style={styles.container}>
-    <LinearGradient
-      colors={['#f0f0f0', '#87cefa']}
-      style={styles.container}
-      start={[0, 1]}
-      end={[1, 0]}
-    >
-      <Text style={styles.header}>Thông báo</Text>
-      <View style={styles.separator} />
-      {renderContent()}
-    </LinearGradient>
+      <LinearGradient
+        colors={['#f0f0f0', '#87cefa']}
+        style={styles.container}
+        start={[0, 1]}
+        end={[1, 0]}
+      >
+        <Text style={styles.header}>Thông báo</Text>
+        <View style={styles.separator} />
+        {renderContent()}
+      </LinearGradient>
     </View>
   );
 };
@@ -144,7 +190,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     paddingHorizontal: 20,
-  
+
   },
   image: {
     width: 150,
@@ -180,8 +226,8 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.23,
     shadowRadius: 2.62,
     elevation: 4,
-    marginRight:10,
-    marginLeft:10
+    marginRight: 10,
+    marginLeft: 10
   },
   notificationMessage: {
     fontSize: 16,

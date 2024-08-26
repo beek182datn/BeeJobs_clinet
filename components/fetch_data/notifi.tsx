@@ -34,12 +34,12 @@ export const getAllNotifications = async (
   userId: string,
   page: number = 1,
   limit: number = 10
-): Promise<NotificationResponse> => {
+): Promise<NotificationModel[]> => {
   try {
     const response = await axios.get<NotificationResponse>(
-      `${API_URL}/all/${userId}?page=${page}&limit=${limit}`
+      `http://beejobs.io.vn:14307/all/${userId}?page=${page}&limit=${limit}`
     );
-    return response.data;
+    return response.data.notifications;
   } catch (error) {
     console.error('Error fetching all notifications:', error);
     throw error;
@@ -48,7 +48,7 @@ export const getAllNotifications = async (
 
 export const markNotificationAsRead = async (notificationId: string): Promise<{ message: string }> => {
   try {
-    const response = await axios.put(`${API_URL}/markAsRead/${notificationId}`);
+    const response = await axios.put(`http://beejobs.io.vn:14307/markAsRead/${notificationId}`);
     return response.data;
   } catch (error) {
     console.error('Error marking notification as read:', error);

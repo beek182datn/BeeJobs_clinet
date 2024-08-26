@@ -162,15 +162,17 @@ export type AppliedJobRespone = {
 export interface NotificationModel {
   _id: string;
   userId: string;
-  formUser: string;
+  FromUser: string;
   message: string;
   type: string;
+  job_id: string;
+  applyJob_id: string;
   isRead: boolean;
   createdAt: string;
 }
 
 export interface NotificationResponse {
-  notifications: Notification[];
+  notifications: NotificationModel[];
   total: number;
   page: number;
   totalPages: number;
