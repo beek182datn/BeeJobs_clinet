@@ -576,10 +576,10 @@ export const findJobById = async (job_id: string): Promise<Job | null> => {
 
 
 // tìm công việc theo hình thức
-export const findJobByFilterOption = async (userId?: string, title?: string, salary?: string, location?: string, experience?: string): Promise<Job[]> => {
+export const findJobByFilterOption = async (userId?: string, title?: string, salary?: string, location?: string, experience?: string, major?: string): Promise<Job[]> => {
   try {
     const response: AxiosResponse<JobsResponse> = await axios.get(
-      `http://beejobs.io.vn:14307/jobs/getjobs?userId=${userId}&title=${title}&salary=${salary}&location=${location}&experience=${experience}`
+      `http://beejobs.io.vn:14307/jobs/getjobs?userId=${userId}&title=${title}&salary=${salary}&location=${location}&experience=${experience}&major=${major}`
     );
     const jobs: Job[] = response.data.data;
 

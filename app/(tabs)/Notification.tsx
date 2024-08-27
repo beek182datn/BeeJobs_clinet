@@ -7,6 +7,8 @@ import { router, useFocusEffect } from 'expo-router';
 import { LinearGradient } from "expo-linear-gradient";
 import { Ionicons } from '@expo/vector-icons';
 import axios from 'axios';
+import socket, { listenForNewMessages } from '@/components/fetch_data/config';
+
 interface NotificationScreenProps {
   userId: string;
 }
@@ -32,6 +34,7 @@ const NotificationScreen: React.FC<NotificationScreenProps> = ({ userId }) => {
     } else {
       fetchNotifications(userId);
     }
+
   }, [userId]);
 
   const fetchUserId = async () => {
@@ -99,7 +102,7 @@ const NotificationScreen: React.FC<NotificationScreenProps> = ({ userId }) => {
           _id: item.job_id
         }
       })
-    }} onLongPress={()=>{handelNotification(item)}}>
+    }} onLongPress={() => { handelNotification(item) }}>
       <View>
         <Text style={styles.notificationMessage}>{item.message}</Text>
         <Text style={styles.notificationTime}>{new Date(item.createdAt).toLocaleString()}</Text>

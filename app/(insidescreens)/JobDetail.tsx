@@ -18,6 +18,8 @@ import * as FileSystem from 'expo-file-system';
 import { WebView } from 'react-native-webview';
 import * as Sharing from 'expo-sharing';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import socket, { listenForNewMessages } from '@/components/fetch_data/config';
+
 
 
 const Tab = createMaterialTopTabNavigator();
@@ -158,9 +160,9 @@ const JobDetail = () => {
           };
           const jobId = job._id;
           const userId = user.id_user;
-          console.log('workerId: ' + worker._id + ' jobId: ' + jobId);
+          // console.log('workerId: ' + worker._id + ' jobId: ' + jobId);
           const response = await createApplyJob(userId, jobId , data);
-          console.log('workerId: ' + worker._id + ' jobId: ' + jobId);
+          // console.log(response.data.data);
           setShowModal(false);
           setColor('green');
           setMessage('Ứng tuyển thành công');
