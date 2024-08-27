@@ -155,7 +155,7 @@ const Messenger = () => {
                   <View style={styles.avatarContainer}>
                     <Image
                       source={{
-                        uri: item.company_logo,
+                        uri: item.company_logo.includes('http') ? item.company_logo : 'http://beejobs.io.vn:14307'+item.company_logo,
                       }}
                       style={styles.avatar}
                     />

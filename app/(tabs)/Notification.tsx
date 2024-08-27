@@ -107,12 +107,12 @@ const NotificationScreen: React.FC<NotificationScreenProps> = ({ userId }) => {
         <Text style={styles.notificationMessage}>{item.message}</Text>
         <Text style={styles.notificationTime}>{new Date(item.createdAt).toLocaleString()}</Text>
       </View>
-      <TouchableOpacity style={{ flexDirection: 'row' }}>
+      <View style={{ flexDirection: 'row' }}>
         {item.isRead ? (
           <Text>Đã xem</Text>) : (
           <Text>Chưa xem</Text>
         )}
-      </TouchableOpacity>
+      </View>
     </TouchableOpacity>
   );
 

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { SafeAreaView, StyleSheet, Text, View, Image, Pressable, ScrollView, StatusBar, Platform, TouchableOpacity, BackHandler, Alert } from 'react-native';
+import { SafeAreaView, StyleSheet, Text, View, Image, Pressable, ScrollView, StatusBar, Platform, TouchableOpacity, BackHandler, Alert, Linking } from 'react-native';
 import { FontAwesome, Ionicons } from '@expo/vector-icons';
 import { router, useFocusEffect, useLocalSearchParams } from 'expo-router';
 import { Company, User } from '@/components/Model/Model';
@@ -144,7 +144,8 @@ const CompanyDetail = () => {
 
                 </View>
 
-                <TouchableOpacity style={{ flexDirection: 'row', justifyContent: 'center', backgroundColor: '#FFFFFF' }}>
+                <TouchableOpacity style={{ flexDirection: 'row', justifyContent: 'center', backgroundColor: '#FFFFFF' }}
+                onPress={()=>{Linking.openURL(String(companyInfo?.company_website))}}>
                     <Ionicons name='link' size={18} color={'blue'} />
                     <Text style={{ marginLeft: 4 }}>{companyInfo?.company_website}</Text>
                 </TouchableOpacity>
