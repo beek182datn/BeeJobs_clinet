@@ -13,7 +13,7 @@ import Icon from "react-native-vector-icons/Ionicons"; // Thêm thư viện cho 
 import { useRouter, useLocalSearchParams } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
 import axios, { AxiosResponse } from "axios";
-
+import AlertComponent from "@/components/AlertComponent";
 const ResetPasswordScreen = () => {
   const router = useRouter();
   const params = useLocalSearchParams();
@@ -22,7 +22,9 @@ const ResetPasswordScreen = () => {
   const [newPassword, setNewPassword] = useState("");
   const [confirmNewPassword, setConfirmNewPassword] = useState("");
   const [email, setEmail] = useState("");
-  
+  const [showMissingInfoAlert, setShowMissingInfoAlert] = useState(false);
+  const [message, setMessage] = useState("");
+  const [color, setColor] = useState("");
   const backAction = () => {
     router.back();
     return true;
@@ -59,9 +61,42 @@ const ResetPasswordScreen = () => {
     fetchUserData();
   }, [user_id]);
 
+  const isValidPassword = (newPassword: string): boolean => {
+    // Kiểm tra độ dài của mật khẩu phải trên 6 ký tự
+    if (newPassword.length <= 6) {
+        setMessage("Mật khẩu phải trên 6 ký tự");
+        setColor("red");
+        setShowMissingInfoAlert(true);
+      return false;
+    }
+
+    // Kiểm tra chữ cái đầu tiên phải là chữ cái viết hoa
+    const firstChar = newPassword.charAt(0);
+    if (!/[A-Z]/.test(firstChar)) {
+        setMessage("Chữ cái đầu tiên phải của mật khẩu phải viết hoa");
+        setColor("red");
+        setShowMissingInfoAlert(true);
+      return false;
+    }
+
+    // Kiểm tra mật khẩu phải chứa ít nhất một số
+    if (!/\d/.test(newPassword)) {
+        setMessage("Mật khẩu phải chứa ít nhất một số");
+        setColor("red");
+        setShowMissingInfoAlert(true);
+        
+      return false;
+    }
+
+    return true;
+  };
+
   const handleSave = async () => {
     if (newPassword.trim() === "" || confirmNewPassword.trim() === "" ) {
         Alert.alert("Lỗi", "Hãy nhập đầy đủ thông tin");
+        return;
+      }
+      if(!isValidPassword(newPassword)){
         return;
       }
     if (newPassword !== confirmNewPassword) {
@@ -134,6 +169,12 @@ const ResetPasswordScreen = () => {
           <Text style={styles.buttonText}>Lưu</Text>
         </TouchableOpacity>
       </View>
+      <AlertComponent
+        color={color}
+        message={message}
+        visible={showMissingInfoAlert}
+        onClose={() => setShowMissingInfoAlert(false)}
+      />
     </SafeAreaView>
   );
 };

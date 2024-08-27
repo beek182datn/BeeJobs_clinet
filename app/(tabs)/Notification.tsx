@@ -13,6 +13,7 @@ interface NotificationScreenProps {
 
 const NotificationScreen: React.FC<NotificationScreenProps> = ({ userId }) => {
   const [notifications, setNotifications] = useState<NotificationModel[]>([]);
+  console.log('data tb: ' + JSON.stringify(notifications))
   const [loading, setLoading] = useState(true);
   const [storedUserId, setStoredUserId] = useState<string | null>(userId ?? null);
 
@@ -106,8 +107,8 @@ const NotificationScreen: React.FC<NotificationScreenProps> = ({ userId }) => {
       </View>
       <TouchableOpacity style={{ flexDirection: 'row' }}>
         {item.isRead ? (
-          <Text>Đã xem</Text>) : (
-          <Text>Chưa xem</Text>
+          <Text style={{color: '#0099CC'}}>Đã xem</Text>) : (
+          <Text style={{color: 'blue', fontWeight: 'bold'}}>Chưa xem</Text>
         )}
       </TouchableOpacity>
     </TouchableOpacity>

@@ -282,7 +282,7 @@ const Profile: React.FC = () => {
           <View style={styles.profileHeader}>
             <TouchableOpacity>
               <Image
-                source={{ uri: "https://via.placeholder.com/100" }}
+                source={{ uri: "http://beejobs.io.vn:14307/uploads/1721866026009-logo.jpg" }}
                 style={styles.avatar}
               />
             </TouchableOpacity>
@@ -525,7 +525,7 @@ const Profile: React.FC = () => {
               }}
             >
               <Ionicons name="call-outline" size={30} color="#0099CC" />
-              <Text style={styles.utilityText}>Trợ giúp</Text>
+              <Text style={[styles.utilityText]}>Trợ giúp</Text>
             </TouchableOpacity>
           </View>
 
@@ -543,7 +543,7 @@ const Profile: React.FC = () => {
           <View style={styles.profileHeader}>
             <TouchableOpacity>
               <Image
-                source={{ uri: "https://via.placeholder.com/100" }}
+                source={{ uri: "http://beejobs.io.vn:14307/uploads/1721866026009-logo.jpg" }}
                 style={styles.avatar}
               />
             </TouchableOpacity>
@@ -624,7 +624,7 @@ const Profile: React.FC = () => {
               <Text style={styles.utilityText}>Chính sách bảo mật</Text>
             </TouchableOpacity>
             <TouchableOpacity
-              style={styles.utilityItem}
+              style={[styles.utilityItem,{paddingBottom: 30}]}
               onPress={() => {
                 router.push("/HelpCenter");
               }}

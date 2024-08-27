@@ -42,7 +42,7 @@ const CompanyDetail = () => {
         setUser(user);
 
         const folow = await checkFolowCompany(String(params.userId), String(params.company_id))
-        setIsFolowing(folow.isFollowing)
+            setIsFolowing(folow.isFollowing)
     };
 
     useEffect(() => {
