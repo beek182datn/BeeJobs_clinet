@@ -11,6 +11,12 @@ const JobsFollowed = () => {
     const [user, setUser] = useState<User | null>();
     const [refreshing, setRefreshing] = useState(false);
 
+    useFocusEffect(
+        React.useCallback(()=>{
+            fetchData();
+        }, [])
+    )
+
     const fetchData = async () => {
         const user: User | null = await getUserInfo();
         setUser(user);

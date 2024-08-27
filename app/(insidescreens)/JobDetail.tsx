@@ -1,14 +1,14 @@
 import { StyleSheet, Text, View, ScrollView, Pressable, Image, Modal, TextInput,StatusBar, TouchableOpacity, Dimensions, SafeAreaView, Linking, Alert, KeyboardAvoidingView, Platform, TouchableWithoutFeedback, Keyboard } from 'react-native'
 import React, { useEffect, useState } from 'react'
 import { useFocusEffect, useLocalSearchParams } from 'expo-router'
-import { findCompanyById, getUserInfo, checkApplyJob, findWorkerById, findJobById } from '@/components/fetch_data/api';
+import { findCompanyById, getUserInfo, checkApplyJob, findWorkerById, findJobById, unFollowJob, followJob, checkFollowingJob } from '@/components/fetch_data/api';
 import { ApplyJobData, Company, Job, User, Worker } from '@/components/Model/Model';
 import { BackHandler, } from "react-native";
 import { useRouter, } from "expo-router";
 import { createApplyJob } from '@/components/fetch_data/api';
 import * as DocumentPicker from 'expo-document-picker';
 import AlertComponent from '@/components/AlertComponent';
-import { Ionicons } from '@expo/vector-icons';
+import { FontAwesome, Ionicons } from '@expo/vector-icons';
 import Icon from "react-native-vector-icons/FontAwesome";
 // const { width, height } = Dimensions.get('window');
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
@@ -82,6 +82,8 @@ const JobDetail = () => {
         const response = await checkApplyJob(user.id_user, String(params._id));
         setIsApplied(response.isApplied);
       }
+      const check = await checkFollowingJob(String(user.id_user), String(params?._id))
+      setIsFolowing(check.isFollowing);
     }
   };
 
@@ -91,7 +93,7 @@ const JobDetail = () => {
       backAction
     );
 
-    fetchCompanyData();
+    // fetchCompanyData();
     return () => backHandler.remove();
   }, [router])
 
@@ -288,6 +290,45 @@ const JobDetail = () => {
     }
   }
 
+  const [isFolowing, setIsFolowing] = useState(false);
+
+  const handleFolowJob = async () => {
+    const data: User | null = await getUserInfo();
+    if (data) {
+      try {
+        await followJob(String(data.id_user), String(job?._id))
+        setIsFolowing(true)
+      } catch (error) {
+        console.log(error)
+      }
+    }
+    else {
+      Alert.alert(
+        "Thông báo",
+        "Bạn cần đăng nhập",
+        [{
+          text: "OK", onPress: async () => {
+            router.push('/LoginScreen')
+            await AsyncStorage.setItem('data', 'data in here!');
+          }
+        }],
+        { cancelable: true }
+      );
+    }
+  }
+
+  const handleUnFolowJob = async () => {
+    const data: User | null = await getUserInfo();
+    if (data) {
+      try {
+        await unFollowJob(String(data.id_user), String(job?._id))
+        setIsFolowing(false)
+      } catch (error) {
+        console.log(error)
+      }
+    }
+  }
+
   return (
     <SafeAreaView style={styles.container}>
       <ScrollView style={{ padding: 10 }}>
@@ -302,6 +343,15 @@ const JobDetail = () => {
         </View>
 
         <View style={styles.topView}>
+          <View>
+            {!isFolowing &&
+            <TouchableOpacity onPress={handleFolowJob}>
+              <FontAwesome name="bookmark-o" size={24} color="gray" />
+            </TouchableOpacity>}
+          {isFolowing &&
+            <TouchableOpacity onPress={handleUnFolowJob}>
+              <FontAwesome name="bookmark" size={24} color="gray" />
+            </TouchableOpacity>}</View>
           <TouchableOpacity onPress={handleDetailCompany}>
             <Image source={companyInfo?.company_logo != '' ? { uri: companyInfo?.company_logo } : require('../../assets/images/profile.png')} style={styles.companyLogo} />
           </TouchableOpacity>

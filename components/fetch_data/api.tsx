@@ -458,7 +458,7 @@ export const getAllAppliedJobs = async (worker_id: string): Promise<AppliedJob[]
     // Lấy thông tin job và công ty cho từng đơn ứng tuyển
     const updatedAppliedJobs = await Promise.all(
       appliedJobs.map(async (job) => {
-        console.log(JSON.stringify(job.job_id.company_id))
+        // console.log(JSON.stringify(job.job_id.company_id))
 
         const companyResponse: AxiosResponse<CompanyRespone> = await axios.get(
           `http://beejobs.io.vn:14307/api/companies/getCompanyById/${String(job.job_id.company_id)}`
@@ -560,10 +560,10 @@ export const getFollowedJobs = async (userId: string): Promise<Job[]> => {
 };
 
 
-export const findJobById = async (job_id: string): Promise<Job | null> => {
+export const findJobById = async (job_id: string, userId?: string): Promise<Job | null> => {
   try {
     const response: AxiosResponse<JobsResponseSingle> = await axios.get(
-      `http://beejobs.io.vn:14307/jobs/getjobbyid/${job_id}`
+      `http://beejobs.io.vn:14307/jobs/getjobbyid/${job_id}?userId=${userId}`
     );
     // console.log(response.status)
     const job = response.data.data;
