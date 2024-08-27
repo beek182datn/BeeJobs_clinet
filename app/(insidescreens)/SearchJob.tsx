@@ -137,7 +137,7 @@ const SearchJob = () => {
                             <TextInput
                                 value={location}
                                 onChangeText={setLocation}
-                                style={{ borderWidth: 1, borderColor: 'grey', borderRadius: 10, paddingLeft: 15, fontSize: 14 }}
+                                style={{ borderWidth: 1, borderColor: 'grey', borderRadius: 10, paddingLeft: 15, fontSize: 14, height: 50 }}
                                 placeholder={'Địa điểm'} />
                         </View>
 
@@ -146,7 +146,7 @@ const SearchJob = () => {
                             <TextInput
                                 value={experience}
                                 onChangeText={setExperience}
-                                style={{ borderWidth: 1, borderColor: 'grey', borderRadius: 10, paddingLeft: 15, fontSize: 14 }}
+                                style={{ borderWidth: 1, borderColor: 'grey', borderRadius: 10, paddingLeft: 15, fontSize: 14, height: 50 }}
                                 placeholder={'Kinh nghiệm'} />
                         </View>
                     </View>
@@ -156,7 +156,7 @@ const SearchJob = () => {
                             <TextInput
                                 value={salary}
                                 onChangeText={setSalary}
-                                style={{ borderWidth: 1, borderColor: 'grey', borderRadius: 10, paddingLeft: 15, fontSize: 14 }}
+                                style={{ borderWidth: 1, borderColor: 'grey', borderRadius: 10, paddingLeft: 15, fontSize: 14, height: 50 }}
                                 placeholder={'Mức lương'} />
                         </View>
                         <View style={{ flex: 1, marginLeft: 5 }}>
@@ -164,7 +164,7 @@ const SearchJob = () => {
                             <TextInput
                                 value={major}
                                 onChangeText={setmajor}
-                                style={{ borderWidth: 1, borderColor: 'grey', borderRadius: 10, paddingLeft: 15, fontSize: 14 }}
+                                style={{ borderWidth: 1, borderColor: 'grey', borderRadius: 10, paddingLeft: 15, fontSize: 14, height: 50 }}
                                 placeholder={'Ngành'} />
 
                         </View>

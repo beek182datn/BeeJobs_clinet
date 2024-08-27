@@ -160,7 +160,7 @@ const NotificationScreen: React.FC<NotificationScreenProps> = ({ userId }) => {
   };
 
   return (
-    <View style={styles.container}>
+    <SafeAreaView style={styles.container}>
       <LinearGradient
         colors={['#f0f0f0', '#87cefa']}
         style={styles.container}
@@ -171,7 +171,7 @@ const NotificationScreen: React.FC<NotificationScreenProps> = ({ userId }) => {
         <View style={styles.separator} />
         {renderContent()}
       </LinearGradient>
-    </View>
+    </SafeAreaView>
   );
 };
 
