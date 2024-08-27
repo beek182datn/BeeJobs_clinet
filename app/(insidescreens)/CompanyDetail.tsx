@@ -41,16 +41,11 @@ const CompanyDetail = () => {
         const user: User | null = await getUserInfo();
         setUser(user);
 
-<<<<<<< HEAD
-        const folow = await checkFolowCompany(String(params.userId), String(params.company_id))
-            setIsFolowing(folow.isFollowing)
-=======
         if (params.userId) {
             const folow = await checkFolowCompany(String(params.userId), String(params.company_id))
             setIsFolowing(folow.isFollowing)
         }
 
->>>>>>> 96835f89ba045f6df3c0b09d6de3745e8a67358f
     };
 
     useEffect(() => {
