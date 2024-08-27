@@ -1,4 +1,4 @@
-import { ActivityIndicator, FlatList, SafeAreaView, StyleSheet, Text, TextInput, StatusBar, Platform, TouchableOpacity, View } from 'react-native';
+import { ActivityIndicator, FlatList, SafeAreaView, StyleSheet, Text, TextInput, StatusBar, Platform, TouchableOpacity, View, RefreshControl } from 'react-native';
 import React, { useEffect, useState } from 'react';
 import { router } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
@@ -34,6 +34,7 @@ const SearchJob = () => {
     const [experience, setExperience] = useState("");
     const [isNoData, setIsNoData] = useState(false);
     const [isDisplay, setisDisplay] = useState(false);
+    const [refreshing, setRefreshing] = useState(false);
 
 
     useEffect(() => {
@@ -75,6 +76,7 @@ const SearchJob = () => {
     }
 
     const handelClear = () => {
+        setRefreshing(true)
         setJobs([])
         setIsNoData(false)
         setExperience('')
@@ -82,6 +84,7 @@ const SearchJob = () => {
         setSalary('')
         setSearchText('')
         setmajor('')
+        setRefreshing(false)
     }
 
     return (
@@ -107,58 +110,64 @@ const SearchJob = () => {
                     onChangeText={handelSearchPress}
                 />
                 <View>
-                    
+
                     <TouchableOpacity onPress={handelFilter} style={styles.filterButton}>
                         <Ionicons name='search' size={18} color={'white'} />
                     </TouchableOpacity>
                     <View>
                         <TouchableOpacity onPress={handelClear} style={{
-                            backgroundColor: "#2196F3",
+                            // backgroundColor: "#ccc",
                             borderRadius: 10,
                             justifyContent: "center",
                             alignItems: "center",
                             padding: 5
                         }}>
-                            <Ionicons name='close' size={18} color={'white'} />
+                            <Ionicons name='close' size={18} color={'black'} />
                         </TouchableOpacity>
                     </View>
                 </View>
 
             </View>
 
-            <View>
-                <View style={styles.filter}>
-                    <View style={{ flex: 1 }}>
-                        <TextInput
-                            value={location}
-                            onChangeText={setLocation}
-                            style={{ borderWidth: 1, borderColor: 'grey', borderRadius: 10, paddingLeft: 15 }}
-                            placeholder={'Địa điểm'} />
-                    </View>
+            <View style={{ backgroundColor: 'white', flexDirection: 'row' }}>
+                <View>
+                    <View style={styles.filter}>
+                        <View style={{ flex: 1, marginRight: 5 }}>
+                            <Text style={{ paddingLeft: 15, fontSize: 14, fontWeight: '500' }}>Địa điểm</Text>
+                            <TextInput
+                                value={location}
+                                onChangeText={setLocation}
+                                style={{ borderWidth: 1, borderColor: 'grey', borderRadius: 10, paddingLeft: 15, fontSize: 14 }}
+                                placeholder={'Địa điểm'} />
+                        </View>
 
-                    <View style={{ flex: 1 }}>
-                        <TextInput
-                            value={experience}
-                            onChangeText={setExperience}
-                            style={{ borderWidth: 1, borderColor: 'grey', borderRadius: 10, paddingLeft: 15 }}
-                            placeholder={'Kinh nghiệm'} />
+                        <View style={{ flex: 1, marginLeft: 5 }}>
+                            <Text style={{ paddingLeft: 15, fontSize: 14, fontWeight: '500' }}>Kinh nghiệm</Text>
+                            <TextInput
+                                value={experience}
+                                onChangeText={setExperience}
+                                style={{ borderWidth: 1, borderColor: 'grey', borderRadius: 10, paddingLeft: 15, fontSize: 14 }}
+                                placeholder={'Kinh nghiệm'} />
+                        </View>
                     </View>
-                </View>
-                <View style={styles.filter}>
-                    <View style={{ flex: 1 }}>
-                        <TextInput
-                            value={salary}
-                            onChangeText={setSalary}
-                            style={{ borderWidth: 1, borderColor: 'grey', borderRadius: 10, paddingLeft: 15 }}
-                            placeholder={'Mức lương'} />
-                    </View>
-                    <View style={{ flex: 1 }}>
-                        <TextInput
-                            value={major}
-                            onChangeText={setmajor}
-                            style={{ borderWidth: 1, borderColor: 'grey', borderRadius: 10, paddingLeft: 15 }}
-                            placeholder={'Ngành'} />
+                    <View style={styles.filter}>
+                        <View style={{ flex: 1, marginRight: 5 }}>
+                            <Text style={{ paddingLeft: 15, fontSize: 14, fontWeight: '500' }}>Mức lương</Text>
+                            <TextInput
+                                value={salary}
+                                onChangeText={setSalary}
+                                style={{ borderWidth: 1, borderColor: 'grey', borderRadius: 10, paddingLeft: 15, fontSize: 14 }}
+                                placeholder={'Mức lương'} />
+                        </View>
+                        <View style={{ flex: 1, marginLeft: 5 }}>
+                            <Text style={{ paddingLeft: 15, fontSize: 14, fontWeight: '500' }}>Ngành</Text>
+                            <TextInput
+                                value={major}
+                                onChangeText={setmajor}
+                                style={{ borderWidth: 1, borderColor: 'grey', borderRadius: 10, paddingLeft: 15, fontSize: 14 }}
+                                placeholder={'Ngành'} />
 
+                        </View>
                     </View>
                 </View>
             </View>
@@ -183,6 +192,9 @@ const SearchJob = () => {
                         renderItem={({ item }) => <JobsList job={item} callback={() => { setJobs([]) }} />}
                         keyExtractor={(item) => item._id.toString()}
                         contentContainerStyle={{ paddingBottom: 90 }}
+                        refreshControl={
+                            <RefreshControl refreshing={refreshing} onRefresh={handelClear} />
+                        }
                     />
                 </View>}
         </SafeAreaView>

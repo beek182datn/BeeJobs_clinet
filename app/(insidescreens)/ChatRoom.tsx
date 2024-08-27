@@ -145,7 +145,8 @@ const ChatRoom: React.FC = () => {
                         <Ionicons name="arrow-back" size={22} color="black" />
                     </TouchableOpacity>
                     <Image
-                        source={info.company_logo ? { uri: info.company_logo }: companyInfo?.company_logo ? { uri: companyInfo?.company_logo } : require('../../assets/images/SplashLogo.png')}
+                        source={
+                           info.company_logo ? { uri: info.company_logo }: companyInfo?.company_logo ? { uri: companyInfo?.company_logo } : require('../../assets/images/SplashLogo.png')}
                         style={styles.logo}
                     />
                     <View style={styles.viewTitle}>
