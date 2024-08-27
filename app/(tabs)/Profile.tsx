@@ -276,7 +276,8 @@ const Profile: React.FC = () => {
   };
 
   return (
-    <ScrollView style={styles.container} >
+    <SafeAreaView style={styles.container}>
+      <ScrollView>
       {user && !worker && (
         <>
           <View style={styles.profileHeader}>
@@ -643,6 +644,7 @@ const Profile: React.FC = () => {
         </>
       )}
     </ScrollView>
+    </SafeAreaView>
   );
 };
 
