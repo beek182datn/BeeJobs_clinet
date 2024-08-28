@@ -15,7 +15,7 @@ interface NotificationScreenProps {
 
 const NotificationScreen: React.FC<NotificationScreenProps> = ({ userId }) => {
   const [notifications, setNotifications] = useState<NotificationModel[]>([]);
-  console.log('data tb: ' + JSON.stringify(notifications))
+  // console.log('data tb: ' + JSON.stringify(notifications))
   const [loading, setLoading] = useState(true);
   const [storedUserId, setStoredUserId] = useState<string | null>(userId ?? null);
 
