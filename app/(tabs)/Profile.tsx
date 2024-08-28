@@ -340,7 +340,7 @@ const Profile: React.FC = () => {
               >
                 <Ionicons name="business" size={30} color="#0099CC" />
                 <Text style={styles.infoText}>Công ty đang theo dõi</Text>
-                <Text style={styles.infoNumber}>{companyInfo.length}</Text>
+                <Text style={styles.infoNumber}>{companyInfo.length === 0 ? 0 : companyInfo.length}</Text>
               </TouchableOpacity>
             </View>
           </View>
@@ -462,7 +462,7 @@ const Profile: React.FC = () => {
               >
                 <Ionicons name="business" size={30} color="#0099CC" />
                 <Text style={styles.infoText}>Công ty đang theo dõi</Text>
-                <Text style={styles.infoNumber}>{companyInfo.length}</Text>
+                <Text style={styles.infoNumber}>{companyInfo.length === 0 ? 0 : companyInfo.length}</Text>
               </TouchableOpacity>
             </View>
           </View>

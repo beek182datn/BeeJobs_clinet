@@ -8,6 +8,7 @@ import { LinearGradient } from "expo-linear-gradient";
 import { Ionicons } from '@expo/vector-icons';
 import axios from 'axios';
 import socket, { listenForNewMessages } from '@/components/fetch_data/config';
+import { RefreshControl } from 'react-native';
 
 interface NotificationScreenProps {
   userId: string;
@@ -18,6 +19,8 @@ const NotificationScreen: React.FC<NotificationScreenProps> = ({ userId }) => {
   // console.log('data tb: ' + JSON.stringify(notifications))
   const [loading, setLoading] = useState(true);
   const [storedUserId, setStoredUserId] = useState<string | null>(userId ?? null);
+  const [refreshing, setRefreshing] = useState(false);
+
 
   useFocusEffect(
     React.useCallback(() => {
@@ -26,7 +29,8 @@ const NotificationScreen: React.FC<NotificationScreenProps> = ({ userId }) => {
       } else {
         fetchNotifications(userId);
       }
-    }, [])
+      setRefreshing(false)
+    }, [refreshing])
   )
 
   useEffect(() => {
@@ -140,6 +144,9 @@ const NotificationScreen: React.FC<NotificationScreenProps> = ({ userId }) => {
           data={notifications}
           renderItem={renderNotification}
           keyExtractor={(item) => item._id}
+          refreshControl={
+            <RefreshControl refreshing={refreshing} onRefresh={()=>{setRefreshing(true)}} />
+        }
         />
       );
     } else {

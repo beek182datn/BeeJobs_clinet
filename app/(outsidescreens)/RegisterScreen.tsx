@@ -149,11 +149,11 @@ const RegisterScreen = () => {
             type_role: 'NLD'
           }
         );
-        console.log("huy check: " + response.data.status);
+        console.log("huy check: " + JSON.stringify(response.data));
         if (response.data.status === 200) {
           router.push({ pathname: "VerifyAccount", params: { email: email } });
         } else if (response.data.status === 400) {
-          setMessage("Email đã được đăng ký!");
+          setMessage(response.data.msg);
           setShowMissingInfoAlert(true);
           setColor("red");
           return;

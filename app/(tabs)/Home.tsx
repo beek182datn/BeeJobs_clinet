@@ -10,7 +10,8 @@ import {
   ToastAndroid,
   ActivityIndicator,
   StatusBar,
-  Platform 
+  Platform, 
+  RefreshControl
 } from "react-native";
 import React, { useState, useEffect, useCallback } from "react";
 import { useFocusEffect } from "@react-navigation/native";
@@ -92,11 +93,11 @@ const Home = () => {
       setCurrentPage(1);
       setTotalPages(1);
       loadJobs(1);
-      
+      setRefreshing(false)
       return () => {
         setIsLoading(false);
       }; // Cleanup to prevent memory leaks
-    }, [])
+    }, [refreshing])
   );
 
   // useEffect(() => {
@@ -223,6 +224,9 @@ const Home = () => {
           renderItem={({ item }) => <JobsList job={item} callback={()=>{}}/>}
           keyExtractor={(item) => item._id.toString()}
           onEndReachedThreshold={0.5}
+          refreshControl={
+            <RefreshControl refreshing={refreshing} onRefresh={()=>{setRefreshing(true)}} />
+        }
           ListFooterComponent={
             currentPage < totalPages ?
               <TouchableOpacity onPress={async () => {
