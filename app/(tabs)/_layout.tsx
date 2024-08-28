@@ -7,17 +7,19 @@ import { configureNotifications, registerForPushNotificationsAsync, requestNotif
 import { View, Text } from 'react-native';
 import { getUnreadNotifications } from "@/components/fetch_data/notifi";
 import { getUserInfo } from "@/components/fetch_data/api";
-import { NotificationModel, NotificationPushModel } from "@/components/Model/Model";
+import { NotificationModel, NotificationPushModel, User } from "@/components/Model/Model";
 import socket, { listenForNotifications } from "@/components/fetch_data/config";
 
 export default () => {
   const [notifications, setNotifications] = useState<NotificationModel[]>();
+  const [user, setUser] = useState<User | null>();
   const colorScheme = useColorScheme();
   useFocusEffect(
     React.useCallback(() => {
       const fetchNotifi = async () => {
         const user = await getUserInfo();
         if (user) {
+          setUser(user)
           const notification = await getUnreadNotifications(user.id_user);
           setNotifications(notification);
         }
@@ -103,7 +105,7 @@ export default () => {
           ),
           tabBarIcon: ({ color, focused }) => (
             <View style={{position:'relative'}}>
-              {notifications?.length !== 0 &&
+              {notifications?.length !== 0 || !user  &&
                 <Text style={{ position: 'absolute', backgroundColor: 'red', color: 'white', paddingLeft: 4, paddingRight: 4, top: -15, right: -15, borderRadius: 30, fontWeight:'500', fontSize: 14 }}>{notifications?.length}</Text>
               }
               <TabBarIcon
