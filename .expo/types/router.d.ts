@@ -3,7 +3,7 @@ import type { ReactNode } from 'react';
 import type { TextProps, GestureResponderEvent } from 'react-native';
 
 export namespace ExpoRouter {
-  type StaticRoutes = `/` | `/(tabs)` | `/_sitemap` | `/explore`;
+  type StaticRoutes = `/` | `/(insidescreens)/AppliedJobByTime` | `/(insidescreens)/ChatRoom` | `/(insidescreens)/CompanyDetail` | `/(insidescreens)/CompanyDetail2` | `/(insidescreens)/CompanyIntroduction` | `/(insidescreens)/HelpCenter` | `/(insidescreens)/JobDetail` | `/(insidescreens)/JobsFollowed` | `/(insidescreens)/PrivacyPolicy` | `/(insidescreens)/SearchJob` | `/(insidescreens)/TermsOfService` | `/(insidescreens)/ViewCV` | `/(insidescreens)/ViewPdf` | `/(outsidescreens)` | `/(outsidescreens)/AppliedJobs` | `/(outsidescreens)/ChangePassword` | `/(outsidescreens)/CompanyIntroduction` | `/(outsidescreens)/CompleteProfileScreen` | `/(outsidescreens)/CompleteProfileScreen1` | `/(outsidescreens)/CompleteProfileScreen2` | `/(outsidescreens)/FollowCompany` | `/(outsidescreens)/ForgotPasswordScreen` | `/(outsidescreens)/HelpCenter` | `/(outsidescreens)/LoginScreen` | `/(outsidescreens)/OtpVerificationScreen` | `/(outsidescreens)/PrivacyPolicy` | `/(outsidescreens)/RegisterScreen` | `/(outsidescreens)/ResetPasswordScreen` | `/(outsidescreens)/TermsOfService` | `/(outsidescreens)/VerifyAccount` | `/(tabs)` | `/AppliedJobByTime` | `/AppliedJobs` | `/ChangePassword` | `/ChatRoom` | `/CompanyDetail` | `/CompanyDetail2` | `/CompanyIntroduction` | `/CompleteProfileScreen` | `/CompleteProfileScreen1` | `/CompleteProfileScreen2` | `/FollowCompany` | `/ForgotPasswordScreen` | `/HelpCenter` | `/Home` | `/JobDetail` | `/JobsFollowed` | `/LoginScreen` | `/Messenger` | `/Notification` | `/OtpVerificationScreen` | `/PrivacyPolicy` | `/Profile` | `/RegisterScreen` | `/ResetPasswordScreen` | `/SearchJob` | `/TermsOfService` | `/VerifyAccount` | `/ViewCV` | `/ViewPdf` | `/_sitemap`;
   type DynamicRoutes<T extends string> = never;
   type DynamicRouteTemplate = never;
 
@@ -301,8 +301,9 @@ export namespace ExpoRouter {
   type useRouter = typeof useRouter;
 
   /**
-   * Returns the URL search parameters for the contextually focused route. e.g. \`/acme?foo=bar\` -> \`{ foo: "bar" }\`.
+   * Returns the URL parameters for the contextually focused route. e.g. \`/acme?foo=bar\` -> \`{ foo: "bar" }\`.
    * This is useful for stacks where you may push a new screen that changes the query parameters.
+   * For dynamic routes, both the route parameters and the search parameters are returned.
    *
    * To observe updates even when the invoking route is not focused, use \`useGlobalSearchParams()\`.
    * @see \`useGlobalSearchParams\`
@@ -318,10 +319,10 @@ export namespace ExpoRouter {
   type useSearchParams = typeof useSearchParams;
 
   /**
-   * Get the globally selected query parameters, including dynamic path segments. This function will update even when the route is not focused.
+   * Get the globally selected URL parameters, including search parameters and dynamic path segments as route parameters. This function will update even when the route is not focused.
    * Useful for analytics or other background operations that don't draw to the screen.
    *
-   * When querying search params in a stack, opt-towards using \`useLocalSearchParams\` as these will only
+   * When querying URL params in a stack, opt-towards using \`useLocalSearchParams\` as these will only
    * update when the route is focused.
    *
    * @see \`useLocalSearchParams\`
